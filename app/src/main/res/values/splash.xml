@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.LazyPizza.LazyPizzaSplash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#F36B50</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.LazyPizza</item>
+    </style>
+</resources>
