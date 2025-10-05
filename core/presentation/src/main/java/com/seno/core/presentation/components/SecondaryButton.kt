@@ -1,7 +1,7 @@
 package com.seno.core.presentation.components
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -23,13 +23,12 @@ fun LazyPizzaSecondaryButton(
         onClick = {
             onClick()
         },
-        modifier = modifier
-            .background(
-                color = MaterialTheme.colorScheme.background
-            ),
         border = BorderStroke(
             width = 1.dp,
             color = primary8
+        ),
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = MaterialTheme.colorScheme.background
         )
     ) {
         Text(
