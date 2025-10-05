@@ -7,8 +7,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -46,6 +48,7 @@ import com.seno.core.presentation.theme.title_1_semiBold
 @SuppressLint("DefaultLocale")
 @Composable
 fun ProductCard(
+    modifier: Modifier = Modifier,
     painterRes: Painter,
     productName: String,
     productPrice: Double
@@ -53,13 +56,15 @@ fun ProductCard(
     var quantity by remember { mutableIntStateOf(0) }
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .padding(16.dp)
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min)
             .background(
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
                 shape = RoundedCornerShape(12.dp)
-            ),
+            )
+            .padding(2.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -79,11 +84,12 @@ fun ProductCard(
                 ),
             contentScale = ContentScale.Crop
         )
-
-        Spacer(modifier = Modifier.width(16.dp))
-
+        
         Column(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(vertical = 12.dp),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),

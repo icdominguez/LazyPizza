@@ -3,6 +3,7 @@ package com.seno.core.presentation.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,26 +31,29 @@ import com.seno.core.presentation.theme.title_1_semiBold
 
 @Composable
 fun PizzaCard(
+    modifier: Modifier = Modifier,
     painterRes: Painter,
     pizzaName: String,
     pizzaDescription: String,
     pizzaPrice: String
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .padding(16.dp)
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min)
             .background(
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
                 shape = RoundedCornerShape(12.dp)
-            ),
+            )
+            .padding(2.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
             painter = painterRes,
             contentDescription = "Pizza",
             modifier = Modifier
-                .size(100.dp)
+                .size(120.dp)
                 .padding(start = 1.dp, top = 1.dp, bottom = 1.dp, end = 8.dp)
                 .background(
                     color = MaterialTheme.colorScheme.surfaceContainerHighest,

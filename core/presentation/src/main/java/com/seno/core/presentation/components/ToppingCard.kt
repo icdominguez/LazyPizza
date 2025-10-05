@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.seno.core.presentation.R
 import com.seno.core.presentation.theme.body_3_regular
 import com.seno.core.presentation.theme.outline50
+import com.seno.core.presentation.theme.primary
 import com.seno.core.presentation.theme.textPrimary
 import com.seno.core.presentation.theme.textSecondary
 import com.seno.core.presentation.theme.title_2
@@ -43,6 +44,7 @@ import com.seno.core.presentation.theme.title_2
 @SuppressLint("DefaultLocale")
 @Composable
 fun ToppingCard(
+    modifier: Modifier = Modifier,
     painterRes: Painter,
     toppingName: String,
     toppingPrice: Double
@@ -50,13 +52,13 @@ fun ToppingCard(
     var quantity by remember { mutableIntStateOf(0) }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
+            .padding(16.dp)
             .fillMaxWidth()
             .clickable { if (quantity == 0) quantity = 1 }
-            .padding(16.dp)
             .border(
                 width = 1.dp,
-                color = outline50,
+                color = if (quantity > 0) primary else outline50,
                 shape = RoundedCornerShape(12.dp)
             )
             .background(
@@ -93,7 +95,10 @@ fun ToppingCard(
                 style = title_2.copy(color = textPrimary)
             )
         } else {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 IconButton(
                     onClick = {
                         if (quantity > 1) quantity-- else quantity = 0
