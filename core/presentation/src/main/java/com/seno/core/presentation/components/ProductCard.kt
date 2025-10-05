@@ -57,7 +57,6 @@ fun ProductCard(
 
     Row(
         modifier = modifier
-            .padding(16.dp)
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
             .background(
