@@ -50,15 +50,12 @@ val title_3 = TextStyle(
     fontSize = 15.sp,
     lineHeight = 22.sp
 )
-
-
 val label_2_semiBold = TextStyle(
     fontFamily = FontFamily(Font(R.font.instrument_sans_semibold)),
     fontWeight = FontWeight.SemiBold,
     fontSize = 12.sp,
     lineHeight = 16.sp
 )
-
 val body_1_regular = TextStyle(
     fontFamily = FontFamily(Font(R.font.instrument_sans_regular)),
     fontWeight = FontWeight.Normal,
@@ -80,6 +77,12 @@ val body_3_regular = TextStyle(
 val body_3_medium = TextStyle(
     fontFamily = FontFamily(Font(R.font.instrument_sans_medium)),
     fontWeight = FontWeight.Medium,
+    fontSize = 14.sp,
+    lineHeight = 18.sp
+)
+val body_3_body = TextStyle(
+    fontFamily = FontFamily(Font(R.font.instrument_sans_bold)),
+    fontWeight = FontWeight.Bold,
     fontSize = 14.sp,
     lineHeight = 18.sp
 )

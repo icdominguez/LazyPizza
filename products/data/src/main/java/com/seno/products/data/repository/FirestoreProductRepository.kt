@@ -1,53 +1,93 @@
 package com.seno.products.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.seno.products.data.model.MenuItemEntity
-import com.seno.products.data.model.PizzaItemEntity
-import com.seno.products.data.model.toMenuItem
-import com.seno.products.data.model.toPizzaItem
-import com.seno.products.domain.model.MenuItem
-import com.seno.products.domain.model.PizzaItem
+import com.seno.products.data.model.ProductEntity
+import com.seno.products.data.model.toProduct
+import com.seno.products.domain.model.Product
+import com.seno.products.domain.model.ProductType
 import com.seno.products.domain.repository.ProductsRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.combine
 
 class FirestoreProductRepository(
     private val db: FirebaseFirestore
-): ProductsRepository {
-    override fun drinks(): Flow<List<MenuItem>> = sectionFlow(DRINKS)
-    override fun sauces(): Flow<List<MenuItem>> = sectionFlow(SAUCES)
-    override fun iceCreams(): Flow<List<MenuItem>> = sectionFlow(ICE_CREAMS)
-    override fun extraToppings(): Flow<List<MenuItem>> = sectionFlow(EXTRA_TOPPINGS)
-    override fun pizzas(): Flow<List<PizzaItem>> = pizzasFlow()
+) : ProductsRepository {
+    override fun getAllProducts(): Flow<List<Product>> = getAllProductsFlow()
 
-    private fun sectionFlow(collection: String): Flow<List<MenuItem>> = callbackFlow {
-        val listener = db.collection(collection)
-            .addSnapshotListener { snap, err ->
-                if (err != null) {
-                    trySend(emptyList())
-                    return@addSnapshotListener
-                }
+    private fun getAllProductsFlow(): Flow<List<Product>> {
+        val collections = listOf(
+            PIZZAS to ProductType.PIZZA,
+            DRINKS to ProductType.DRINK,
+            SAUCES to ProductType.SAUCE,
+            ICE_CREAMS to ProductType.ICE_CREAM,
+        )
 
-                val items = snap?.toObjects(MenuItemEntity::class.java).orEmpty()
-                trySend(items.map { it.toMenuItem() })
+        val flows = collections.map { (collection, type) ->
+            callbackFlow {
+                val listener = db.collection(collection)
+                    .addSnapshotListener { snapshot, error ->
+                        if (error != null) {
+                            trySend(emptyList())
+                            return@addSnapshotListener
+                        }
+
+                        val entities = snapshot?.toObjects(ProductEntity::class.java).orEmpty()
+                        val products = entities.mapNotNull { it.copy(type = type).toProduct() }
+                        trySend(products)
+                    }
+
+                awaitClose { listener.remove() }
             }
+        }
 
-        awaitClose { listener.remove() }
+        return combine(flows) { lists ->
+            lists.flatMap { it }
+        }
     }
 
-    private fun pizzasFlow(): Flow<List<PizzaItem>> = callbackFlow {
-        val listener = db.collection(PIZZAS)
-            .addSnapshotListener { snap, err ->
-                if (err != null) {
-                    trySend(emptyList())
-                    return@addSnapshotListener
+    override fun getExtraToppingsFlow(): Flow<List<Product>> =
+        callbackFlow {
+            val listener = db.collection(EXTRA_TOPPINGS)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        trySend(emptyList())
+                        return@addSnapshotListener
+                    }
+
+                    val entities = snapshot?.toObjects(ProductEntity::class.java).orEmpty()
+                    val products = entities.mapNotNull {
+                        it.copy(type = ProductType.EXTRA_TOPPING).toProduct()
+                    }
+                    trySend(products)
                 }
-                val items = snap?.toObjects(PizzaItemEntity::class.java).orEmpty()
-                trySend(items.map { it.toPizzaItem() })
-            }
-        awaitClose { listener.remove() }
-    }
+
+            awaitClose { listener.remove() }
+        }
+
+    override fun getPizzaByName(pizzaName: String): Flow<Product.Pizza?> =
+        callbackFlow {
+            val listener = db.collection(PIZZAS)
+                .whereEqualTo("name", pizzaName)
+                .limit(1)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        trySend(null)
+                        return@addSnapshotListener
+                    }
+
+                    val pizza = snapshot?.documents
+                        ?.firstOrNull()
+                        ?.toObject(ProductEntity::class.java)
+                        ?.toProduct() as? Product.Pizza
+
+                    trySend(pizza)
+                }
+
+            awaitClose { listener.remove() }
+        }
+
 
     private companion object {
         const val DRINKS = "drinks"
