@@ -21,6 +21,19 @@ class AllProductsViewModel(
 
     fun onAction(action: AllProductsAction) {
         when(action) {
+            is AllProductsAction.OnQueryChange -> {
+                val productsFiltered = if(action.newSearchQuery.isNotEmpty()) {
+                    _state.value.products.mapValues { (_, products) ->
+                        products.filter { product ->
+                            product.name.contains(action.newSearchQuery, ignoreCase = true)
+                        }
+                    }.filterValues { it.isNotEmpty() }
+                } else {
+                    state.value.products
+                }
+
+                _state.update { it.copy(searchQuery = action.newSearchQuery, productsFiltered = productsFiltered) }
+            }
             else -> Unit
         }
     }
@@ -47,6 +60,7 @@ class AllProductsViewModel(
                     _state.update {
                         it.copy(
                             products = productsGrouped,
+                            productsFiltered = productsGrouped,
                             headerIndexMap = headerIndexMap,
                             isLoading = false
                         )

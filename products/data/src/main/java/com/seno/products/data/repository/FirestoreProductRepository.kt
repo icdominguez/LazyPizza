@@ -17,12 +17,11 @@ class FirestoreProductRepository(
     override fun getAllProducts(): Flow<List<Product>> = getAllProductsFlow()
 
     private fun getAllProductsFlow(): Flow<List<Product>> {
-        val collections = listOf(
-            PIZZAS to ProductType.PIZZA,
-            DRINKS to ProductType.DRINK,
-            SAUCES to ProductType.SAUCE,
-            ICE_CREAMS to ProductType.ICE_CREAM,
-        )
+        val collections = ProductType.entries
+            .filterNot { it == ProductType.EXTRA_TOPPING }
+            .map { type ->
+                type.name.lowercase() + "s" to type
+            }
 
         val flows = collections.map { (collection, type) ->
             callbackFlow {
@@ -49,7 +48,7 @@ class FirestoreProductRepository(
 
     override fun getExtraToppingsFlow(): Flow<List<Product>> =
         callbackFlow {
-            val listener = db.collection(EXTRA_TOPPINGS)
+            val listener = db.collection(ProductType.EXTRA_TOPPING.name.lowercase() + "s")
                 .addSnapshotListener { snapshot, error ->
                     if (error != null) {
                         trySend(emptyList())
