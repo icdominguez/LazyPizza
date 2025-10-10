@@ -1,13 +1,10 @@
 package com.seno.products.domain.repository
 
-import com.seno.products.domain.model.MenuItem
-import com.seno.products.domain.model.PizzaItem
+import com.seno.products.domain.model.Product
 import kotlinx.coroutines.flow.Flow
 
 interface ProductsRepository {
-    fun drinks(): Flow<List<MenuItem>>
-    fun sauces(): Flow<List<MenuItem>>
-    fun iceCreams(): Flow<List<MenuItem>>
-    fun extraToppings(): Flow<List<MenuItem>>
-    fun pizzas(): Flow<List<PizzaItem>>
+    fun getAllProducts(): Flow<List<Product>>
+    fun getExtraToppingsFlow(): Flow<List<Product>>
+    fun getPizzaByName(pizzaName: String): Flow<Product.Pizza?>
 }

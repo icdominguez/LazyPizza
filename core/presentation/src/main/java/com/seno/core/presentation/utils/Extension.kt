@@ -11,3 +11,13 @@ fun Modifier.applyIf(condition: Boolean, modifier: @Composable Modifier.() -> Mo
         this
     }
 }
+
+fun String.replaceUnderscores() =
+    this.replace("_", " ")
+
+fun String.toCamelCase() =
+    this.lowercase()
+        .split(' ', '_')
+        .filter { it.isNotEmpty() }.joinToString(" ") { word ->
+            word.replaceFirstChar { it.uppercase() }
+        }
