@@ -17,21 +17,33 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.seno.core.presentation.R
+import com.seno.core.presentation.components.CustomizableSearchBar
 import com.seno.core.presentation.components.LazyPizzaDefaultScreen
 import com.seno.core.presentation.components.LazyPizzaTopAppBar
 import com.seno.core.presentation.components.PizzaCard
@@ -134,14 +146,12 @@ fun AllProductsScreen(
                 contentDescription = "Banner",
             )
 
-            /*CustomizableSearchBar(
-                modifier = Modifier,
-                query = "",
-                onQueryChange = {},
-                onSearch = {},
-                searchResults = emptyList(),
-                onResultClick = {}
-            )*/
+            Spacer(modifier = Modifier.size(16.dp))
+
+            CustomizableSearchBar(
+                query = state.searchQuery,
+                onQueryChange = { onAction(AllProductsAction.OnQueryChange(it)) },
+            )
 
             LazyRow(
                 modifier = Modifier
@@ -178,7 +188,7 @@ fun AllProductsScreen(
                     state = listState,
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    state.products.forEach { (type, products) ->
+                    state.productsFiltered.forEach { (type, products) ->
                         stickyHeader {
                             Row(
                                 modifier = Modifier

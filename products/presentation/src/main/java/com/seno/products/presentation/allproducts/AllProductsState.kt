@@ -7,4 +7,6 @@ data class AllProductsState(
     val isLoading: Boolean = true,
     val products: Map<ProductType, List<Product>> = emptyMap(),
     val headerIndexMap: Map<ProductType, Int> = emptyMap(),
+    val productsFiltered: Map<ProductType, List<Product>> = emptyMap(),
+    val searchQuery: String = "",
 )
