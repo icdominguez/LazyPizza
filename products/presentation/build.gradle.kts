@@ -8,6 +8,7 @@ android {
 
 dependencies {
     implementation(libs.timber)
+    implementation(libs.coil.compose)
 
     with(projects) {
         implementation(core.presentation)

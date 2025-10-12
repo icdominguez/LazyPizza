@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.seno.core.presentation.theme.LazyPizzaTheme
 import com.seno.core.presentation.theme.background
 import com.seno.core.presentation.theme.body_3_medium
 import com.seno.core.presentation.theme.outline
@@ -26,7 +27,7 @@ fun ProductChip(
     onClick: () -> Unit = {},
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .background(color = background)
             .border(
                 width = 1.dp,
@@ -51,10 +52,12 @@ fun ProductChip(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun FilterChipPreview() {
-    ProductChip(
-        chipText = "Pizza"
-    )
+private fun FilterChipPreview() {
+    LazyPizzaTheme {
+        ProductChip(
+            chipText = "Pizza"
+        )
+    }
 }

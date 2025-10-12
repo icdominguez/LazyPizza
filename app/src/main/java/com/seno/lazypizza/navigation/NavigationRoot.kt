@@ -30,6 +30,10 @@ private fun NavGraphBuilder.mainGraph(navHostController: NavHostController) {
     }
 
     composable<Screen.ProductDetail> {
-        ProductDetailRoot()
+        ProductDetailRoot(
+            onBackClicked = {
+                navHostController.navigateUp()
+            }
+        )
     }
 }

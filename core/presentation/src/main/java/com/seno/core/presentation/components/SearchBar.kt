@@ -27,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.seno.core.presentation.R
+import com.seno.core.presentation.theme.LazyPizzaTheme
 import com.seno.core.presentation.theme.body_1_regular
 import com.seno.core.presentation.theme.textSecondary
 
@@ -40,9 +41,10 @@ fun CustomizableSearchBar(
     var hasFocus by remember { mutableStateOf(false) }
 
     BasicTextField(
-        modifier = Modifier.onFocusChanged { focusState ->
+        modifier = modifier.onFocusChanged { focusState ->
             hasFocus = focusState.isFocused
         },
+        singleLine = true,
         value = query,
         onValueChange = { onQueryChange(it) },
         textStyle = body_1_regular,
@@ -88,11 +90,13 @@ fun CustomizableSearchBar(
     )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun SearchBarPreview() {
-    CustomizableSearchBar(
-        query = "",
-        onQueryChange = {},
-    )
+private fun SearchBarPreview() {
+    LazyPizzaTheme {
+        CustomizableSearchBar(
+            query = "",
+            onQueryChange = {},
+        )
+    }
 }
