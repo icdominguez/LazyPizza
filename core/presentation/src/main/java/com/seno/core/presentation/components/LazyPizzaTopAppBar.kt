@@ -6,8 +6,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.seno.core.presentation.theme.LazyPizzaTheme
 import com.seno.core.presentation.theme.background
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,12 +25,4 @@ fun LazyPizzaTopAppBar(
             containerColor = background,
         )
     )
-}
-
-@Preview
-@Composable
-private fun LazyPizzaTopAppBarPreview() {
-    LazyPizzaTheme {
-        LazyPizzaTopAppBar()
-    }
 }

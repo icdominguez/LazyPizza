@@ -1,6 +1,11 @@
 package com.seno.core.presentation.components
 
-import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -33,14 +38,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.seno.core.presentation.R
+import com.seno.core.presentation.theme.LazyPizzaTheme
 import com.seno.core.presentation.theme.body_1_medium
 import com.seno.core.presentation.theme.body_4_regular
 import com.seno.core.presentation.theme.outline50
 import com.seno.core.presentation.theme.textPrimary
 import com.seno.core.presentation.theme.textSecondary
 import com.seno.core.presentation.theme.title_1_semiBold
+import com.seno.core.presentation.utils.formatToPrice
+import java.util.Locale
 
-@SuppressLint("DefaultLocale")
 @Composable
 fun ProductCard(
     modifier: Modifier = Modifier,
@@ -78,7 +85,7 @@ fun ProductCard(
                 ),
             contentScale = ContentScale.Crop
         )
-        
+
         Column(
             modifier = Modifier
                 .fillMaxHeight()
@@ -122,13 +129,15 @@ fun ProductCard(
             Spacer(modifier = Modifier.height(12.dp))
 
             Row(
-                modifier = Modifier.fillMaxWidth().padding(end = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (quantity == 0) {
                     Text(
-                        text = "$${String.format("%.2f", productPrice)}",
+                        text = "$${productPrice.formatToPrice()}",
                         style = title_1_semiBold.copy(color = textPrimary)
                     )
 
@@ -157,10 +166,18 @@ fun ProductCard(
                             )
                         }
 
-                        Text(
-                            text = quantity.toString(),
-                            style = MaterialTheme.typography.titleLarge,
-                        )
+                        AnimatedContent(
+                            quantity,
+                            transitionSpec = {
+                                slideInVertically { -it } + fadeIn() togetherWith slideOutVertically { it } + fadeOut()
+                            }
+                        ) {
+                            Text(
+                                text = it.toString(),
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+
+                        }
 
                         IconButton(
                             onClick = { quantity++ },
@@ -187,11 +204,23 @@ fun ProductCard(
                         horizontalAlignment = Alignment.End
                     ) {
                         Text(
-                            text = "$${String.format("%.2f", productPrice)}",
+                            text = "$${
+                                String.format(
+                                    Locale.ROOT,
+                                    "%.2f",
+                                    productPrice * quantity
+                                )
+                            }",
                             style = title_1_semiBold.copy(color = textPrimary)
                         )
                         Text(
-                            text = "$quantity x $${String.format("%.2f", productPrice * quantity)}",
+                            text = "$quantity x $${
+                                String.format(
+                                    Locale.ROOT,
+                                    "%.2f",
+                                    productPrice
+                                )
+                            }",
                             style = body_4_regular.copy(textSecondary)
                         )
                     }
@@ -201,12 +230,14 @@ fun ProductCard(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun ProductCardPreview() {
-    ProductCard(
-        imageUrl = "",
-        productName = "Mineral Water",
-        productPrice = 1.49
-    )
+private fun ProductCardPreview() {
+    LazyPizzaTheme {
+        ProductCard(
+            imageUrl = "",
+            productName = "Mineral Water",
+            productPrice = 1.49
+        )
+    }
 }

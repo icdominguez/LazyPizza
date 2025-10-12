@@ -26,11 +26,13 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.seno.core.presentation.R
+import com.seno.core.presentation.theme.LazyPizzaTheme
 import com.seno.core.presentation.theme.body_1_medium
 import com.seno.core.presentation.theme.body_3_regular
 import com.seno.core.presentation.theme.textPrimary
 import com.seno.core.presentation.theme.textSecondary
 import com.seno.core.presentation.theme.title_1_semiBold
+import com.seno.core.presentation.utils.formatToPrice
 
 @Composable
 fun PizzaCard(
@@ -38,7 +40,7 @@ fun PizzaCard(
     imageUrl: String,
     pizzaName: String,
     pizzaDescription: String,
-    pizzaPrice: String,
+    pizzaPrice: Double,
     onPizzaClick: () -> Unit = {},
 ) {
     Row(
@@ -95,7 +97,7 @@ fun PizzaCard(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = pizzaPrice,
+                text = "$${pizzaPrice.formatToPrice()}",
                 style = title_1_semiBold.copy(
                     color = textPrimary
                 )
@@ -104,13 +106,15 @@ fun PizzaCard(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun PizzaCardPreview() {
-    PizzaCard(
-        imageUrl = "",
-        pizzaName = "Margherita",
-        pizzaDescription = "Tomato sauce, mozzarella, fresh basil, olive oil",
-        pizzaPrice = "$8.99"
-    )
+private fun PizzaCardPreview() {
+    LazyPizzaTheme {
+        PizzaCard(
+            imageUrl = "",
+            pizzaName = "Margherita",
+            pizzaDescription = "Tomato sauce, mozzarella, fresh basil, olive oil",
+            pizzaPrice = 8.00
+        )
+    }
 }

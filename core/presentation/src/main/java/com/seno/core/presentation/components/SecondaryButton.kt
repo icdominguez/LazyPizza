@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.seno.core.presentation.theme.LazyPizzaTheme
 import com.seno.core.presentation.theme.primary
 import com.seno.core.presentation.theme.primary8
 import com.seno.core.presentation.theme.title_3
@@ -20,6 +21,7 @@ fun LazyPizzaSecondaryButton(
     onClick: () -> Unit
 ) {
     OutlinedButton(
+        modifier = modifier,
         onClick = {
             onClick()
         },
@@ -39,11 +41,13 @@ fun LazyPizzaSecondaryButton(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun LazyPizzaSecondaryButtonPreview() {
-    LazyPizzaSecondaryButton(
-        buttonText = "Button",
-        onClick = {},
-    )
+private fun LazyPizzaSecondaryButtonPreview() {
+    LazyPizzaTheme {
+        LazyPizzaSecondaryButton(
+            buttonText = "Button",
+            onClick = {},
+        )
+    }
 }

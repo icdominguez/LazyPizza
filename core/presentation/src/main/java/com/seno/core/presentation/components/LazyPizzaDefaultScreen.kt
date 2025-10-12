@@ -17,7 +17,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 @Composable
 fun LazyPizzaDefaultScreen(
     modifier: Modifier = Modifier,
-    containerColor: Color = MaterialTheme.colorScheme.surface,
+    containerColor: Color = MaterialTheme.colorScheme.background,
     topAppBar: @Composable () -> Unit = {},
     content: @Composable () -> Unit = {},
 ) {
