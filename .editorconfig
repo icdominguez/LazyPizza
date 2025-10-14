@@ -1,0 +1,9 @@
+root = true
+
+[*.{kt,kts}]
+# ktlint_standard_trailing-comma-on-call-site = disabled
+# ktlint_standard_trailing-comma-on-declaration-site = disable
+ktlint_standard_final-newline = disabled
+ktlint_standard_function-naming = disabled
+# ktlint_standard_blank-line-before-declaration = disabled
+# ktlint_standard_colon-spacing = disabled

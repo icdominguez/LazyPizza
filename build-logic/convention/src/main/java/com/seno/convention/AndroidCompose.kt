@@ -13,6 +13,7 @@ internal fun Project.configureAndroidCompose(
         }
 
         dependencies {
+            "ktlintRuleset"(project.libs.findLibrary("ktlint.compose.rules").get())
             "implementation"(project.libs.findBundle("koin.compose").get())
             "implementation"(project.libs.findBundle("compose").get())
 
