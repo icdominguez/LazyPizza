@@ -21,8 +21,9 @@ fun LazyPizzaTopAppBar(
         title = title,
         navigationIcon = navigationIcon,
         actions = actions,
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = background,
-        )
+        colors =
+            TopAppBarDefaults.topAppBarColors(
+                containerColor = background,
+            ),
     )
 }

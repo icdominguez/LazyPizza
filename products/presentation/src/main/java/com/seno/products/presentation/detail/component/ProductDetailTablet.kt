@@ -60,43 +60,48 @@ internal fun ProductDetailTablet(
     val deviceType = DeviceConfiguration.fromWindowSizeClass(windowSizeClass)
 
     Row(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(1f)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .weight(1f)
+                    .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(
-                        RoundedCornerShape(
-                            bottomEnd = 16.dp
-                        )
-                    )
-                    .background(
-                        color = MaterialTheme.colorScheme.background,
-                    ),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .clip(
+                            RoundedCornerShape(
+                                bottomEnd = 16.dp,
+                            ),
+                        ).background(
+                            color = MaterialTheme.colorScheme.background,
+                        ),
+                contentAlignment = Alignment.Center,
             ) {
                 state.selectedPizza?.let {
                     AsyncImage(
-                        model = ImageRequest.Builder(context = LocalContext.current)
-                            .data(state.selectedPizza.image)
-                            .crossfade(true)
-                            .build(),
+                        model =
+                            ImageRequest
+                                .Builder(context = LocalContext.current)
+                                .data(state.selectedPizza.image)
+                                .crossfade(true)
+                                .build(),
                         error = painterResource(id = R.drawable.ic_broken_image),
                         placeholder = painterResource(id = R.drawable.loading_img),
                         contentDescription = "Pizza",
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .size(240.dp),
-                        contentScale = ContentScale.Crop
+                        modifier =
+                            Modifier
+                                .wrapContentSize()
+                                .size(240.dp),
+                        contentScale = ContentScale.Crop,
                     )
                 }
             }
@@ -104,59 +109,68 @@ internal fun ProductDetailTablet(
             Text(
                 text = state.selectedPizza?.name.orEmpty(),
                 style = title_1_semiBold,
-                color = textPrimary
+                color = textPrimary,
             )
 
             Text(
-                text = state.selectedPizza?.ingredients.orEmpty().joinToString(", "),
+                text =
+                    state.selectedPizza
+                        ?.ingredients
+                        .orEmpty()
+                        .joinToString(", "),
                 style = body_3_regular,
                 color = textSecondary,
             )
         }
 
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .clip(
-                    RoundedCornerShape(
-                        topStart = 16.dp,
-                        bottomStart = 16.dp
-                    )
-                )
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                .padding(horizontal = 16.dp, vertical = 16.dp)
-                .applyIf(deviceType == DeviceConfiguration.TABLET_LANDSCAPE) {
-                    padding(
-                        bottom = WindowInsets.navigationBars.asPaddingValues()
-                            .calculateBottomPadding()
-                    )
-                },
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 16.dp,
+                            bottomStart = 16.dp,
+                        ),
+                    ).background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                    .padding(horizontal = 16.dp, vertical = 16.dp)
+                    .applyIf(deviceType == DeviceConfiguration.TABLET_LANDSCAPE) {
+                        padding(
+                            bottom =
+                                WindowInsets.navigationBars
+                                    .asPaddingValues()
+                                    .calculateBottomPadding(),
+                        )
+                    },
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
-                modifier = Modifier
-                    .padding(top = 8.dp),
+                modifier =
+                    Modifier
+                        .padding(top = 8.dp),
                 text = stringResource(com.seno.products.presentation.R.string.add_extra_toppings),
                 style = label_2_semiBold,
-                color = textSecondary
+                color = textSecondary,
             )
 
             LazyVerticalGrid(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .applyIf(deviceType == DeviceConfiguration.TABLET_LANDSCAPE) {
-                        weight(1f)
-                    },
-                contentPadding = PaddingValues(
-                    top = 8.dp,
-                ),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .applyIf(deviceType == DeviceConfiguration.TABLET_LANDSCAPE) {
+                            weight(1f)
+                        },
+                contentPadding =
+                    PaddingValues(
+                        top = 8.dp,
+                    ),
                 columns = GridCells.Fixed(3),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 items(
                     items = state.listExtraToppings,
-                    key = { it.name }
+                    key = { it.name },
                 ) { topping ->
                     ToppingCard(
                         imageUrl = topping.image,
@@ -168,17 +182,18 @@ internal fun ProductDetailTablet(
                         },
                         onQuantityMinus = {
                             onAction(ProductDetailAction.OnToppingMinus(topping))
-                        }
+                        },
                     )
                 }
             }
 
             LazyPizzaPrimaryButton(
                 isLoading = state.isUpdatingCart,
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth(),
                 onClick = { onAction(ProductDetailAction.OnAddToCartButtonClick) },
-                buttonText = "Add to Cart for $${state.selectedPizza?.price?.formatToPrice()}"
+                buttonText = "Add to Cart for $${state.selectedPizza?.price?.formatToPrice()}",
             )
         }
     }
@@ -186,14 +201,14 @@ internal fun ProductDetailTablet(
 
 @Preview(
     showBackground = true,
-    device = Devices.PIXEL_TABLET
+    device = Devices.PIXEL_TABLET,
 )
 @Composable
 private fun ProductDetailTabletPreview() {
     LazyPizzaTheme {
         ProductDetailTablet(
             state = ProductDetailState(),
-            onAction = {}
+            onAction = {},
         )
     }
 }

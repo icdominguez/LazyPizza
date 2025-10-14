@@ -16,27 +16,29 @@ import com.seno.core.presentation.theme.title_3
 
 @Composable
 fun LazyPizzaSecondaryButton(
-    modifier: Modifier = Modifier,
     buttonText: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     OutlinedButton(
         modifier = modifier,
         onClick = {
             onClick()
         },
-        border = BorderStroke(
-            width = 1.dp,
-            color = primary8
-        ),
-        colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = MaterialTheme.colorScheme.background
-        )
+        border =
+            BorderStroke(
+                width = 1.dp,
+                color = primary8,
+            ),
+        colors =
+            ButtonDefaults.outlinedButtonColors(
+                containerColor = MaterialTheme.colorScheme.background,
+            ),
     ) {
         Text(
             text = buttonText,
             style = title_3,
-            color = primary
+            color = primary,
         )
     }
 }

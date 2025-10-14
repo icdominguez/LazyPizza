@@ -10,12 +10,11 @@ import kotlinx.coroutines.flow.map
 
 class UserDataDataStore(
     private val dataStore: DataStore<Preferences>
-): UserData {
-    override fun getCartId(): Flow<String?> {
-        return dataStore.data.map {
+) : UserData {
+    override fun getCartId(): Flow<String?> =
+        dataStore.data.map {
             it[CART_ID_KEY]
         }
-    }
 
     override suspend fun setCardId(cartId: String) {
         dataStore.edit { preferences ->

@@ -22,35 +22,37 @@ fun EmptyCartComponent(
 ) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             text = "Your cart is empty",
-            style = title_1_medium.copy(
-                color = textPrimary
-            ),
+            style =
+                title_1_medium.copy(
+                    color = textPrimary,
+                ),
         )
 
         Spacer(modifier = Modifier.size(6.dp))
 
         Text(
             text = "Head back to the menu and grab a pizza you love",
-            style = body_3_regular.copy(
-                color = textSecondary
-            )
+            style =
+                body_3_regular.copy(
+                    color = textSecondary,
+                ),
         )
 
         Spacer(modifier = Modifier.size(20.dp))
 
         LazyPizzaPrimaryButton(
             buttonText = "Back to menu",
-            onClick = { onBackToMenuClick() }
+            onClick = { onBackToMenuClick() },
         )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun EmptyCartComponentPreview() {
+private fun EmptyCartComponentPreview() {
     EmptyCartComponent()
 }

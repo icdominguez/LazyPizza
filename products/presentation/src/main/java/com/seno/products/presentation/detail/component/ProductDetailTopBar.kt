@@ -22,31 +22,34 @@ import com.seno.core.presentation.theme.textSecondary8
 
 @Composable
 fun ProductDetailTopBar(
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onBackClicked: () -> Unit,
 ) {
     TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.background
-        ),
+        modifier = modifier,
+        colors =
+            TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background,
+            ),
         title = {},
         navigationIcon = {
             IconButton(
-                modifier = modifier
-                    .padding(start = 16.dp)
-                    .size(32.dp)
-                    .background(
-                        color = textSecondary8.copy(alpha = 0.08f),
-                        shape = RoundedCornerShape(100)
-                    ),
-                onClick = { onBackClicked() }
+                modifier =
+                    Modifier
+                        .padding(start = 16.dp)
+                        .size(32.dp)
+                        .background(
+                            color = textSecondary8.copy(alpha = 0.08f),
+                            shape = RoundedCornerShape(100),
+                        ),
+                onClick = { onBackClick() },
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                     contentDescription = "back",
-                    tint = textSecondary
+                    tint = textSecondary,
                 )
             }
-        }
+        },
     )
 }

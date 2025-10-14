@@ -22,12 +22,12 @@ internal fun ProductDetailScreen(
     if (deviceType.isTablet()) {
         ProductDetailTablet(
             state = state,
-            onAction = onAction
+            onAction = onAction,
         )
     } else {
         ProductDetailMobile(
             state = state,
-            onAction = onAction
+            onAction = onAction,
         )
     }
 }

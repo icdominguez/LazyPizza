@@ -1,0 +1,15 @@
+root = true
+
+[*.{kt,kts}]
+# ktlint_standard_trailing-comma-on-call-site = disabled # Trailing comma rules
+# ktlint_standard_trailing-comma-on-declaration-site = disable # Trailing comma rules
+# ktlint_standard_final-newline = disabled # new line rules
+ktlint_standard_class-signature = disabled # newline expected after opening/closing parenthesis
+ktlint_standard_function-naming = disabled # camelCase naming function will warn composable
+ktlint_standard_multiline-expression-wrapping = disabled # multiline expression
+ktlint_standard_trailing-comma-on-declaration-site = disabled # traling comma before ";"
+ktlint_standard_no-wildcard-imports = disabled # wildcard import
+ktlint_compose_modifier-missing-check = disabled # default modifier
+# ktlint_standard_trailing-comma-on-call-site = disabled # traling comma before ")"
+# ktlint_standard_blank-line-before-declaration = disabled
+# ktlint_standard_colon-spacing = disabled

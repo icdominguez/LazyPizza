@@ -4,10 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class Screen {
-
     @Serializable
     data object Menu {
-
         @Serializable
         data object AllProducts
 
@@ -19,7 +17,6 @@ sealed class Screen {
 
     @Serializable
     data object Cart {
-
         @Serializable
         data object CartScreen
     }

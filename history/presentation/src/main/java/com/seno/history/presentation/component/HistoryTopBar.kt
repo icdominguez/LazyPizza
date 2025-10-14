@@ -18,9 +18,7 @@ import com.seno.core.presentation.utils.DeviceConfiguration
 import com.seno.history.presentation.R
 
 @Composable
-fun HistoryTopBar(
-    modifier: Modifier = Modifier
-) {
+fun HistoryTopBar(modifier: Modifier = Modifier) {
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     val deviceType = DeviceConfiguration.fromWindowSizeClass(windowSizeClass)
 
@@ -30,11 +28,12 @@ fun HistoryTopBar(
             Text(
                 text = stringResource(R.string.order_history),
                 style = body_1_medium,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = if (deviceType.isTablet()) 50.dp else 0.dp)
-                    .offset(x = if (!deviceType.isTablet()) (-8).dp else 0.dp),
-                textAlign = TextAlign.Center
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(start = if (deviceType.isTablet()) 50.dp else 0.dp)
+                        .offset(x = if (!deviceType.isTablet()) (-8).dp else 0.dp),
+                textAlign = TextAlign.Center,
             )
         },
     )

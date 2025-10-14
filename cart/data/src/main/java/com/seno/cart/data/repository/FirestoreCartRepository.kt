@@ -16,40 +16,46 @@ import kotlinx.coroutines.tasks.await
 class FirestoreCartRepository(
     private val db: FirebaseFirestore
 ) : CartRepository {
-    override suspend fun createCart(items: List<CartItem>): FirebaseResult<String> = try {
-        val cartId = db.collection(CART_COLLECTION).document().id
-        val cartReference = db.collection(CART_COLLECTION).document(cartId)
+    override suspend fun createCart(items: List<CartItem>): FirebaseResult<String> =
+        try {
+            val cartId = db.collection(CART_COLLECTION).document().id
+            val cartReference = db.collection(CART_COLLECTION).document(cartId)
 
-        // 1. Create the cart document empty
-        cartReference.set(mapOf<String, Any>()).await()
+            // 1. Create the cart document empty
+            cartReference.set(mapOf<String, Any>()).await()
 
-        val batch = db.batch()
+            val batch = db.batch()
 
-        // 2. Iterate through items and create them
-        items.map { it.toCharDto() }.forEach { item ->
-            val itemReference = cartReference.collection(CART_ITEMS_COLLECTION).document()
-            batch.set(itemReference, item)
+            // 2. Iterate through items and create them
+            items.map { it.toCharDto() }.forEach { item ->
+                val itemReference = cartReference.collection(CART_ITEMS_COLLECTION).document()
+                batch.set(itemReference, item)
+            }
+
+            // 3. Save everything
+            batch.commit().await()
+
+            FirebaseResult.Success(cartId)
+        } catch (exception: Exception) {
+            FirebaseResult.Error(exception)
         }
 
-        // 3. Save everything
-        batch.commit().await()
-
-        FirebaseResult.Success(cartId)
-    } catch (exception: Exception) {
-        FirebaseResult.Error(exception)
-    }
-
-    override suspend fun updateCart(cartId: String, items: List<CartItem>): FirebaseResult<Unit> =
+    override suspend fun updateCart(
+        cartId: String,
+        items: List<CartItem>
+    ): FirebaseResult<Unit> =
         try {
             val cartReference = db.collection(CART_COLLECTION).document(cartId)
             val itemsReference = cartReference.collection(CART_ITEMS_COLLECTION)
 
             val snapshot = itemsReference.get().await()
 
-            val existingItems = snapshot.documents.mapNotNull { document ->
-                val item = document.toObject(CartDto::class.java)
-                item?.let { it.identityKey() to document.id }
-            }.toMap()
+            val existingItems =
+                snapshot.documents
+                    .mapNotNull { document ->
+                        val item = document.toObject(CartDto::class.java)
+                        item?.let { it.identityKey() to document.id }
+                    }.toMap()
 
             val batch = db.batch()
             val newKeys = items.map { it.toCharDto().identityKey() }.toSet()
@@ -83,34 +89,39 @@ class FirestoreCartRepository(
             FirebaseResult.Error(exception)
         }
 
-    override fun getCart(cartId: String): Flow<FirebaseResult<List<CartItem>>> = callbackFlow {
-        val cartReference = db.collection(CART_COLLECTION).document(cartId)
-        val listener = cartReference
-            .collection(CART_ITEMS_COLLECTION)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    trySend(FirebaseResult.Error(error))
-                    return@addSnapshotListener
-                }
+    override fun getCart(cartId: String): Flow<FirebaseResult<List<CartItem>>> =
+        callbackFlow {
+            val cartReference = db.collection(CART_COLLECTION).document(cartId)
+            val listener =
+                cartReference
+                    .collection(CART_ITEMS_COLLECTION)
+                    .addSnapshotListener { snapshot, error ->
+                        if (error != null) {
+                            trySend(FirebaseResult.Error(error))
+                            return@addSnapshotListener
+                        }
 
-                if(snapshot == null) {
-                    trySend(FirebaseResult.Success(emptyList()))
-                    return@addSnapshotListener
-                }
+                        if (snapshot == null) {
+                            trySend(FirebaseResult.Success(emptyList()))
+                            return@addSnapshotListener
+                        }
 
-                try {
-                    val cartItems = snapshot.documents.mapNotNull { document ->
-                        document.toObject(CartDto::class.java)
-                    }.map { it.toCartItem() }
+                        try {
+                            val cartItems =
+                                snapshot.documents
+                                    .mapNotNull { document ->
+                                        document.toObject(CartDto::class.java)
+                                    }.map { it.toCartItem() }
 
-                    trySend(FirebaseResult.Success(cartItems))
-                } catch (exception: Exception) {
-                    trySend(FirebaseResult.Error(exception))
-                }
+                            trySend(FirebaseResult.Success(cartItems))
+                        } catch (exception: Exception) {
+                            trySend(FirebaseResult.Error(exception))
+                        }
+                    }
+
+            awaitClose { listener.remove() }
         }
 
-        awaitClose { listener.remove() }
-    }
     companion object {
         private const val CART_COLLECTION = "cart"
         private const val CART_ITEMS_COLLECTION = "items"

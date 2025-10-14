@@ -48,29 +48,34 @@ fun LazyPizzaMenuBar(
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     val deviceType = DeviceConfiguration.fromWindowSizeClass(windowSizeClass)
 
-    val myNavigationSuiteItemColors = NavigationSuiteDefaults.itemColors(
-        navigationBarItemColors = NavigationBarItemDefaults.colors(
-            indicatorColor = Color.Transparent,
-            selectedIconColor = MaterialTheme.colorScheme.primary,
-            selectedTextColor = textPrimary,
-            unselectedIconColor = textSecondary,
-            unselectedTextColor = textSecondary,
-        ), navigationRailItemColors = NavigationRailItemDefaults.colors(
-            indicatorColor = Color.Transparent,
-            selectedIconColor = MaterialTheme.colorScheme.primary,
-            selectedTextColor = textPrimary,
-            unselectedIconColor = textSecondary,
-            unselectedTextColor = textSecondary
+    val myNavigationSuiteItemColors =
+        NavigationSuiteDefaults.itemColors(
+            navigationBarItemColors =
+                NavigationBarItemDefaults.colors(
+                    indicatorColor = Color.Transparent,
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = textPrimary,
+                    unselectedIconColor = textSecondary,
+                    unselectedTextColor = textSecondary,
+                ),
+            navigationRailItemColors =
+                NavigationRailItemDefaults.colors(
+                    indicatorColor = Color.Transparent,
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = textPrimary,
+                    unselectedIconColor = textSecondary,
+                    unselectedTextColor = textSecondary,
+                ),
         )
-    )
 
     NavigationSuiteScaffold(
         modifier = modifier,
         state = state,
-        navigationSuiteColors = NavigationSuiteDefaults.colors(
-            navigationRailContainerColor = MaterialTheme.colorScheme.background,
-            navigationBarContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-        ),
+        navigationSuiteColors =
+            NavigationSuiteDefaults.colors(
+                navigationRailContainerColor = MaterialTheme.colorScheme.background,
+                navigationBarContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            ),
         navigationSuiteItems = {
             NavigationMenu.entries.forEachIndexed { index, screen ->
                 val itemCount = badgeCounts[screen] ?: 0
@@ -79,15 +84,17 @@ fun LazyPizzaMenuBar(
                 val isTabletLandscape = deviceType == DeviceConfiguration.TABLET_LANDSCAPE
                 val isSelected = selectedMenu == screen
                 item(
-                    modifier = Modifier.padding(
-                        start = if (!isTablet && index == 0) 50.dp else 0.dp,
-                        end = if (!isTablet && index == NavigationMenu.entries.size - 1) 50.dp else 0.dp,
-                        top = when {
-                            isTabletLandscape && index == 0 -> 200.dp
-                            isTabletPortrait && index == 0 -> 350.dp
-                            else -> 0.dp
-                        }
-                    ),
+                    modifier =
+                        Modifier.padding(
+                            start = if (!isTablet && index == 0) 50.dp else 0.dp,
+                            end = if (!isTablet && index == NavigationMenu.entries.size - 1) 50.dp else 0.dp,
+                            top =
+                                when {
+                                    isTabletLandscape && index == 0 -> 200.dp
+                                    isTabletPortrait && index == 0 -> 350.dp
+                                    else -> 0.dp
+                                },
+                        ),
                     selected = isSelected,
                     colors = myNavigationSuiteItemColors,
                     onClick = {},
@@ -97,7 +104,7 @@ fun LazyPizzaMenuBar(
                                 if (itemCount > 0) {
                                     Badge(
                                         containerColor = MaterialTheme.colorScheme.primary,
-                                        contentColor = textOnPrimary
+                                        contentColor = textOnPrimary,
                                     ) {
                                         Text(
                                             text = "$itemCount",
@@ -105,27 +112,34 @@ fun LazyPizzaMenuBar(
                                         )
                                     }
                                 }
-                            }
+                            },
                         ) {
                             Box(
                                 contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clickable(
-                                        interactionSource = null, indication = null
-                                    ) {
-                                        onNavigationMenuClick(screen)
-                                    }
-                                    .then(
-                                        if (isSelected) Modifier.background(
-                                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
-                                            shape = CircleShape
-                                        ) else Modifier
-                                    )
+                                modifier =
+                                    Modifier
+                                        .size(40.dp)
+                                        .clickable(
+                                            interactionSource = null,
+                                            indication = null,
+                                        ) {
+                                            onNavigationMenuClick(screen)
+                                        }.then(
+                                            if (isSelected) {
+                                                Modifier.background(
+                                                    color = MaterialTheme.colorScheme.primary.copy(
+                                                        alpha = 0.08f,
+                                                    ),
+                                                    shape = CircleShape,
+                                                )
+                                            } else {
+                                                Modifier
+                                            },
+                                        ),
                             ) {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(screen.icon),
-                                    contentDescription = screen.title
+                                    contentDescription = screen.title,
                                 )
                             }
                         }
@@ -136,10 +150,10 @@ fun LazyPizzaMenuBar(
                             style = title_4,
                             textAlign = TextAlign.Center,
                         )
-                    }
+                    },
                 )
             }
-        }
+        },
     ) {
         content()
     }
@@ -154,7 +168,7 @@ private fun LazyPizzaMenuBarPreview() {
             state = rememberNavigationSuiteScaffoldState(),
             selectedMenu = NavigationMenu.CART,
             onNavigationMenuClick = {},
-            content = {}
+            content = {},
         )
     }
 }

@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
 
                 NavigationRoot(
                     state = state,
-                    navHostController = navHostController
+                    navHostController = navHostController,
                 )
             }
         }

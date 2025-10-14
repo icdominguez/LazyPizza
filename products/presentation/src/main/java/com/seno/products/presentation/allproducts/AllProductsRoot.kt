@@ -19,9 +19,9 @@ fun AllProductsRoot(
     val context = LocalContext.current
 
     ObserveAsEvents(
-        flow = viewModel.event
+        flow = viewModel.event,
     ) { event ->
-        when(event) {
+        when (event) {
             is AllProductsEvent.Error -> {
                 Toast.makeText(context, event.error, Toast.LENGTH_LONG).show()
             }
@@ -43,6 +43,6 @@ fun AllProductsRoot(
                 is AllProductsAction.OnProductClicked -> onNavigateToProductDetail(action.pizzaName)
                 else -> viewModel.onAction(action)
             }
-        }
+        },
     )
 }

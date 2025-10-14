@@ -23,43 +23,45 @@ import com.seno.core.presentation.theme.title_3
 
 @Composable
 fun LazyPizzaPrimaryButton(
-    modifier: Modifier = Modifier,
     buttonText: String,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     isLoading: Boolean = false
 ) {
     Button(
         onClick = {
             onClick()
         },
-        modifier = modifier
-            .background(
-                brush = Brush.linearGradient(
-                    colors = primaryGradient,
-                ),
-                shape = CircleShape
-            )
-            .dropShadow(
-                RoundedCornerShape(20.dp)
-            ) {
-                radius = 10f
-                color = primary
-                spread = 6f
-                alpha = 0.25f
-            },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent
-        )
+        modifier =
+            modifier
+                .background(
+                    brush =
+                        Brush.linearGradient(
+                            colors = primaryGradient,
+                        ),
+                    shape = CircleShape,
+                ).dropShadow(
+                    RoundedCornerShape(20.dp),
+                ) {
+                    radius = 10f
+                    color = primary
+                    spread = 6f
+                    alpha = 0.25f
+                },
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+            ),
     ) {
         if (isLoading) {
             CircularProgressIndicator(
-                color = MaterialTheme.colorScheme.surfaceContainerHigh
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
             )
         } else {
             Text(
                 text = buttonText,
                 style = title_3,
-                color = textOnPrimary
+                color = textOnPrimary,
             )
         }
     }

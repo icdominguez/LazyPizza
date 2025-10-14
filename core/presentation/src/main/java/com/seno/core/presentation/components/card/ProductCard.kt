@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,125 +45,129 @@ import com.seno.core.presentation.utils.formatToPrice
 
 @Composable
 fun ProductCard(
-    modifier: Modifier = Modifier,
     imageUrl: String,
     productName: String,
     productPrice: Double,
     quantity: Int,
-    extraToppings: List<String> = emptyList(),
     onQuantityChange: (Int) -> Unit,
-    onDeleteClicked: () -> Unit
+    onDeleteClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    extraToppings: List<String> = emptyList()
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min)
-            .background(
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .padding(2.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min)
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    shape = RoundedCornerShape(12.dp),
+                ).padding(2.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         AsyncImage(
             model = imageUrl,
             contentDescription = productName,
-            modifier = Modifier
-                .width(108.dp)
-                .fillMaxHeight()
-                .padding(start = 1.dp, top = 1.dp, bottom = 1.dp, end = 8.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    shape = RoundedCornerShape(
-                        topStart = 12.dp,
-                        bottomStart = 12.dp,
-                        topEnd = 0.dp,
-                        bottomEnd = 0.dp
-                    )
-                ),
-            contentScale = ContentScale.Fit
+            modifier =
+                Modifier
+                    .width(108.dp)
+                    .fillMaxHeight()
+                    .padding(start = 1.dp, top = 1.dp, bottom = 1.dp, end = 8.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        shape =
+                            RoundedCornerShape(
+                                topStart = 12.dp,
+                                bottomStart = 12.dp,
+                                topEnd = 0.dp,
+                                bottomEnd = 0.dp,
+                            ),
+                    ),
+            contentScale = ContentScale.Fit,
         )
 
         Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .padding(vertical = 12.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .padding(vertical = 12.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = productName,
-                    style = body_1_medium.copy(color = textPrimary)
+                    style = body_1_medium.copy(color = textPrimary),
                 )
 
                 if (quantity > 0) {
                     IconButton(
-                        onClick = { onDeleteClicked() },
-                        modifier = Modifier
-                            .padding(end = 8.dp)
-                            .border(
-                                width = 1.dp,
-                                color = outline50,
-                                shape = RoundedCornerShape(12.dp)
-                            )
-                            .padding(4.dp)
-                            .size(22.dp)
+                        onClick = { onDeleteClick() },
+                        modifier =
+                            Modifier
+                                .padding(end = 8.dp)
+                                .border(
+                                    width = 1.dp,
+                                    color = outline50,
+                                    shape = RoundedCornerShape(12.dp),
+                                ).padding(4.dp)
+                                .size(22.dp),
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.trash_ic),
                             contentDescription = "Remove",
-                            tint = Color.Unspecified
+                            tint = Color.Unspecified,
                         )
                     }
                 }
             }
 
-            if(extraToppings.isNotEmpty()) {
+            if (extraToppings.isNotEmpty()) {
                 extraToppings.map { extraTopping ->
                     Text(
                         text = extraTopping,
-                        style = body_3_regular.copy(textSecondary)
+                        style = body_3_regular.copy(textSecondary),
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(if(extraToppings.isNotEmpty()) 8.dp else 12.dp))
+            Spacer(modifier = Modifier.height(if (extraToppings.isNotEmpty()) 8.dp else 12.dp))
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 8.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(end = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (quantity == 0) {
                     Text(
                         text = "$${productPrice.formatToPrice()}",
-                        style = title_1_semiBold.copy(color = textPrimary)
+                        style = title_1_semiBold.copy(color = textPrimary),
                     )
 
                     LazyPizzaSecondaryButton(
                         buttonText = "Add to Cart",
-                        onClick = { onQuantityChange(1) }
+                        onClick = { onQuantityChange(1) },
                     )
                 } else {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(
                             onClick = { if (quantity > 1) onQuantityChange(quantity - 1) },
-                            modifier = Modifier
-                                .padding(end = 8.dp)
-                                .border(
-                                    width = 1.dp,
-                                    color = outline50,
-                                    shape = RoundedCornerShape(12.dp)
-                                )
-                                .padding(4.dp)
-                                .size(22.dp),
-                            enabled = quantity > 1
+                            modifier =
+                                Modifier
+                                    .padding(end = 8.dp)
+                                    .border(
+                                        width = 1.dp,
+                                        color = outline50,
+                                        shape = RoundedCornerShape(12.dp),
+                                    ).padding(4.dp)
+                                    .size(22.dp),
+                            enabled = quantity > 1,
                         ) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(R.drawable.minus_ic),
@@ -180,33 +183,32 @@ fun ProductCard(
 
                         IconButton(
                             onClick = { onQuantityChange(quantity + 1) },
-                            modifier = Modifier
-                                .padding(start = 8.dp)
-                                .border(
-                                    width = 1.dp,
-                                    color = outline50,
-                                    shape = RoundedCornerShape(12.dp)
-                                )
-                                .padding(4.dp)
-                                .size(22.dp)
+                            modifier =
+                                Modifier
+                                    .padding(start = 8.dp)
+                                    .border(
+                                        width = 1.dp,
+                                        color = outline50,
+                                        shape = RoundedCornerShape(12.dp),
+                                    ).padding(4.dp)
+                                    .size(22.dp),
                         ) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(R.drawable.plus_ic),
                                 contentDescription = "Increase",
-                                modifier = Modifier.size(22.dp)
+                                modifier = Modifier.size(22.dp),
                             )
                         }
                     }
 
-
                     Column(horizontalAlignment = Alignment.End) {
                         Text(
                             text = "$${(productPrice * quantity).formatToPrice()}",
-                            style = title_1_semiBold.copy(color = textPrimary)
+                            style = title_1_semiBold.copy(color = textPrimary),
                         )
                         Text(
                             text = "$quantity x $${productPrice.formatToPrice()}",
-                            style = body_4_regular.copy(textSecondary)
+                            style = body_4_regular.copy(textSecondary),
                         )
                     }
                 }
@@ -226,7 +228,7 @@ private fun ProductCardPreview() {
         productPrice = 1.49,
         quantity = quantity,
         onQuantityChange = { quantity = it },
-        onDeleteClicked = {},
-        extraToppings = listOf("1X Extra cheese", "2X Extra sauce")
+        onDeleteClick = {},
+        extraToppings = listOf("1X Extra cheese", "2X Extra sauce"),
     )
 }

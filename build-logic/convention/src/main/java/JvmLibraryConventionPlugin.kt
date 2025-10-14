@@ -8,7 +8,10 @@ class JvmLibraryConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         target.run {
-            pluginManager.apply(libs.findPlugin("kotlin.jvm").get().get().pluginId)
+            pluginManager.run {
+                apply(libs.findPlugin("kotlin.jvm").get().get().pluginId)
+                apply(libs.findPlugin("lazypizza.ktlint").get().get().pluginId)
+            }
 
             configureKotlinJvm()
         }

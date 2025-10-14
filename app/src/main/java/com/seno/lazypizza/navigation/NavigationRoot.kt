@@ -46,17 +46,18 @@ fun NavigationRoot(
 
     ObserveAsEvents(
         SnackbarController.events,
-        snackbarHostState
+        snackbarHostState,
     ) { event ->
         scope.launch {
             snackbarHostState.currentSnackbarData?.dismiss()
 
-            val result = snackbarHostState.showSnackbar(
-                message = event.message,
-                actionLabel = event.action?.name,
-                withDismissAction = event.onDismiss != null,
-                duration = SnackbarDuration.Short
-            )
+            val result =
+                snackbarHostState.showSnackbar(
+                    message = event.message,
+                    actionLabel = event.action?.name,
+                    withDismissAction = event.onDismiss != null,
+                    duration = SnackbarDuration.Short,
+                )
 
             if (result == SnackbarResult.ActionPerformed) {
                 event.action?.action?.invoke()
@@ -70,9 +71,9 @@ fun NavigationRoot(
             when {
                 currentRoute?.hasRoute<Screen.Menu.ProductDetail>() == true -> {
                     ProductDetailTopBar(
-                        onBackClicked = {
+                        onBackClick = {
                             navHostController.navigateUp()
-                        }
+                        },
                     )
                 }
 
@@ -94,16 +95,19 @@ fun NavigationRoot(
         LaunchedEffect(currentRoute) {
             if (currentRoute?.hasRoute<Screen.Menu.ProductDetail>() == true) {
                 suiteScaffoldState.hide()
-            } else suiteScaffoldState.show()
+            } else {
+                suiteScaffoldState.show()
+            }
         }
 
         LazyPizzaMenuBar(
             state = suiteScaffoldState,
             selectedMenu = currentRoute.getSelectedMenu(),
-            badgeCounts = mapOf(
-                NavigationMenu.CART to state.totalCartItem,
-                NavigationMenu.HISTORY to 0,
-            ),
+            badgeCounts =
+                mapOf(
+                    NavigationMenu.CART to state.totalCartItem,
+                    NavigationMenu.HISTORY to 0,
+                ),
             onNavigationMenuClick = { menu ->
                 val currentParentRoute = currentRoute?.parent?.route
 
@@ -149,7 +153,7 @@ fun NavigationRoot(
         ) {
             NavHost(
                 navController = navHostController,
-                startDestination = Screen.Menu
+                startDestination = Screen.Menu,
             ) {
                 mainGraph(navHostController)
                 cartGraph(navHostController)
@@ -161,13 +165,14 @@ fun NavigationRoot(
 
 private fun NavGraphBuilder.mainGraph(navHostController: NavHostController) {
     navigation<Screen.Menu>(
-        startDestination = Screen.Menu.AllProducts
+        startDestination = Screen.Menu.AllProducts,
     ) {
         composable<Screen.Menu.AllProducts> {
             AllProductsRoot(
                 onNavigateToProductDetail = { pizzaName ->
                     navHostController.navigate(route = Screen.Menu.ProductDetail(pizzaName))
-                })
+                },
+            )
         }
     }
 
@@ -175,14 +180,14 @@ private fun NavGraphBuilder.mainGraph(navHostController: NavHostController) {
         ProductDetailRoot(
             onAddToCartClick = {
                 navHostController.navigateUp()
-            }
+            },
         )
     }
 }
 
 private fun NavGraphBuilder.cartGraph(navHostController: NavHostController) {
     navigation<Screen.Cart>(
-        startDestination = Screen.Cart.CartScreen
+        startDestination = Screen.Cart.CartScreen,
     ) {
         composable<Screen.Cart.CartScreen> {
             CartRoot(
@@ -191,7 +196,7 @@ private fun NavGraphBuilder.cartGraph(navHostController: NavHostController) {
                         popUpTo(0)
                         launchSingleTop = true
                     }
-                }
+                },
             )
         }
     }
@@ -199,7 +204,7 @@ private fun NavGraphBuilder.cartGraph(navHostController: NavHostController) {
 
 private fun NavGraphBuilder.historyGraph(navHostController: NavHostController) {
     navigation<Screen.History>(
-        startDestination = Screen.History.HistoryScreen
+        startDestination = Screen.History.HistoryScreen,
     ) {
         composable<Screen.History.HistoryScreen> {
             HistoryScreenRoot()

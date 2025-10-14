@@ -51,8 +51,7 @@ class AllProductsViewModel(
             .distinctUntilChanged()
             .onEach {
                 cartId = it
-            }
-            .launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
 
         loadProducts()
     }
@@ -60,20 +59,22 @@ class AllProductsViewModel(
     fun onAction(action: AllProductsAction) {
         when (action) {
             is AllProductsAction.OnQueryChange -> {
-                val productsFiltered = if (action.newSearchQuery.isNotEmpty()) {
-                    _state.value.products.mapValues { (_, products) ->
-                        products.filter { product ->
-                            product.name.contains(action.newSearchQuery, ignoreCase = true)
-                        }
-                    }.filterValues { it.isNotEmpty() }
-                } else {
-                    state.value.products
-                }
+                val productsFiltered =
+                    if (action.newSearchQuery.isNotEmpty()) {
+                        _state.value.products
+                            .mapValues { (_, products) ->
+                                products.filter { product ->
+                                    product.name.contains(action.newSearchQuery, ignoreCase = true)
+                                }
+                            }.filterValues { it.isNotEmpty() }
+                    } else {
+                        state.value.products
+                    }
 
                 _state.update {
                     it.copy(
                         searchQuery = action.newSearchQuery,
-                        productsFiltered = productsFiltered
+                        productsFiltered = productsFiltered,
                     )
                 }
             }
@@ -99,13 +100,15 @@ class AllProductsViewModel(
                     is FirebaseResult.Success -> {
                         userData.setCardId(createCartResponse.data)
                         SnackbarController.sendEvent(
-                            event = SnackbarEvent(
-                                message = "${product.name} added to cart",
-                                action = SnackbarAction(
-                                    name = "OK",
-                                    action = {}
-                                )
-                            )
+                            event =
+                                SnackbarEvent(
+                                    message = "${product.name} added to cart",
+                                    action =
+                                        SnackbarAction(
+                                            name = "OK",
+                                            action = {},
+                                        ),
+                                ),
                         )
                     }
 
@@ -113,8 +116,8 @@ class AllProductsViewModel(
                         _event.trySend(
                             AllProductsEvent.Error(
                                 createCartResponse.exception.message
-                                    ?: "Error creating the cart"
-                            )
+                                    ?: "Error creating the cart",
+                            ),
                         )
                     }
                 }
@@ -124,29 +127,32 @@ class AllProductsViewModel(
 
                     when (getCartResponse) {
                         is FirebaseResult.Success -> {
-                            val updatedCartItems = getCartResponse.data.toMutableList().apply {
-                                val cartItemSelectedIndex = this.indexOf(cartItemSelected)
-                                if (cartItemSelectedIndex == -1) {
-                                    this.add(cartItemSelected)
-                                } else {
-                                    this[cartItemSelectedIndex] =
-                                        this[cartItemSelectedIndex].copy(quantity = product.quantity + 1)
+                            val updatedCartItems =
+                                getCartResponse.data.toMutableList().apply {
+                                    val cartItemSelectedIndex = this.indexOf(cartItemSelected)
+                                    if (cartItemSelectedIndex == -1) {
+                                        this.add(cartItemSelected)
+                                    } else {
+                                        this[cartItemSelectedIndex] =
+                                            this[cartItemSelectedIndex].copy(quantity = product.quantity + 1)
+                                    }
                                 }
-                            }
                             cartRepository.updateCart(
                                 cartId = it,
-                                items = updatedCartItems
+                                items = updatedCartItems,
                             )
 
                             if (!getCartResponse.data.contains(product.toCartItem())) {
                                 SnackbarController.sendEvent(
-                                    event = SnackbarEvent(
-                                        message = "${product.name} added to cart",
-                                        action = SnackbarAction(
-                                            name = "OK",
-                                            action = {}
-                                        )
-                                    )
+                                    event =
+                                        SnackbarEvent(
+                                            message = "${product.name} added to cart",
+                                            action =
+                                                SnackbarAction(
+                                                    name = "OK",
+                                                    action = {},
+                                                ),
+                                        ),
                                 )
                             }
                         }
@@ -154,8 +160,8 @@ class AllProductsViewModel(
                         is FirebaseResult.Error -> {
                             _event.trySend(
                                 AllProductsEvent.Error(
-                                    getCartResponse.exception.message ?: "Error updating the cart"
-                                )
+                                    getCartResponse.exception.message ?: "Error updating the cart",
+                                ),
                             )
                         }
                     }
@@ -169,9 +175,10 @@ class AllProductsViewModel(
             val cartItemSelected = product.copy(quantity = product.quantity - 1).toCartItem()
             if (cartId == null) {
                 cartRepository.createCart(
-                    items = listOf(
-                        product.toCartItem().copy(quantity = 1)
-                    )
+                    items =
+                        listOf(
+                            product.toCartItem().copy(quantity = 1),
+                        ),
                 )
             } else {
                 cartId?.let {
@@ -179,33 +186,37 @@ class AllProductsViewModel(
 
                     when (getCartResponse) {
                         is FirebaseResult.Success -> {
-                            val updatedCartItems = getCartResponse.data.toMutableList().apply {
-                                val cartItemSelectedIndex = this.indexOf(cartItemSelected)
-                                if (cartItemSelectedIndex == -1) {
-                                    this.add(cartItemSelected)
-                                } else {
-                                    this[cartItemSelectedIndex] =
-                                        this[cartItemSelectedIndex].copy(quantity = product.quantity - 1)
+                            val updatedCartItems =
+                                getCartResponse.data.toMutableList().apply {
+                                    val cartItemSelectedIndex = this.indexOf(cartItemSelected)
+                                    if (cartItemSelectedIndex == -1) {
+                                        this.add(cartItemSelected)
+                                    } else {
+                                        this[cartItemSelectedIndex] =
+                                            this[cartItemSelectedIndex].copy(quantity = product.quantity - 1)
+                                    }
                                 }
-                            }
                             cartRepository.updateCart(
                                 cartId = it,
-                                items = updatedCartItems
+                                items = updatedCartItems,
                             )
 
-                            val productQuantity = getCartResponse.data.find { cartItem ->
-                                cartItem.reference == product.toCartItem().reference
-                            }
+                            val productQuantity =
+                                getCartResponse.data.find { cartItem ->
+                                    cartItem.reference == product.toCartItem().reference
+                                }
 
                             if (productQuantity?.quantity == 1) {
                                 SnackbarController.sendEvent(
-                                    event = SnackbarEvent(
-                                        message = "${product.name} removed from cart",
-                                        action = SnackbarAction(
-                                            name = "OK",
-                                            action = {}
-                                        )
-                                    )
+                                    event =
+                                        SnackbarEvent(
+                                            message = "${product.name} removed from cart",
+                                            action =
+                                                SnackbarAction(
+                                                    name = "OK",
+                                                    action = {},
+                                                ),
+                                        ),
                                 )
                             }
                         }
@@ -213,8 +224,8 @@ class AllProductsViewModel(
                         is FirebaseResult.Error -> {
                             _event.trySend(
                                 AllProductsEvent.Error(
-                                    getCartResponse.exception.message ?: "Error updating the cart"
-                                )
+                                    getCartResponse.exception.message ?: "Error updating the cart",
+                                ),
                             )
                         }
                     }
@@ -231,31 +242,34 @@ class AllProductsViewModel(
 
                 when (getCartResponse) {
                     is FirebaseResult.Success -> {
-                        val updatedCartItems = getCartResponse
-                            .data
-                            .filter { it.reference != cartItemToDelete.reference }
+                        val updatedCartItems =
+                            getCartResponse
+                                .data
+                                .filter { it.reference != cartItemToDelete.reference }
 
                         cartRepository.updateCart(
                             cartId = cartId,
-                            items = updatedCartItems
+                            items = updatedCartItems,
                         )
 
                         SnackbarController.sendEvent(
-                            event = SnackbarEvent(
-                                message = "${product.name} removed from cart",
-                                action = SnackbarAction(
-                                    name = "OK",
-                                    action = {}
-                                )
-                            )
+                            event =
+                                SnackbarEvent(
+                                    message = "${product.name} removed from cart",
+                                    action =
+                                        SnackbarAction(
+                                            name = "OK",
+                                            action = {},
+                                        ),
+                                ),
                         )
                     }
 
                     is FirebaseResult.Error -> {
                         _event.trySend(
                             AllProductsEvent.Error(
-                                getCartResponse.exception.message ?: "Error updating the cart"
-                            )
+                                getCartResponse.exception.message ?: "Error updating the cart",
+                            ),
                         )
                     }
                 }
@@ -264,64 +278,67 @@ class AllProductsViewModel(
     }
 
     private fun loadProducts() {
-        val productCartFlow = userData
-            .getCartId()
-            .distinctUntilChanged()
-            .flatMapLatest { cartId ->
-                if (cartId == null) {
-                    flowOf(emptyMap())
-                } else {
-                    cartRepository
-                        .getCart(cartId)
-                        .map { result ->
-                            when (result) {
-                                is FirebaseResult.Success -> {
-                                    result.data.associate { cartItem ->
-                                        val productId = cartItem.reference.substringAfterLast("/")
-                                        productId to cartItem.quantity
+        val productCartFlow =
+            userData
+                .getCartId()
+                .distinctUntilChanged()
+                .flatMapLatest { cartId ->
+                    if (cartId == null) {
+                        flowOf(emptyMap())
+                    } else {
+                        cartRepository
+                            .getCart(cartId)
+                            .map { result ->
+                                when (result) {
+                                    is FirebaseResult.Success -> {
+                                        result.data.associate { cartItem ->
+                                            val productId = cartItem.reference.substringAfterLast("/")
+                                            productId to cartItem.quantity
+                                        }
+                                    }
+
+                                    is FirebaseResult.Error -> {
+                                        _event.trySend(
+                                            AllProductsEvent.Error(
+                                                result.exception.message ?: "Error getting the cart",
+                                            ),
+                                        )
+                                        emptyMap()
                                     }
                                 }
-
-                                is FirebaseResult.Error -> {
-                                    _event.trySend(
-                                        AllProductsEvent.Error(
-                                            result.exception.message ?: "Error getting the cart"
-                                        )
-                                    )
-                                    emptyMap()
-                                }
                             }
-                        }
-                }
-            }
-            .distinctUntilChanged()
+                    }
+                }.distinctUntilChanged()
 
         combine(
             productsRepository
                 .getAllProducts()
                 .distinctUntilChanged(),
-            productCartFlow
+            productCartFlow,
         ) { products, quantities ->
-            val cartItemsUI = products.map { product ->
-                val quantity = quantities[product.id] ?: 0
-                CartItemUI(
-                    reference = "${product.type.name.lowercase()}s/${product.id}",
-                    name = product.name,
-                    image = product.image,
-                    price = product.price,
-                    type = product.type,
-                    quantity = quantity,
-                    ingredients = if (product.type == ProductType.PIZZA) {
-                        (product as Product.Pizza).ingredients
-                    } else {
-                        emptyList()
-                    },
-                )
-            }
+            val cartItemsUI =
+                products.map { product ->
+                    val quantity = quantities[product.id] ?: 0
+                    CartItemUI(
+                        reference = "${product.type.name.lowercase()}s/${product.id}",
+                        name = product.name,
+                        image = product.image,
+                        price = product.price,
+                        type = product.type,
+                        quantity = quantity,
+                        ingredients =
+                            if (product.type == ProductType.PIZZA) {
+                                (product as Product.Pizza).ingredients
+                            } else {
+                                emptyList()
+                            },
+                    )
+                }
 
-            val cartItemsUIGrouped = cartItemsUI
-                .sortedBy { it.type.ordinal }
-                .groupBy { it.type }
+            val cartItemsUIGrouped =
+                cartItemsUI
+                    .sortedBy { it.type.ordinal }
+                    .groupBy { it.type }
 
             var index = 0
             val headerIndexMap =
@@ -335,18 +352,16 @@ class AllProductsViewModel(
                 cartItemsUIGrouped,
                 headerIndexMap,
             )
-        }
-            .onEach { (grouped, headerIndexMap) ->
-                _state.update {
-                    it.copy(
-                        products = grouped,
-                        productsFiltered = grouped,
-                        headerIndexMap = headerIndexMap,
-                        isCreateNewCart = false,
-                        isLoading = false
-                    )
-                }
+        }.onEach { (grouped, headerIndexMap) ->
+            _state.update {
+                it.copy(
+                    products = grouped,
+                    productsFiltered = grouped,
+                    headerIndexMap = headerIndexMap,
+                    isCreateNewCart = false,
+                    isLoading = false,
+                )
             }
-            .launchIn(viewModelScope)
+        }.launchIn(viewModelScope)
     }
 }

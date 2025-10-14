@@ -39,79 +39,82 @@ import com.seno.core.presentation.utils.formatToPrice
 
 @Composable
 internal fun CartToppingCard(
-    modifier: Modifier = Modifier,
     imageUrl: String,
     onClick: () -> Unit,
     cartItem: CartItemUI,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .width(160.dp)
-            .shadow(
-                elevation = 8.dp,
-                shape = RoundedCornerShape(12.dp),
-            )
-            .background(
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .padding(2.dp),
+        modifier =
+            modifier
+                .width(160.dp)
+                .shadow(
+                    elevation = 8.dp,
+                    shape = RoundedCornerShape(12.dp),
+                ).background(
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    shape = RoundedCornerShape(12.dp),
+                ).padding(2.dp),
     ) {
         AsyncImage(
             model = imageUrl,
             contentDescription = null,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp)
-                .padding(start = 1.dp, top = 1.dp, bottom = 8.dp, end = 1.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    shape = RoundedCornerShape(
-                        topStart = 12.dp,
-                        bottomStart = 0.dp,
-                        topEnd = 12.dp,
-                        bottomEnd = 0.dp
-                    )
-                ),
-            contentScale = ContentScale.Fit
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+                    .padding(start = 1.dp, top = 1.dp, bottom = 8.dp, end = 1.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        shape =
+                            RoundedCornerShape(
+                                topStart = 12.dp,
+                                bottomStart = 0.dp,
+                                topEnd = 12.dp,
+                                bottomEnd = 0.dp,
+                            ),
+                    ),
+            contentScale = ContentScale.Fit,
         )
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = cartItem.name,
             style = body_1_regular.copy(color = textSecondary),
-            modifier = Modifier.padding(start = 8.dp, top = 8.dp, bottom = 8.dp)
+            modifier = Modifier.padding(start = 8.dp, top = 8.dp, bottom = 8.dp),
         )
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
                 text = "$${cartItem.price.formatToPrice()}",
-                style = title_1_semiBold.copy(
-                    color = textPrimary
-                )
+                style =
+                    title_1_semiBold.copy(
+                        color = textPrimary,
+                    ),
             )
             IconButton(
                 onClick = onClick,
-                modifier = Modifier
-                    .padding(start = 8.dp)
-                    .border(
-                        width = 1.dp,
-                        color = outline50,
-                        shape = RoundedCornerShape(12.dp)
-                    )
-                    .padding(4.dp)
-                    .size(22.dp)
+                modifier =
+                    Modifier
+                        .padding(start = 8.dp)
+                        .border(
+                            width = 1.dp,
+                            color = outline50,
+                            shape = RoundedCornerShape(12.dp),
+                        ).padding(4.dp)
+                        .size(22.dp),
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.plus_ic),
                     contentDescription = "Add to cart",
-                    tint = primary
+                    tint = primary,
                 )
             }
         }
@@ -125,12 +128,13 @@ private fun CartToppingCardPreview() {
         modifier = Modifier,
         imageUrl = "",
         onClick = {},
-        cartItem = CartItemUI(
-            reference = "",
-            image = "",
-            name = "BBQ Sauce",
-            price = 0.59,
-            type = ProductType.EXTRA_TOPPING,
-        )
+        cartItem =
+            CartItemUI(
+                reference = "",
+                image = "",
+                name = "BBQ Sauce",
+                price = 0.59,
+                type = ProductType.EXTRA_TOPPING,
+            ),
     )
 }

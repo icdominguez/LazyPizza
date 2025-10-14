@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.support.serviceOf
+
 plugins {
     alias(libs.plugins.lazypizza.android.application)
 }
@@ -46,5 +48,30 @@ dependencies {
             implementation(domain)
             implementation(presentation)
         }
+    }
+}
+
+tasks.register("installGitHooks") {
+    group = "git"
+    description = "Setup Git hooks path and permissions."
+
+    doLast {
+        val execOps = project.serviceOf<ExecOperations>()
+        val hooksDir = rootProject.file(".githooks")
+        val hookFile = rootProject.file(".githooks/pre-commit")
+
+        if (!hooksDir.exists() || !hookFile.exists()) {
+            println(".githooks/pre-commit not found. Skipping hook setup.")
+            return@doLast
+        }
+
+        if (!hookFile.canExecute()) {
+            hookFile.setExecutable(true)
+        }
+
+        execOps.exec {
+            commandLine("git", "config", "core.hooksPath", ".githooks")
+        }
+        println("Git hooks installed")
     }
 }

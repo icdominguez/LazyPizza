@@ -22,32 +22,31 @@ import com.seno.core.presentation.theme.textPrimary
 
 @Composable
 fun ProductChip(
-    modifier: Modifier = Modifier,
     chipText: String,
-    onClick: () -> Unit = {},
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .background(color = background)
-            .border(
-                width = 1.dp,
-                color = outline,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
-                onClick = { onClick() }
-            )
-            .padding(
-                vertical = 8.dp,
-                horizontal = 12.dp
-            ),
+        modifier =
+            modifier
+                .background(color = background)
+                .border(
+                    width = 1.dp,
+                    color = outline,
+                    shape = RoundedCornerShape(12.dp),
+                ).clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() },
+                    onClick = { onClick() },
+                ).padding(
+                    vertical = 8.dp,
+                    horizontal = 12.dp,
+                ),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = chipText,
-            style = body_3_medium.copy(color = textPrimary)
+            style = body_3_medium.copy(color = textPrimary),
         )
     }
 }
@@ -57,7 +56,8 @@ fun ProductChip(
 private fun FilterChipPreview() {
     LazyPizzaTheme {
         ProductChip(
-            chipText = "Pizza"
+            chipText = "Pizza",
+            onClick = {},
         )
     }
 }
