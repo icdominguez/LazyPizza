@@ -11,6 +11,8 @@ enum class DeviceConfiguration {
     TABLET_LANDSCAPE,
     DESKTOP;
 
+    fun isTablet() = this == TABLET_PORTRAIT || this == TABLET_LANDSCAPE
+
     companion object {
         fun fromWindowSizeClass(windowSizeClass: WindowSizeClass): DeviceConfiguration {
             val widthSizeClass = windowSizeClass.windowWidthSizeClass
