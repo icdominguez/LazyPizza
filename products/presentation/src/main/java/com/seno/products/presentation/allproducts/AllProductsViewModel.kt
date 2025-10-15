@@ -2,6 +2,7 @@ package com.seno.products.presentation.allproducts
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.seno.products.domain.model.Product
 import com.seno.products.domain.repository.ProductsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -34,7 +35,39 @@ class AllProductsViewModel(
 
                 _state.update { it.copy(searchQuery = action.newSearchQuery, productsFiltered = productsFiltered) }
             }
+            is AllProductsAction.OnProductMinus -> onProductMinus(action.productState)
+            is AllProductsAction.OnProductPlus -> onProductPlus(action.productState)
             else -> Unit
+        }
+    }
+
+    private fun onProductPlus(product: Product) {
+        val currentQuantity = _state.value.productQuantities[product.name] ?: 0
+        val updatedQuantities = _state.value.productQuantities.toMutableMap().apply {
+            this[product.name] = currentQuantity + 1
+        }
+
+        _state.update {
+            it.copy(productQuantities = updatedQuantities)
+        }
+    }
+
+    private fun onProductMinus(product: Product) {
+        val currentQuantity = _state.value.productQuantities[product.name] ?: 0
+
+        if (currentQuantity > 0) {
+            val updatedQuantities = _state.value.productQuantities.toMutableMap().apply {
+                val newQuantity = currentQuantity - 1
+                if (newQuantity > 0) {
+                    this[product.name] = newQuantity
+                } else {
+                    remove(product.name) // Remove from map if quantity is 0
+                }
+            }
+
+            _state.update {
+                it.copy(productQuantities = updatedQuantities)
+            }
         }
     }
 

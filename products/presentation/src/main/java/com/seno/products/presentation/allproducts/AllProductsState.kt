@@ -9,4 +9,5 @@ data class AllProductsState(
     val headerIndexMap: Map<ProductType, Int> = emptyMap(),
     val productsFiltered: Map<ProductType, List<Product>> = emptyMap(),
     val searchQuery: String = "",
+    val productQuantities: Map<String, Int> = emptyMap()
 )

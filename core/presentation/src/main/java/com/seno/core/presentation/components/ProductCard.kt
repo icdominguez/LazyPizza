@@ -45,7 +45,7 @@ import com.seno.core.presentation.theme.title_1_semiBold
 @Composable
 fun ProductCard(
     modifier: Modifier = Modifier,
-    painterRes: Painter,
+    imageUrl: String,
     productName: String,
     productPrice: Double,
     quantity: Int,
@@ -63,7 +63,7 @@ fun ProductCard(
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
-            model = painterRes,
+            model = imageUrl,
             contentDescription = productName,
             modifier = Modifier
                 .size(108.dp)
@@ -204,7 +204,7 @@ fun ProductCardPreview() {
     var quantity by remember { mutableIntStateOf(0) }
 
     ProductCard(
-        painterRes = painterResource(id = R.drawable.trash_ic),
+        imageUrl = "",
         productName = "Mineral Water",
         productPrice = 1.49,
         quantity = quantity,

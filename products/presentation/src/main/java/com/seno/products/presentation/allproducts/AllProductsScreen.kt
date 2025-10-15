@@ -211,6 +211,7 @@ fun AllProductsScreen(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 rowItems.forEach { product ->
+                                    val quantity = state.productQuantities[product.name] ?: 0
                                     Box(modifier = Modifier.weight(1f)) {
                                         when (product) {
                                             is Product.Pizza -> {
@@ -230,7 +231,21 @@ fun AllProductsScreen(
                                                 ProductCard(
                                                     imageUrl = product.image,
                                                     productName = product.name,
-                                                    productPrice = product.price
+                                                    productPrice = product.price,
+                                                    quantity = quantity,
+                                                    onQuantityChange = { newQuantity ->
+                                                        when {
+                                                            newQuantity == 0 -> {
+                                                                onAction(AllProductsAction.OnProductMinus(product))
+                                                            }
+                                                            newQuantity > quantity -> {
+                                                                onAction(AllProductsAction.OnProductPlus(product))
+                                                            }
+                                                            newQuantity < quantity -> {
+                                                                onAction(AllProductsAction.OnProductMinus(product))
+                                                            }
+                                                        }
+                                                    }
                                                 )
                                             }
                                         }
