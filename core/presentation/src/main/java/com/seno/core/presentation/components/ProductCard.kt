@@ -184,11 +184,11 @@ fun ProductCard(
 
                     Column(horizontalAlignment = Alignment.End) {
                         Text(
-                            text = "$${productPrice.formatToPrice()}",
+                            text = "$${(productPrice * quantity).formatToPrice()}",
                             style = title_1_semiBold.copy(color = textPrimary)
                         )
                         Text(
-                            text = "$quantity x $${(productPrice * quantity).formatToPrice()}",
+                            text = "$quantity x $${productPrice.formatToPrice()}",
                             style = body_4_regular.copy(textSecondary)
                         )
                     }
