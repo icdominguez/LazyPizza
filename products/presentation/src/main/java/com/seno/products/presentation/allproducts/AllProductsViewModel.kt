@@ -37,6 +37,7 @@ class AllProductsViewModel(
             }
             is AllProductsAction.OnProductMinus -> onProductMinus(action.productState)
             is AllProductsAction.OnProductPlus -> onProductPlus(action.productState)
+            is AllProductsAction.OnProductDelete -> onProductDelete(action.productState)
             else -> Unit
         }
     }
@@ -61,10 +62,23 @@ class AllProductsViewModel(
                 if (newQuantity > 0) {
                     this[product.name] = newQuantity
                 } else {
-                    remove(product.name) // Remove from map if quantity is 0
+                    remove(product.name)
                 }
             }
 
+            _state.update {
+                it.copy(productQuantities = updatedQuantities)
+            }
+        }
+    }
+
+    private fun onProductDelete(product: Product) {
+        val currentQuantity = _state.value.productQuantities[product.name] ?: 0
+
+        if (currentQuantity > 0) {
+            val updatedQuantities = _state.value.productQuantities.toMutableMap().apply {
+                remove(product.name)
+            }
             _state.update {
                 it.copy(productQuantities = updatedQuantities)
             }

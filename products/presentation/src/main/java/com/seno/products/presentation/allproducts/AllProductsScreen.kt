@@ -245,6 +245,9 @@ fun AllProductsScreen(
                                                                 onAction(AllProductsAction.OnProductMinus(product))
                                                             }
                                                         }
+                                                    },
+                                                    onDeleteClicked = {
+                                                        onAction(AllProductsAction.OnProductDelete(product))
                                                     }
                                                 )
                                             }

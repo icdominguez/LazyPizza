@@ -1,6 +1,5 @@
 package com.seno.core.presentation.components
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -26,11 +25,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.seno.core.presentation.R
@@ -40,8 +38,8 @@ import com.seno.core.presentation.theme.outline50
 import com.seno.core.presentation.theme.textPrimary
 import com.seno.core.presentation.theme.textSecondary
 import com.seno.core.presentation.theme.title_1_semiBold
+import com.seno.core.presentation.utils.formatToPrice
 
-@SuppressLint("DefaultLocale")
 @Composable
 fun ProductCard(
     modifier: Modifier = Modifier,
@@ -49,7 +47,8 @@ fun ProductCard(
     productName: String,
     productPrice: Double,
     quantity: Int,
-    onQuantityChange: (Int) -> Unit
+    onQuantityChange: (Int) -> Unit,
+    onDeleteClicked: () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -98,7 +97,7 @@ fun ProductCard(
 
                 if (quantity > 0) {
                     IconButton(
-                        onClick = { onQuantityChange(0) },
+                        onClick = { onDeleteClicked() },
                         modifier = Modifier
                             .padding(end = 8.dp)
                             .border(
@@ -129,7 +128,7 @@ fun ProductCard(
             ) {
                 if (quantity == 0) {
                     Text(
-                        text = "$${String.format("%.2f", productPrice)}",
+                        text = "$${productPrice.formatToPrice()}",
                         style = title_1_semiBold.copy(color = textPrimary)
                     )
 
@@ -140,7 +139,7 @@ fun ProductCard(
                 } else {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(
-                            onClick = { if (quantity > 1) onQuantityChange(quantity - 1) },
+                            onClick = { if (quantity >= 1) onQuantityChange(quantity - 1) },
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .border(
@@ -185,11 +184,11 @@ fun ProductCard(
 
                     Column(horizontalAlignment = Alignment.End) {
                         Text(
-                            text = "$${String.format("%.2f", productPrice)}",
+                            text = "$${productPrice.formatToPrice()}",
                             style = title_1_semiBold.copy(color = textPrimary)
                         )
                         Text(
-                            text = "$quantity x $${String.format("%.2f", productPrice * quantity)}",
+                            text = "$quantity x $${(productPrice * quantity).formatToPrice()}",
                             style = body_4_regular.copy(textSecondary)
                         )
                     }
@@ -199,8 +198,9 @@ fun ProductCard(
     }
 }
 
+@Preview
 @Composable
-fun ProductCardPreview() {
+private fun ProductCardPreview() {
     var quantity by remember { mutableIntStateOf(0) }
 
     ProductCard(
@@ -208,6 +208,7 @@ fun ProductCardPreview() {
         productName = "Mineral Water",
         productPrice = 1.49,
         quantity = quantity,
-        onQuantityChange = { quantity = it }
+        onQuantityChange = { quantity = it },
+        onDeleteClicked = {}
     )
 }
