@@ -1,11 +1,5 @@
 package com.seno.core.presentation.components
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -38,7 +32,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.seno.core.presentation.R
-import com.seno.core.presentation.theme.LazyPizzaTheme
 import com.seno.core.presentation.theme.body_1_medium
 import com.seno.core.presentation.theme.body_4_regular
 import com.seno.core.presentation.theme.outline50
@@ -46,17 +39,17 @@ import com.seno.core.presentation.theme.textPrimary
 import com.seno.core.presentation.theme.textSecondary
 import com.seno.core.presentation.theme.title_1_semiBold
 import com.seno.core.presentation.utils.formatToPrice
-import java.util.Locale
 
 @Composable
 fun ProductCard(
     modifier: Modifier = Modifier,
     imageUrl: String,
     productName: String,
-    productPrice: Double
+    productPrice: Double,
+    quantity: Int,
+    onQuantityChange: (Int) -> Unit,
+    onDeleteClicked: () -> Unit
 ) {
-    var quantity by remember { mutableIntStateOf(0) }
-
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -70,7 +63,7 @@ fun ProductCard(
     ) {
         AsyncImage(
             model = imageUrl,
-            contentDescription = "Pizza",
+            contentDescription = productName,
             modifier = Modifier
                 .size(108.dp)
                 .padding(start = 1.dp, top = 1.dp, bottom = 1.dp, end = 8.dp)
@@ -104,9 +97,7 @@ fun ProductCard(
 
                 if (quantity > 0) {
                     IconButton(
-                        onClick = {
-                            quantity = 0
-                        },
+                        onClick = { onDeleteClicked() },
                         modifier = Modifier
                             .padding(end = 8.dp)
                             .border(
@@ -143,12 +134,12 @@ fun ProductCard(
 
                     LazyPizzaSecondaryButton(
                         buttonText = "Add to Cart",
-                        onClick = { quantity = 1 }
+                        onClick = { onQuantityChange(1) }
                     )
                 } else {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(
-                            onClick = { if (quantity > 0) quantity-- },
+                            onClick = { if (quantity >= 1) onQuantityChange(quantity - 1) },
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .border(
@@ -166,21 +157,13 @@ fun ProductCard(
                             )
                         }
 
-                        AnimatedContent(
-                            quantity,
-                            transitionSpec = {
-                                slideInVertically { -it } + fadeIn() togetherWith slideOutVertically { it } + fadeOut()
-                            }
-                        ) {
-                            Text(
-                                text = it.toString(),
-                                style = MaterialTheme.typography.titleLarge,
-                            )
-
-                        }
+                        Text(
+                            text = quantity.toString(),
+                            style = MaterialTheme.typography.titleLarge,
+                        )
 
                         IconButton(
-                            onClick = { quantity++ },
+                            onClick = { onQuantityChange(quantity + 1) },
                             modifier = Modifier
                                 .padding(start = 8.dp)
                                 .border(
@@ -199,28 +182,13 @@ fun ProductCard(
                         }
                     }
 
-                    Column(
-                        modifier = Modifier,
-                        horizontalAlignment = Alignment.End
-                    ) {
+                    Column(horizontalAlignment = Alignment.End) {
                         Text(
-                            text = "$${
-                                String.format(
-                                    Locale.ROOT,
-                                    "%.2f",
-                                    productPrice * quantity
-                                )
-                            }",
+                            text = "$${(productPrice * quantity).formatToPrice()}",
                             style = title_1_semiBold.copy(color = textPrimary)
                         )
                         Text(
-                            text = "$quantity x $${
-                                String.format(
-                                    Locale.ROOT,
-                                    "%.2f",
-                                    productPrice
-                                )
-                            }",
+                            text = "$quantity x $${productPrice.formatToPrice()}",
                             style = body_4_regular.copy(textSecondary)
                         )
                     }
@@ -230,14 +198,17 @@ fun ProductCard(
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 private fun ProductCardPreview() {
-    LazyPizzaTheme {
-        ProductCard(
-            imageUrl = "",
-            productName = "Mineral Water",
-            productPrice = 1.49
-        )
-    }
+    var quantity by remember { mutableIntStateOf(0) }
+
+    ProductCard(
+        imageUrl = "",
+        productName = "Mineral Water",
+        productPrice = 1.49,
+        quantity = quantity,
+        onQuantityChange = { quantity = it },
+        onDeleteClicked = {}
+    )
 }
