@@ -10,6 +10,7 @@ dependencies {
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.room.gradlePlugin)
     compileOnly(libs.ksp.gradlePlugin)
+    implementation(libs.ktlint.gradle)
 }
 
 gradlePlugin {
@@ -29,6 +30,10 @@ gradlePlugin {
         register("jvmLibrary") {
             id = "lazypizza.jvm.library"
             implementationClass = "JvmLibraryConventionPlugin"
+        }
+        register("ktlint") {
+            id = "lazypizza.ktlint"
+            implementationClass = "KtlintConventionPlugin"
         }
     }
 }

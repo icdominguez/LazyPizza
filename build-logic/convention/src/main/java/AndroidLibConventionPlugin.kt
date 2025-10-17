@@ -17,6 +17,7 @@ class AndroidLibConventionPlugin : Plugin<Project> {
                 apply(libs.findPlugin("android.library").get().get().pluginId)
                 apply(libs.findPlugin("kotlin.android").get().get().pluginId)
                 apply(libs.findPlugin("kotlin.serialization").get().get().pluginId)
+                apply(libs.findPlugin("lazypizza.ktlint").get().get().pluginId)
             }
 
             extensions.configure<LibraryExtension> {
