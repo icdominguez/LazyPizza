@@ -1,6 +1,6 @@
 package com.seno.products.domain.repository
 
-import com.seno.products.domain.model.Product
+import com.seno.core.domain.product.Product
 import kotlinx.coroutines.flow.Flow
 
 interface ProductsRepository {

@@ -175,9 +175,7 @@ internal fun ProductDetailTablet(
             LazyPizzaPrimaryButton(
                 modifier = Modifier
                     .fillMaxWidth(),
-                onClick = {
-
-                },
+                onClick = { onAction(ProductDetailAction.OnAddToCartButtonClick) },
                 buttonText = "Add to Cart for $${state.selectedPizza?.price?.formatToPrice()}"
             )
         }

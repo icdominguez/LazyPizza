@@ -3,8 +3,8 @@ package com.seno.products.data.repository
 import com.google.firebase.firestore.FirebaseFirestore
 import com.seno.products.data.model.ProductEntity
 import com.seno.products.data.model.toProduct
-import com.seno.products.domain.model.Product
-import com.seno.products.domain.model.ProductType
+import com.seno.core.domain.product.Product
+import com.seno.core.domain.product.ProductType
 import com.seno.products.domain.repository.ProductsRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -32,7 +32,10 @@ class FirestoreProductRepository(
                             return@addSnapshotListener
                         }
 
-                        val entities = snapshot?.toObjects(ProductEntity::class.java).orEmpty()
+                        val entities = snapshot?.documents.orEmpty().mapNotNull { document ->
+                            document.toObject(ProductEntity::class.java)?.copy(id = document.id)
+                        }
+
                         val products = entities.mapNotNull { it.copy(type = type).toProduct() }
                         trySend(products)
                     }
@@ -55,7 +58,9 @@ class FirestoreProductRepository(
                         return@addSnapshotListener
                     }
 
-                    val entities = snapshot?.toObjects(ProductEntity::class.java).orEmpty()
+                    val entities = snapshot?.documents.orEmpty().mapNotNull { document ->
+                        document.toObject(ProductEntity::class.java)?.copy(id = document.id)
+                    }
                     val products = entities.mapNotNull {
                         it.copy(type = ProductType.EXTRA_TOPPING).toProduct()
                     }
@@ -79,6 +84,7 @@ class FirestoreProductRepository(
                     val pizza = snapshot?.documents
                         ?.firstOrNull()
                         ?.toObject(ProductEntity::class.java)
+                        ?.copy(id = snapshot.documents.first().id)
                         ?.toProduct() as? Product.Pizza
 
                     trySend(pizza)

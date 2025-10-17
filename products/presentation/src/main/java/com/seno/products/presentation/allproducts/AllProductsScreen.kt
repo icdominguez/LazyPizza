@@ -52,8 +52,8 @@ import com.seno.core.presentation.theme.textSecondary
 import com.seno.core.presentation.utils.DeviceConfiguration
 import com.seno.core.presentation.utils.replaceUnderscores
 import com.seno.core.presentation.utils.toCamelCase
-import com.seno.products.domain.model.Product
-import com.seno.products.domain.model.ProductType
+import com.seno.core.domain.product.Product
+import com.seno.core.domain.product.ProductType
 import kotlinx.coroutines.launch
 
 @Composable
