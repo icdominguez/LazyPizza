@@ -1,4 +1,4 @@
-package com.seno.core.presentation.components
+package com.seno.core.presentation.components.button
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.ButtonDefaults

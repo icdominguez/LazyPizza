@@ -1,4 +1,4 @@
-package com.seno.core.presentation.components
+package com.seno.core.presentation.components.card
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn

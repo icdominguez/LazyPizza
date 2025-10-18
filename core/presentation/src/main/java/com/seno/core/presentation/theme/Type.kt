@@ -50,6 +50,12 @@ val title_3 = TextStyle(
     fontSize = 15.sp,
     lineHeight = 22.sp
 )
+val title_4 = TextStyle(
+    fontFamily = FontFamily(Font(R.font.instrument_sans_medium)),
+    fontWeight = FontWeight.Medium,
+    fontSize = 12.sp,
+    lineHeight = 16.sp
+)
 val label_2_semiBold = TextStyle(
     fontFamily = FontFamily(Font(R.font.instrument_sans_semibold)),
     fontWeight = FontWeight.SemiBold,
