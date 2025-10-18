@@ -1,4 +1,4 @@
-package com.seno.core.presentation.components
+package com.seno.core.presentation.components.button
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.CircleShape
@@ -31,13 +31,13 @@ fun LazyPizzaPrimaryButton(
         },
         modifier = modifier
             .background(
-            brush = Brush.horizontalGradient(
-                colors = primaryGradient,
-                startX = 0f,
-                endX = Float.POSITIVE_INFINITY
-            ),
-            shape = CircleShape
-        )
+                brush = Brush.horizontalGradient(
+                    colors = primaryGradient,
+                    startX = 0f,
+                    endX = Float.POSITIVE_INFINITY
+                ),
+                shape = CircleShape
+            )
             .dropShadow(
                 RoundedCornerShape(20.dp)
             ) {

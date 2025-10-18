@@ -8,8 +8,9 @@ activityCompose = "1.11.0"
 composeBom = "2025.09.01"
 koin = "4.1.1"
 material3Adaptive = "1.1.0"
+navigationSuite = "1.4.0"
 materialIconsExtended = "1.7.8"
-composeAnimation = "1.9.2"
+composeAnimation = "1.9.3"
 navigationCompose = "2.9.5"
 coroutines = "1.10.2"
 timber = "5.0.1"
@@ -17,8 +18,8 @@ kotlinx-serialization-json = "1.9.0"
 coreSplashscreen = "1.0.1"
 room = "2.8.1"
 ksp = "2.2.20-2.0.3"
-firebase-bom = "34.3.0"
-google-services = "4.4.2"
+firebase-bom = "34.4.0"
+google-services = "4.4.4"
 datastorePreferences = "1.1.7"
 
 # Project versions
@@ -62,6 +63,9 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
 
+androidx-compose-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "navigationSuite" }
+androidx-compose-material3-adaptive-navigation = { module = "androidx.compose.material3.adaptive:adaptive-navigation", version.ref = "material3Adaptive" }
+
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 
 # Gradle
@@ -95,6 +99,8 @@ compose = [
     "androidx-lifecycle-viewmodel-compose",
     "androidx-material3",
     "androidx-material3-adaptive",
+    "androidx-compose-material3-adaptive-navigation",
+    "androidx-compose-material3-adaptive-navigation-suite",
     "androidx-material-icons-extended",
     "androidx-compose-animation",
     "androidx-ui",

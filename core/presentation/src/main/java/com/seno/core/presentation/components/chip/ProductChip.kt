@@ -1,4 +1,4 @@
-package com.seno.core.presentation.components
+package com.seno.core.presentation.components.chip
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -36,7 +36,7 @@ fun ProductChip(
             )
             .clickable(
                 indication = null,
-                interactionSource = remember { MutableInteractionSource() } ,
+                interactionSource = remember { MutableInteractionSource() },
                 onClick = { onClick() }
             )
             .padding(

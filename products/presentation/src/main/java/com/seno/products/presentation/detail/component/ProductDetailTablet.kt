@@ -30,13 +30,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.seno.core.presentation.R
-import com.seno.core.presentation.components.LazyPizzaPrimaryButton
-import com.seno.core.presentation.components.ToppingCard
+import com.seno.core.presentation.components.button.LazyPizzaPrimaryButton
+import com.seno.core.presentation.components.card.ToppingCard
 import com.seno.core.presentation.theme.LazyPizzaTheme
 import com.seno.core.presentation.theme.body_3_regular
 import com.seno.core.presentation.theme.label_2_semiBold
@@ -182,7 +183,10 @@ internal fun ProductDetailTablet(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(
+    showBackground = true,
+    device = Devices.PIXEL_TABLET
+)
 @Composable
 private fun ProductDetailTabletPreview() {
     LazyPizzaTheme {
