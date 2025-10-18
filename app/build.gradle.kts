@@ -23,12 +23,22 @@ dependencies {
     implementation(libs.bundles.koin.compose)
 
     with(projects) {
-        implementation(core.data)
-        implementation(core.domain)
-        implementation(core.presentation)
+        with(core) {
+            implementation(data)
+            implementation(domain)
+            implementation(presentation)
+        }
 
-        implementation(products.data)
-        implementation(products.domain)
-        implementation(products.presentation)
+        with(products) {
+            implementation(data)
+            implementation(domain)
+            implementation(presentation)
+        }
+
+        with(cart) {
+            implementation(data)
+            implementation(domain)
+            implementation(presentation)
+        }
     }
 }

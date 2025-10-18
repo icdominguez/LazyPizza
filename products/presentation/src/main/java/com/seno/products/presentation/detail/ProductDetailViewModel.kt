@@ -3,6 +3,9 @@ package com.seno.products.presentation.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.seno.cart.domain.CartRepository
+import com.seno.core.domain.cart.CartItem
+import com.seno.core.domain.userdata.UserData
 import com.seno.products.domain.repository.ProductsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,10 +14,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class ProductDetailViewModel(
     savedStateHandle: SavedStateHandle,
-    productsRepository: ProductsRepository
+    productsRepository: ProductsRepository,
+    private val cartRepository: CartRepository,
+    private val userData: UserData,
 ) : ViewModel() {
 
     private val pizzaName = savedStateHandle.get<String>(PIZZA_NAME) ?: ""
@@ -32,6 +38,7 @@ class ProductDetailViewModel(
                     selectedPizza = pizza,
                     listExtraToppings = toppings.map { product ->
                         ToppingsUI(
+                            id = product.id,
                             name = product.name,
                             image = product.image,
                             price = product.price,
@@ -49,6 +56,33 @@ class ProductDetailViewModel(
         when (action) {
             is ProductDetailAction.OnToppingPlus -> onToppingPlus(action.toppingsUI)
             is ProductDetailAction.OnToppingMinus -> onToppingMinus(action.toppingsUI)
+            is ProductDetailAction.OnAddToCartButtonClick -> onAddToCartButtonClick()
+        }
+    }
+
+    private fun onAddToCartButtonClick() {
+        val cartItems = _state.value.listExtraToppings
+            .filterNot { it.quantity == 0 }
+            .map {
+                CartItem(
+                    reference = "${it.type.name.lowercase()}/${it.id}",
+                    quantity = it.quantity
+                )
+            }
+            .toMutableList()
+            .apply {
+                _state.value.selectedPizza?.let { pizza ->
+                    add(
+                        CartItem(
+                            reference = "${pizza.type.name.lowercase()}/${pizza.id}",
+                            quantity = 1
+                        )
+                    )
+                }
+            }
+
+        viewModelScope.launch(context = Dispatchers.IO) {
+            // TODO: Check if dataStore.getCardId() is null. If null: cartRepository.createCart() else cartRepository.updateCart()
         }
     }
 

@@ -1,6 +1,7 @@
 package com.seno.products.presentation.detail
 
-import com.seno.products.domain.model.Product
+import com.seno.core.domain.product.Product
+import com.seno.core.domain.product.ProductType
 
 data class ProductDetailState(
     val isLoading: Boolean = false,
@@ -9,6 +10,8 @@ data class ProductDetailState(
 )
 
 data class ToppingsUI(
+    val id: String,
+    val type: ProductType = ProductType.EXTRA_TOPPING,
     val name: String,
     val image: String,
     val price: Double,

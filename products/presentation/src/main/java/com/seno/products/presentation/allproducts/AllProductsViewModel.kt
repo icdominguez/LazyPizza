@@ -2,7 +2,7 @@ package com.seno.products.presentation.allproducts
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.seno.products.domain.model.Product
+import com.seno.core.domain.product.Product
 import com.seno.products.domain.repository.ProductsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

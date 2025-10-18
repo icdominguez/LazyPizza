@@ -1,7 +1,7 @@
 package com.seno.products.presentation.allproducts
 
-import com.seno.products.domain.model.Product
-import com.seno.products.domain.model.ProductType
+import com.seno.core.domain.product.Product
+import com.seno.core.domain.product.ProductType
 
 data class AllProductsState(
     val isLoading: Boolean = true,

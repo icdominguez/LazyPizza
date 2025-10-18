@@ -19,6 +19,7 @@ room = "2.8.1"
 ksp = "2.2.20-2.0.3"
 firebase-bom = "34.3.0"
 google-services = "4.4.2"
+datastorePreferences = "1.1.7"
 
 # Project versions
 projectAppId = "com.seno.lazypizza"
@@ -60,6 +61,8 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
+
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 
 # Gradle
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }

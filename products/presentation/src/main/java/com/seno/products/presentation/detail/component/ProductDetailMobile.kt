@@ -48,7 +48,7 @@ import com.seno.core.presentation.theme.textPrimary
 import com.seno.core.presentation.theme.textSecondary
 import com.seno.core.presentation.theme.title_1_semiBold
 import com.seno.core.presentation.utils.formatToPrice
-import com.seno.products.domain.model.Product
+import com.seno.core.domain.product.Product
 import com.seno.products.presentation.detail.ProductDetailAction
 import com.seno.products.presentation.detail.ProductDetailState
 
@@ -185,9 +185,7 @@ internal fun ProductDetailMobile(
                             .onGloballyPositioned {
                                 buttonHeight = it.size.height.dp
                             },
-                        onClick = {
-
-                        },
+                        onClick = { onAction(ProductDetailAction.OnAddToCartButtonClick) },
                         buttonText = "Add to Cart for $${state.selectedPizza?.price?.formatToPrice()}"
                     )
                 }
@@ -203,6 +201,7 @@ private fun ProductDetailMobilePreview() {
         ProductDetailMobile(
             state = ProductDetailState(
                 selectedPizza = Product.Pizza(
+                    id = "",
                     name = "Margherita",
                     price = 8.00,
                     image = "",

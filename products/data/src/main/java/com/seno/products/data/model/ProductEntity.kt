@@ -1,10 +1,11 @@
 package com.seno.products.data.model
 
-import com.seno.products.domain.model.Product
-import com.seno.products.domain.model.Product.*
-import com.seno.products.domain.model.ProductType
+import com.seno.core.domain.product.Product
+import com.seno.core.domain.product.Product.*
+import com.seno.core.domain.product.ProductType
 
 data class ProductEntity(
+    val id: String = "",
     val name: String = "",
     val image: String = "",
     val price: Double = 0.0,
@@ -14,17 +15,10 @@ data class ProductEntity(
 
 fun ProductEntity.toProduct(): Product? {
     return when (type) {
-        ProductType.PIZZA -> Pizza(
-            type = type,
-            name = name,
-            price = price,
-            image = image,
-            ingredients = ingredients.orEmpty()
-        )
-
-        ProductType.DRINK -> Drink(type = type, name = name, price = price, image = image)
-        ProductType.ICE_CREAM -> IceCream(type = type, name = name, price = price, image = image)
-        ProductType.SAUCE -> IceCream(type = type, name = name, price = price, image = image)
-        ProductType.EXTRA_TOPPING -> IceCream(type = type, name = name, price = price, image = image)
+        ProductType.PIZZA -> Pizza(id = id, type = type, name = name, price = price, image = image, ingredients = ingredients.orEmpty())
+        ProductType.DRINK -> Drink(id = id, type = type, name = name, price = price, image = image)
+        ProductType.ICE_CREAM -> IceCream(id = id, type = type, name = name, price = price, image = image)
+        ProductType.SAUCE -> IceCream(id = id,type = type, name = name, price = price, image = image)
+        ProductType.EXTRA_TOPPING -> IceCream(id = id, type = type, name = name, price = price, image = image)
     }
 }

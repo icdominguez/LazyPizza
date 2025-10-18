@@ -1,6 +1,6 @@
 package com.seno.products.presentation.allproducts
 
-import com.seno.products.domain.model.Product
+import com.seno.core.domain.product.Product
 
 sealed interface AllProductsAction {
     data class OnProductClicked(val pizzaName: String) : AllProductsAction
