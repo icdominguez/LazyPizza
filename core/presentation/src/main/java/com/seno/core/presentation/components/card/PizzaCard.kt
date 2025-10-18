@@ -1,4 +1,4 @@
-package com.seno.core.presentation.components
+package com.seno.core.presentation.components.card
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

@@ -18,11 +18,13 @@ import androidx.core.view.WindowInsetsControllerCompat
 fun LazyPizzaDefaultScreen(
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.background,
+    contentWindowInsets: WindowInsets = WindowInsets.safeDrawing,
     topAppBar: @Composable () -> Unit = {},
     content: @Composable () -> Unit = {},
 ) {
     Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing,
+        modifier = modifier,
+        contentWindowInsets = contentWindowInsets,
         topBar = topAppBar,
         containerColor = containerColor,
     ) { innerPadding ->
@@ -40,7 +42,8 @@ fun LazyPizzaDefaultScreen(
         SideEffect {
             val window = (view.context as? Activity)?.window
             if (!view.isInEditMode && window != null) {
-                WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
+                WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars =
+                    true
             }
         }
     }
