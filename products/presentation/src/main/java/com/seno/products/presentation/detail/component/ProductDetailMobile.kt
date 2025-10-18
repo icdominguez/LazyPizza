@@ -38,8 +38,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.seno.core.presentation.R
-import com.seno.core.presentation.components.LazyPizzaPrimaryButton
-import com.seno.core.presentation.components.ToppingCard
+import com.seno.core.presentation.components.button.LazyPizzaPrimaryButton
+import com.seno.core.presentation.components.card.ToppingCard
 import com.seno.core.presentation.theme.LazyPizzaTheme
 import com.seno.core.presentation.theme.background
 import com.seno.core.presentation.theme.body_3_regular

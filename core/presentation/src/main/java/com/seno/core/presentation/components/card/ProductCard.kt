@@ -1,4 +1,4 @@
-package com.seno.core.presentation.components
+package com.seno.core.presentation.components.card
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.seno.core.presentation.R
+import com.seno.core.presentation.components.button.LazyPizzaSecondaryButton
 import com.seno.core.presentation.theme.body_1_medium
 import com.seno.core.presentation.theme.body_4_regular
 import com.seno.core.presentation.theme.outline50
