@@ -19,6 +19,8 @@ import androidx.navigation.navigation
 import com.seno.core.presentation.components.LazyPizzaDefaultScreen
 import com.seno.core.presentation.components.bar.LazyPizzaMenuBar
 import com.seno.core.presentation.model.NavigationMenu
+import com.seno.history.presentation.HistoryScreenRoot
+import com.seno.history.presentation.component.HistoryTopBar
 import com.seno.lazypizza.util.getSelectedMenu
 import com.seno.products.presentation.allproducts.AllProductsRoot
 import com.seno.products.presentation.allproducts.component.AllProductsTopBar
@@ -45,6 +47,10 @@ fun NavigationRoot(
 
                 currentRoute?.hasRoute<Screen.Menu.AllProducts>() == true -> {
                     AllProductsTopBar()
+                }
+
+                currentRoute?.hasRoute<Screen.History.HistoryScreen>() == true -> {
+                    HistoryTopBar()
                 }
             }
         },
@@ -153,11 +159,7 @@ private fun NavGraphBuilder.historyGraph(navHostController: NavHostController) {
         startDestination = Screen.History.HistoryScreen
     ) {
         composable<Screen.History.HistoryScreen> {
-            Box(
-                modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-            ) {
-                Text("History")
-            }
+            HistoryScreenRoot()
         }
     }
 }

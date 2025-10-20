@@ -40,5 +40,11 @@ dependencies {
             implementation(domain)
             implementation(presentation)
         }
+
+        with(history) {
+            implementation(data)
+            implementation(domain)
+            implementation(presentation)
+        }
     }
 }

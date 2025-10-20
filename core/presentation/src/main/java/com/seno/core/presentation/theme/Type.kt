@@ -38,6 +38,14 @@ val title_1_semiBold = TextStyle(
     fontSize = 24.sp,
     lineHeight = 28.sp
 )
+
+val title_1_medium = TextStyle(
+    fontFamily = FontFamily(Font(R.font.instrument_sans_medium)),
+    fontWeight = FontWeight.Medium,
+    fontSize = 24.sp,
+    lineHeight = 28.sp
+)
+
 val title_2 = TextStyle(
     fontFamily = FontFamily(Font(R.font.instrument_sans_semibold)),
     fontWeight = FontWeight.SemiBold,
