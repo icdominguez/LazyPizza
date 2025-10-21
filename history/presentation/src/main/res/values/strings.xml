@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="order_history">Order History</string>
+    <string name="not_signed_in">Not Signed In</string>
+    <string name="please_sign_in_to_view_your_order_history">Please sign in to view your order history.</string>
+    <string name="sign_in">Sign In</string>
+</resources>

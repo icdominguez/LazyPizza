@@ -31,10 +31,8 @@ fun LazyPizzaPrimaryButton(
         },
         modifier = modifier
             .background(
-                brush = Brush.horizontalGradient(
+                brush = Brush.linearGradient(
                     colors = primaryGradient,
-                    startX = 0f,
-                    endX = Float.POSITIVE_INFINITY
                 ),
                 shape = CircleShape
             )
