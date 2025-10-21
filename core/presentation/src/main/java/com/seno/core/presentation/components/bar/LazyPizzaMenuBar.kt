@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -28,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.seno.core.presentation.model.NavigationMenu
 import com.seno.core.presentation.theme.LazyPizzaTheme
+import com.seno.core.presentation.theme.textOnPrimary
 import com.seno.core.presentation.theme.textPrimary
 import com.seno.core.presentation.theme.textSecondary
 import com.seno.core.presentation.theme.title_4
@@ -39,6 +42,7 @@ fun LazyPizzaMenuBar(
     selectedMenu: NavigationMenu?,
     onNavigationMenuClick: (NavigationMenu) -> Unit,
     modifier: Modifier = Modifier,
+    badgeCounts: Map<NavigationMenu, Int> = emptyMap(),
     content: @Composable () -> Unit,
 ) {
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
@@ -69,11 +73,11 @@ fun LazyPizzaMenuBar(
         ),
         navigationSuiteItems = {
             NavigationMenu.entries.forEachIndexed { index, screen ->
+                val itemCount = badgeCounts[screen] ?: 0
                 val isTablet = deviceType.isTablet()
                 val isTabletPortrait = deviceType == DeviceConfiguration.TABLET_PORTRAIT
                 val isTabletLandscape = deviceType == DeviceConfiguration.TABLET_LANDSCAPE
                 val isSelected = selectedMenu == screen
-
                 item(
                     modifier = Modifier.padding(
                         start = if (!isTablet && index == 0) 50.dp else 0.dp,
@@ -88,27 +92,42 @@ fun LazyPizzaMenuBar(
                     colors = myNavigationSuiteItemColors,
                     onClick = {},
                     icon = {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clickable(
-                                    interactionSource = null, indication = null
-                                ) {
-                                    onNavigationMenuClick(screen)
+                        BadgedBox(
+                            badge = {
+                                if (itemCount > 0) {
+                                    Badge(
+                                        containerColor = MaterialTheme.colorScheme.primary,
+                                        contentColor = textOnPrimary
+                                    ) {
+                                        Text(
+                                            text = "$itemCount",
+                                            style = title_4,
+                                        )
+                                    }
                                 }
-                                .then(
-                                    if (isSelected) Modifier.background(
-                                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
-                                        shape = CircleShape
-                                    ) else Modifier
-                                )
+                            }
                         ) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(screen.icon),
-                                contentDescription = screen.title
-                            )
-
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clickable(
+                                        interactionSource = null, indication = null
+                                    ) {
+                                        onNavigationMenuClick(screen)
+                                    }
+                                    .then(
+                                        if (isSelected) Modifier.background(
+                                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
+                                            shape = CircleShape
+                                        ) else Modifier
+                                    )
+                            ) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(screen.icon),
+                                    contentDescription = screen.title
+                                )
+                            }
                         }
                     },
                     label = {
