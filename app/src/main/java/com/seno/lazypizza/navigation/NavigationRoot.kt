@@ -66,6 +66,10 @@ fun NavigationRoot(
         LazyPizzaMenuBar(
             state = state,
             selectedMenu = currentRoute.getSelectedMenu(),
+            badgeCounts = mapOf(
+                NavigationMenu.CART to 1/*put counter value here*/,
+                NavigationMenu.HISTORY to 0,
+            ),
             onNavigationMenuClick = { menu ->
                 val currentParentRoute = currentRoute?.parent?.route
 
@@ -109,7 +113,7 @@ fun NavigationRoot(
                         }
                     }
                 }
-            }
+            },
         ) {
             NavHost(
                 navController = navHostController,

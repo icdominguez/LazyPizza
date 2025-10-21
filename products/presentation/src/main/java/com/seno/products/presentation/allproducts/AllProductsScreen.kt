@@ -33,6 +33,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.seno.core.domain.product.Product
+import com.seno.core.domain.product.ProductType
 import com.seno.core.presentation.components.bar.CustomizableSearchBar
 import com.seno.core.presentation.components.card.PizzaCard
 import com.seno.core.presentation.components.card.ProductCard
@@ -44,8 +46,6 @@ import com.seno.core.presentation.theme.textSecondary
 import com.seno.core.presentation.utils.DeviceConfiguration
 import com.seno.core.presentation.utils.replaceUnderscores
 import com.seno.core.presentation.utils.toCamelCase
-import com.seno.core.domain.product.Product
-import com.seno.core.domain.product.ProductType
 import kotlinx.coroutines.launch
 
 @Composable
