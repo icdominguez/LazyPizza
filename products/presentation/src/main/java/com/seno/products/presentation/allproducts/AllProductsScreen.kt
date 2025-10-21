@@ -33,7 +33,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.seno.core.domain.product.Product
 import com.seno.core.domain.product.ProductType
 import com.seno.core.presentation.components.bar.CustomizableSearchBar
 import com.seno.core.presentation.components.card.PizzaCard
@@ -152,11 +151,9 @@ fun AllProductsScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             rowItems.forEach { product ->
-                                val quantity = state.productQuantities[product.name] ?: 0
-
                                 Box(modifier = Modifier.weight(1f)) {
-                                    when (product) {
-                                        is Product.Pizza -> {
+                                    when (product.type) {
+                                        ProductType.PIZZA -> {
                                             PizzaCard(
                                                 imageUrl = product.image,
                                                 pizzaName = product.name,
@@ -173,13 +170,12 @@ fun AllProductsScreen(
                                                 }
                                             )
                                         }
-
                                         else -> {
                                             ProductCard(
                                                 imageUrl = product.image,
                                                 productName = product.name,
                                                 productPrice = product.price,
-                                                quantity = quantity,
+                                                quantity = product.quantity,
                                                 onQuantityChange = { newQuantity ->
                                                     when {
                                                         newQuantity == 0 -> {
@@ -190,7 +186,7 @@ fun AllProductsScreen(
                                                             )
                                                         }
 
-                                                        newQuantity > quantity -> {
+                                                        newQuantity > product.quantity -> {
                                                             onAction(
                                                                 AllProductsAction.OnProductPlus(
                                                                     product
@@ -198,7 +194,7 @@ fun AllProductsScreen(
                                                             )
                                                         }
 
-                                                        newQuantity < quantity -> {
+                                                        newQuantity < product.quantity -> {
                                                             onAction(
                                                                 AllProductsAction.OnProductMinus(
                                                                     product

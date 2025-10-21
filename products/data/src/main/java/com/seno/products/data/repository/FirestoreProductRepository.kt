@@ -1,15 +1,17 @@
 package com.seno.products.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.seno.products.data.model.ProductEntity
-import com.seno.products.data.model.toProduct
 import com.seno.core.domain.product.Product
 import com.seno.core.domain.product.ProductType
+import com.seno.products.data.model.ProductEntity
+import com.seno.products.data.model.toProduct
 import com.seno.products.domain.repository.ProductsRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 
 class FirestoreProductRepository(
     private val db: FirebaseFirestore
@@ -72,7 +74,7 @@ class FirestoreProductRepository(
 
     override fun getPizzaByName(pizzaName: String): Flow<Product.Pizza?> =
         callbackFlow {
-            val listener = db.collection(PIZZAS)
+            val listener = db.collection(ProductType.PIZZA.name.lowercase() + "s")
                 .whereEqualTo("name", pizzaName)
                 .limit(1)
                 .addSnapshotListener { snapshot, error ->
@@ -93,12 +95,25 @@ class FirestoreProductRepository(
             awaitClose { listener.remove() }
         }
 
+    override fun getProductsByReference(references: List<String>): Flow<List<Product>> =
+        flow {
+            val products = references.mapNotNull { documentReferences ->
+                try {
+                    val snapshot = db.document(documentReferences).get().await()
+                    val collectionName = snapshot.reference.parent.id
 
-    private companion object {
-        const val DRINKS = "drinks"
-        const val SAUCES = "sauces"
-        const val ICE_CREAMS = "ice creams"
-        const val EXTRA_TOPPINGS = "extra_toppings"
-        const val PIZZAS = "pizzas"
-    }
+                    snapshot
+                        .toObject(ProductEntity::class.java)
+                        ?.copy(
+                            id = snapshot.id,
+                            type = ProductType.valueOf(collectionName.dropLast(1).uppercase())
+                        )
+                        ?.toProduct()
+
+                } catch (e: Exception) {
+                    null
+                }
+            }
+            emit(products)
+        }
 }

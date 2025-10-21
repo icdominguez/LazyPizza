@@ -1,4 +1,4 @@
-package com.seno.products.presentation.detail
+package com.seno.cart.presentation
 
 import android.widget.Toast
 import androidx.compose.runtime.Composable
@@ -9,28 +9,32 @@ import com.seno.core.presentation.utils.ObserveAsEvents
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun ProductDetailRoot(
-    viewModel: ProductDetailViewModel = koinViewModel(),
-    onAddToCartClick: () -> Unit = {},
+fun CartRoot(
+    viewModel: CartViewModel = koinViewModel(),
+    onNavigateToMenu: () -> Unit = {},
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
     val context = LocalContext.current
 
     ObserveAsEvents(
         flow = viewModel.event,
     ) { event ->
         when(event) {
-            is ProductDetailEvent.Error -> {
+            is CartEvents.Error -> {
                 Toast.makeText(context, event.error, Toast.LENGTH_LONG).show()
-            }
-            is ProductDetailEvent.OnCartSuccessfullySaved -> {
-                onAddToCartClick()
             }
         }
     }
 
-    ProductDetailScreen(
+    CartScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = { action ->
+            when(action) {
+                is CartActions.OnNavigateToMenuClick -> onNavigateToMenu()
+                else -> viewModel.onAction(action)
+            }
+        }
     )
+
 }
