@@ -1,14 +1,9 @@
 package com.seno.lazypizza.navigation
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.rememberNavigationSuiteScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -16,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navigation
+import com.seno.cart.presentation.CartRoot
 import com.seno.core.presentation.components.LazyPizzaDefaultScreen
 import com.seno.core.presentation.components.bar.LazyPizzaMenuBar
 import com.seno.core.presentation.model.NavigationMenu
@@ -140,7 +136,14 @@ private fun NavGraphBuilder.mainGraph(navHostController: NavHostController) {
     }
 
     composable<Screen.Menu.ProductDetail> {
-        ProductDetailRoot()
+        ProductDetailRoot(
+            onAddToCartClick = {
+                navHostController.navigate(Screen.Cart.CartScreen) {
+                    popUpTo(0)
+                    launchSingleTop = true
+                }
+            }
+        )
     }
 }
 
@@ -149,11 +152,14 @@ private fun NavGraphBuilder.cartGraph(navHostController: NavHostController) {
         startDestination = Screen.Cart.CartScreen
     ) {
         composable<Screen.Cart.CartScreen> {
-            Box(
-                modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-            ) {
-                Text("Cart")
-            }
+            CartRoot(
+                onNavigateToMenu = {
+                    navHostController.navigate(Screen.Menu) {
+                        popUpTo(0)
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
     }
 }

@@ -7,5 +7,12 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.presentation)
+    with(projects) {
+        with(core) {
+            implementation(domain)
+            implementation(presentation)
+        }
+        implementation(products.domain)
+        implementation(cart.domain)
+    }
 }

@@ -2,6 +2,7 @@ package com.seno.lazypizza
 
 import android.app.Application
 import com.seno.cart.data.di.cartDataModule
+import com.seno.cart.presentation.di.cartPresentationModule
 import com.seno.core.data.di.coreDataModule
 import com.seno.history.presentation.di.historyPresentationModule
 import com.seno.products.data.di.productsDataModule
@@ -26,8 +27,9 @@ class LazyPizzaApp : Application() {
                 coreDataModule,
                 productsDataModule,
                 productsPresentationModule,
+                historyPresentationModule,
+                cartPresentationModule,
                 cartDataModule,
-                historyPresentationModule
             )
         }
     }

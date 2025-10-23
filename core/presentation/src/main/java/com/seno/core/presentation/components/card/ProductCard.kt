@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,6 +35,7 @@ import coil.compose.AsyncImage
 import com.seno.core.presentation.R
 import com.seno.core.presentation.components.button.LazyPizzaSecondaryButton
 import com.seno.core.presentation.theme.body_1_medium
+import com.seno.core.presentation.theme.body_3_regular
 import com.seno.core.presentation.theme.body_4_regular
 import com.seno.core.presentation.theme.outline50
 import com.seno.core.presentation.theme.textPrimary
@@ -48,6 +50,7 @@ fun ProductCard(
     productName: String,
     productPrice: Double,
     quantity: Int,
+    extraToppings: List<String> = emptyList(),
     onQuantityChange: (Int) -> Unit,
     onDeleteClicked: () -> Unit
 ) {
@@ -66,7 +69,8 @@ fun ProductCard(
             model = imageUrl,
             contentDescription = productName,
             modifier = Modifier
-                .size(108.dp)
+                .width(108.dp)
+                .fillMaxHeight()
                 .padding(start = 1.dp, top = 1.dp, bottom = 1.dp, end = 8.dp)
                 .background(
                     color = MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -77,7 +81,7 @@ fun ProductCard(
                         bottomEnd = 0.dp
                     )
                 ),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Fit
         )
 
         Column(
@@ -118,7 +122,16 @@ fun ProductCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            if(extraToppings.isNotEmpty()) {
+                extraToppings.map { extraTopping ->
+                    Text(
+                        text = extraTopping,
+                        style = body_3_regular.copy(textSecondary)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(if(extraToppings.isNotEmpty()) 8.dp else 12.dp))
 
             Row(
                 modifier = Modifier
@@ -202,7 +215,7 @@ fun ProductCard(
 @Preview
 @Composable
 private fun ProductCardPreview() {
-    var quantity by remember { mutableIntStateOf(0) }
+    var quantity by remember { mutableIntStateOf(1) }
 
     ProductCard(
         imageUrl = "",
@@ -210,6 +223,7 @@ private fun ProductCardPreview() {
         productPrice = 1.49,
         quantity = quantity,
         onQuantityChange = { quantity = it },
-        onDeleteClicked = {}
+        onDeleteClicked = {},
+        extraToppings = listOf("1X Extra cheese", "2X Extra sauce")
     )
 }
