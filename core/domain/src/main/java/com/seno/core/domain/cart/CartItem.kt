@@ -10,3 +10,11 @@ data class ExtraTopping(
     val reference: String = "",
     val quantity: Int = 0,
 )
+
+fun CartItem.identityKey(): String {
+    val signature = extraToppings
+        .map { "${it.reference}:${it.quantity}" }
+        .sorted()
+        .joinToString("|")
+    return if (signature.isEmpty()) reference else "$reference##$signature"
+}

@@ -5,6 +5,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -23,7 +25,8 @@ import com.seno.core.presentation.theme.title_3
 fun LazyPizzaPrimaryButton(
     modifier: Modifier = Modifier,
     buttonText: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    isLoading: Boolean = false
 ) {
     Button(
         onClick = {
@@ -48,11 +51,17 @@ fun LazyPizzaPrimaryButton(
             containerColor = Color.Transparent
         )
     ) {
-        Text(
-            text = buttonText,
-            style = title_3,
-            color = textOnPrimary
-        )
+        if (isLoading) {
+            CircularProgressIndicator(
+                color = MaterialTheme.colorScheme.surfaceContainerHigh
+            )
+        } else {
+            Text(
+                text = buttonText,
+                style = title_3,
+                color = textOnPrimary
+            )
+        }
     }
 }
 
@@ -61,6 +70,7 @@ fun LazyPizzaPrimaryButton(
 private fun LazyPizzaPrimaryButtonPreview() {
     LazyPizzaTheme {
         LazyPizzaPrimaryButton(
+            isLoading = true,
             buttonText = "Button",
             onClick = {},
         )

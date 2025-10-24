@@ -8,6 +8,9 @@ import com.seno.core.domain.FirebaseResult
 import com.seno.core.domain.cart.CartItem
 import com.seno.core.domain.cart.ExtraTopping
 import com.seno.core.domain.userdata.UserData
+import com.seno.core.presentation.utils.SnackbarAction
+import com.seno.core.presentation.utils.SnackbarController
+import com.seno.core.presentation.utils.SnackbarEvent
 import com.seno.products.domain.repository.ProductsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -68,6 +71,9 @@ class ProductDetailViewModel(
     }
 
     private fun onAddToCartButtonClick() {
+        _state.update {
+            it.copy(isUpdatingCart = true)
+        }
         val extraToppings = _state.value.listExtraToppings
             .filterNot { it.quantity == 0 }
             .map {
@@ -97,17 +103,31 @@ class ProductDetailViewModel(
                     is FirebaseResult.Success -> {
                         userData.setCardId(createCartResponse.data)
                         _event.trySend(ProductDetailEvent.OnCartSuccessfullySaved)
+                        SnackbarController.sendEvent(
+                            event = SnackbarEvent(
+                                message = "${_state.value.selectedPizza?.name} added to cart",
+                                action = SnackbarAction(
+                                    name = "OK",
+                                    action = {}
+                                )
+                            )
+                        )
                     }
 
                     is FirebaseResult.Error -> {
                         // Here the message could be null. Didn't know which message show if it's null
-                        _event.trySend(ProductDetailEvent.Error(createCartResponse.exception.message ?: "Error creating the cart. Try again later"))
+                        _event.trySend(
+                            ProductDetailEvent.Error(
+                                createCartResponse.exception.message
+                                    ?: "Error creating the cart. Try again later"
+                            )
+                        )
                     }
                 }
             } else {
                 // Here we need to get the cart and add the new pizza item. Again need to use first because if not, the flow will be opened
                 val getCartResponse = cartRepository.getCart(cartId).first()
-                when(getCartResponse) {
+                when (getCartResponse) {
                     is FirebaseResult.Success -> {
                         val updateCartResponse = cartRepository.updateCart(
                             cartId = cartId,
@@ -116,17 +136,41 @@ class ProductDetailViewModel(
                         when (updateCartResponse) {
                             is FirebaseResult.Success -> {
                                 _event.trySend(ProductDetailEvent.OnCartSuccessfullySaved)
+                                SnackbarController.sendEvent(
+                                    event = SnackbarEvent(
+                                        message = "${_state.value.selectedPizza?.name} added to cart",
+                                        action = SnackbarAction(
+                                            name = "OK",
+                                            action = {}
+                                        )
+                                    )
+                                )
                             }
 
                             is FirebaseResult.Error -> {
-                                _event.trySend(ProductDetailEvent.Error(updateCartResponse.exception.message ?: "Error creating the cart. Try again later"))
+                                _event.trySend(
+                                    ProductDetailEvent.Error(
+                                        updateCartResponse.exception.message
+                                            ?: "Error creating the cart. Try again later"
+                                    )
+                                )
                             }
                         }
                     }
+
                     is FirebaseResult.Error -> {
-                        _event.trySend(ProductDetailEvent.Error(getCartResponse.exception.message ?: "Error creating the cart. Try again later"))
+                        _event.trySend(
+                            ProductDetailEvent.Error(
+                                getCartResponse.exception.message
+                                    ?: "Error creating the cart. Try again later"
+                            )
+                        )
                     }
                 }
+            }
+
+            _state.update {
+                it.copy(isUpdatingCart = false)
             }
         }
     }

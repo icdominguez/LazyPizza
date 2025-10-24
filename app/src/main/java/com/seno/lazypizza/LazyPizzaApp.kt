@@ -5,6 +5,7 @@ import com.seno.cart.data.di.cartDataModule
 import com.seno.cart.presentation.di.cartPresentationModule
 import com.seno.core.data.di.coreDataModule
 import com.seno.history.presentation.di.historyPresentationModule
+import com.seno.lazypizza.di.applicationModule
 import com.seno.products.data.di.productsDataModule
 import com.seno.products.presentation.di.productsPresentationModule
 import org.koin.android.ext.koin.androidContext
@@ -24,6 +25,7 @@ class LazyPizzaApp : Application() {
             androidContext(this@LazyPizzaApp)
             androidLogger()
             modules(
+                applicationModule,
                 coreDataModule,
                 productsDataModule,
                 productsPresentationModule,
