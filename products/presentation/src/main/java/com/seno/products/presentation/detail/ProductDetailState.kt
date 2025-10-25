@@ -5,6 +5,7 @@ import com.seno.core.domain.product.ProductType
 
 data class ProductDetailState(
     val isLoading: Boolean = false,
+    val isUpdatingCart: Boolean = false,
     val selectedPizza: Product.Pizza? = null,
     val listExtraToppings: List<ToppingsUI> = emptyList(),
 )

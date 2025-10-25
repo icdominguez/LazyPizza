@@ -1,9 +1,14 @@
 package com.seno.lazypizza.navigation
 
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.adaptive.navigationsuite.rememberNavigationSuiteScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -15,22 +20,51 @@ import com.seno.cart.presentation.CartRoot
 import com.seno.core.presentation.components.LazyPizzaDefaultScreen
 import com.seno.core.presentation.components.bar.LazyPizzaMenuBar
 import com.seno.core.presentation.model.NavigationMenu
+import com.seno.core.presentation.utils.ObserveAsEvents
+import com.seno.core.presentation.utils.SnackbarController
 import com.seno.history.presentation.HistoryScreenRoot
 import com.seno.history.presentation.component.HistoryTopBar
+import com.seno.lazypizza.MainState
 import com.seno.lazypizza.util.getSelectedMenu
 import com.seno.products.presentation.allproducts.AllProductsRoot
 import com.seno.products.presentation.allproducts.component.AllProductsTopBar
 import com.seno.products.presentation.detail.ProductDetailRoot
 import com.seno.products.presentation.detail.component.ProductDetailTopBar
+import kotlinx.coroutines.launch
 
 @Composable
 fun NavigationRoot(
+    state: MainState,
     navHostController: NavHostController,
 ) {
     val navBackStackEntry by navHostController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    ObserveAsEvents(
+        SnackbarController.events,
+        snackbarHostState
+    ) { event ->
+        scope.launch {
+            snackbarHostState.currentSnackbarData?.dismiss()
+
+            val result = snackbarHostState.showSnackbar(
+                message = event.message,
+                actionLabel = event.action?.name,
+                withDismissAction = event.onDismiss != null,
+                duration = SnackbarDuration.Short
+            )
+
+            if (result == SnackbarResult.ActionPerformed) {
+                event.action?.action?.invoke()
+            }
+        }
+    }
+
     LazyPizzaDefaultScreen(
+        snackbarHostState = snackbarHostState,
         topAppBar = {
             when {
                 currentRoute?.hasRoute<Screen.Menu.ProductDetail>() == true -> {
@@ -51,19 +85,19 @@ fun NavigationRoot(
             }
         },
     ) {
-        val state = rememberNavigationSuiteScaffoldState()
+        val suiteScaffoldState = rememberNavigationSuiteScaffoldState()
 
         LaunchedEffect(currentRoute) {
             if (currentRoute?.hasRoute<Screen.Menu.ProductDetail>() == true) {
-                state.hide()
-            } else state.show()
+                suiteScaffoldState.hide()
+            } else suiteScaffoldState.show()
         }
 
         LazyPizzaMenuBar(
-            state = state,
+            state = suiteScaffoldState,
             selectedMenu = currentRoute.getSelectedMenu(),
             badgeCounts = mapOf(
-                NavigationMenu.CART to 1/*put counter value here*/,
+                NavigationMenu.CART to state.totalCartItem,
                 NavigationMenu.HISTORY to 0,
             ),
             onNavigationMenuClick = { menu ->
@@ -86,10 +120,8 @@ fun NavigationRoot(
                     NavigationMenu.CART -> {
                         navHostController.navigate(Screen.Cart) {
                             launchSingleTop = true
-                            restoreState = true
                             currentParentRoute?.let {
                                 popUpTo(it) {
-                                    saveState = true
                                     inclusive = true
                                 }
                             }
@@ -138,10 +170,7 @@ private fun NavGraphBuilder.mainGraph(navHostController: NavHostController) {
     composable<Screen.Menu.ProductDetail> {
         ProductDetailRoot(
             onAddToCartClick = {
-                navHostController.navigate(Screen.Cart.CartScreen) {
-                    popUpTo(0)
-                    launchSingleTop = true
-                }
+                navHostController.navigateUp()
             }
         )
     }

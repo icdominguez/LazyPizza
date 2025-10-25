@@ -174,6 +174,7 @@ internal fun ProductDetailTablet(
             }
 
             LazyPizzaPrimaryButton(
+                isLoading = state.isUpdatingCart,
                 modifier = Modifier
                     .fillMaxWidth(),
                 onClick = { onAction(ProductDetailAction.OnAddToCartButtonClick) },

@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.seno.core.domain.product.Product
 import com.seno.core.presentation.R
 import com.seno.core.presentation.components.button.LazyPizzaPrimaryButton
 import com.seno.core.presentation.components.card.ToppingCard
@@ -48,7 +49,6 @@ import com.seno.core.presentation.theme.textPrimary
 import com.seno.core.presentation.theme.textSecondary
 import com.seno.core.presentation.theme.title_1_semiBold
 import com.seno.core.presentation.utils.formatToPrice
-import com.seno.core.domain.product.Product
 import com.seno.products.presentation.detail.ProductDetailAction
 import com.seno.products.presentation.detail.ProductDetailState
 
@@ -180,6 +180,7 @@ internal fun ProductDetailMobile(
                     contentAlignment = Alignment.BottomCenter
                 ) {
                     LazyPizzaPrimaryButton(
+                        isLoading = state.isUpdatingCart,
                         modifier = Modifier
                             .fillMaxWidth()
                             .onGloballyPositioned {
