@@ -34,11 +34,13 @@ class CartViewModel(
     private val _event = Channel<CartEvents>()
     val event = _event.receiveAsFlow()
 
+    private var allDrinksAndSnacks: List<CartItemUI> = emptyList()
     init {
         viewModelScope.launch(context = Dispatchers.IO) {
 
             _state.update { it.copy(isLoading = true) }
 
+            loadAllDrinksAndSnacks()
             val cartId = userData.getCartId().first()
 
             cartId?.let {
@@ -102,12 +104,13 @@ class CartViewModel(
                                 }
                             }
 
-                            // 4. Update cart with the data
+                            // 4. Update cart with the data and update recommended items
                             _state.update { state ->
                                 state.copy(
                                     cartItems = cartItemsUI,
                                     cartId = cartId,
                                     isLoading = false,
+                                    recommendedItems = getFilteredRecommendedItems(cartItemsUI)
                                 )
                             }
 
@@ -128,6 +131,35 @@ class CartViewModel(
         }
     }
 
+    private suspend fun loadAllDrinksAndSnacks() {
+        try {
+            val allProducts = productRepository.getAllProducts().first()
+
+            allDrinksAndSnacks = allProducts.filter {
+                it.type == ProductType.DRINK || it.type == ProductType.SAUCE
+            }.map { product ->
+                CartItemUI(
+                    reference = "products/${product.id}",
+                    quantity = 1,
+                    image = product.image,
+                    name = product.name,
+                    price = product.price,
+                    type = product.type,
+                )
+            }
+        } catch (e: Exception) {
+            allDrinksAndSnacks = emptyList()
+        }
+    }
+
+    private fun getFilteredRecommendedItems(cartItems: List<CartItemUI>): List<CartItemUI> {
+        val cartReferences = cartItems.map { it.reference }
+        return allDrinksAndSnacks
+            .filter { it.reference !in cartReferences }
+            .shuffled()
+            .take(10)
+    }
+
     fun onAction(action: CartActions) {
         when (action) {
             is CartActions.OnCartItemQuantityChange -> onCartItemQuantityChange(
@@ -136,7 +168,40 @@ class CartViewModel(
             )
 
             is CartActions.OnDeleteCartItemClick -> onDeleteProductClick(action.reference)
+            is CartActions.OnAddRecommendedItemClick -> onAddRecommendedItem(action.reference)
             else -> Unit
+        }
+    }
+
+    private fun onAddRecommendedItem(reference: String) {
+        viewModelScope.launch(context = Dispatchers.IO) {
+            val recommendedItem = _state.value.recommendedItems.find { it.reference == reference }
+
+            if (recommendedItem != null) {
+                _state.update { state ->
+                    val newCartItems = state.cartItems + recommendedItem
+                    val newRecommended = state.recommendedItems.filter { it.reference != reference }
+                    state.copy(
+                        cartItems = newCartItems,
+                        recommendedItems = newRecommended,
+                        isUpdatingCart = true
+                    )
+                }
+
+                cartRepository.updateCart(
+                    _state.value.cartId,
+                    _state.value.cartItems.map { it.toCartItem() }
+                )
+
+                _state.update { it.copy(isUpdatingCart = false) }
+
+                SnackbarController.sendEvent(
+                    event = SnackbarEvent(
+                        message = "${recommendedItem.name} added to cart",
+                        action = SnackbarAction(name = "OK", action = {})
+                    )
+                )
+            }
         }
     }
 
@@ -148,19 +213,17 @@ class CartViewModel(
                 it.copy(isUpdatingCart = true)
             }
 
-            val updatedCartItems = _state.value.cartItems.toMutableList().apply {
-                val selectedCartItemIndex = this.indexOfFirst { it.reference == reference }
-                if (selectedCartItemIndex != -1) {
-                    this[selectedCartItemIndex] =
-                        this[selectedCartItemIndex].copy(quantity = quantity)
-                }
-            }.map { it.toCartItem() }
-
-            cartRepository.updateCart(_state.value.cartId, updatedCartItems)
-            _state.update {
-                it.copy(isUpdatingCart = false)
-            }
             if (quantity == 0) {
+                val updatedCartItems = _state.value.cartItems
+                    .filter { it.reference != reference }
+                    .map { it.toCartItem() }
+
+                cartRepository.updateCart(_state.value.cartId, updatedCartItems)
+
+                _state.update {
+                    it.copy(isUpdatingCart = false)
+                }
+
                 SnackbarController.sendEvent(
                     event = SnackbarEvent(
                         message = "$productName removed from cart",
@@ -170,6 +233,19 @@ class CartViewModel(
                         )
                     )
                 )
+            } else {
+                val updatedCartItems = _state.value.cartItems.toMutableList().apply {
+                    val selectedCartItemIndex = this.indexOfFirst { it.reference == reference }
+                    if (selectedCartItemIndex != -1) {
+                        this[selectedCartItemIndex] =
+                            this[selectedCartItemIndex].copy(quantity = quantity)
+                    }
+                }.map { it.toCartItem() }
+
+                cartRepository.updateCart(_state.value.cartId, updatedCartItems)
+                _state.update {
+                    it.copy(isUpdatingCart = false)
+                }
             }
         }
     }

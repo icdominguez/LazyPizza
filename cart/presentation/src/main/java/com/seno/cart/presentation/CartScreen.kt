@@ -2,7 +2,6 @@ package com.seno.cart.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -75,8 +74,8 @@ fun CartScreen(
                 item {
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Recommended section
-                    if (state.cartItems.isNotEmpty()) {
+                    // Recommended section - only show if there are recommended items
+                    if (state.recommendedItems.isNotEmpty()) {
                         Text(
                             text = stringResource(R.string.recommended_title).uppercase(),
                             style = label_2_semiBold.copy(
@@ -91,12 +90,14 @@ fun CartScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            items(state.cartItems) { cartItem ->
+                            items(state.recommendedItems) { recommendedItem ->
                                 CartToppingCard(
-                                    imageUrl = cartItem.image,
-                                    cartItem = cartItem,
-                                    extraToppings = cartItem.extraToppingsRelated,
-                                    onClick = {}
+                                    imageUrl = recommendedItem.image,
+                                    cartItem = recommendedItem,
+                                    extraToppings = recommendedItem.extraToppingsRelated,
+                                    onClick = {
+                                        onAction(CartActions.OnAddRecommendedItemClick(recommendedItem.reference))
+                                    }
                                 )
                             }
                         }
