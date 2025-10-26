@@ -7,5 +7,6 @@ data class CartState(
     val isUpdatingCart: Boolean = false,
     val cartItems: List<CartItemUI> = emptyList(),
     val recommendedItems: List<CartItemUI> = emptyList(),
-    val cartId: String = ""
+    val cartId: String = "",
+    val totalPrice: Double = 0.0
 )
