@@ -39,10 +39,10 @@ class CartViewModel(
             _state.update { it.copy(isLoading = true) }
 
             // Load available drinks and sauces
-            val allDrinksAndSnacks = loadAllDrinksAndSnacks()
+            val allDrinksAndSnacks = loadAllDrinksAndSnacks().shuffled()
 
             // Update the state with base recommended items
-            _state.update { it.copy(recommendedItems = allDrinksAndSnacks.shuffled().take(MAX_RECOMMENDED_ITEMS_TO_SHOW)) }
+            _state.update { it.copy(recommendedItems = allDrinksAndSnacks.take(MAX_RECOMMENDED_ITEMS_TO_SHOW)) }
 
             val cartId = userData.getCartId().first()
             cartId?.let {
@@ -56,7 +56,7 @@ class CartViewModel(
                                         cartItems = emptyList(),
                                         cartId = it,
                                         isLoading = false,
-                                        recommendedItems = allDrinksAndSnacks.shuffled().take(MAX_RECOMMENDED_ITEMS_TO_SHOW)
+                                        recommendedItems = allDrinksAndSnacks.take(MAX_RECOMMENDED_ITEMS_TO_SHOW)
                                     )
                                 }
                                 return@collect
@@ -161,7 +161,7 @@ class CartViewModel(
         cartItems: List<CartItemUI>
     ): List<CartItemUI> {
         val currentRefs = cartItems.map { it.reference }
-        return allDrinksAndSnacks.filter { it.reference !in currentRefs }.shuffled().take(10)
+        return allDrinksAndSnacks.filter { it.reference !in currentRefs }.take(10)
     }
 
     fun onAction(action: CartActions) {
