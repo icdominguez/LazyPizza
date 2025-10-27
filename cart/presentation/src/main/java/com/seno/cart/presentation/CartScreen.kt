@@ -1,8 +1,8 @@
 package com.seno.cart.presentation
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,15 +27,12 @@ import androidx.compose.ui.unit.dp
 import com.seno.cart.presentation.components.CartToppingCard
 import com.seno.cart.presentation.components.EmptyCartComponent
 import com.seno.core.presentation.components.LoadingComponent
-import com.seno.core.presentation.components.button.LazyPizzaPrimaryButton
 import com.seno.core.presentation.components.card.ProductCard
 import com.seno.core.presentation.theme.LazyPizzaTheme
 import com.seno.core.presentation.theme.label_2_semiBold
-import com.seno.core.presentation.theme.primary
 import com.seno.core.presentation.theme.surfaceHigher
 import com.seno.core.presentation.theme.textSecondary
 import com.seno.core.presentation.utils.DeviceConfiguration
-import com.seno.core.presentation.utils.formatToPrice
 
 @Composable
 fun CartScreen(
@@ -59,80 +56,94 @@ private fun TabletCartScreenUI(
     state: CartState,
     onAction: (CartActions) -> Unit
 ) {
-    Row(
+    Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(24.dp)
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        // Left side — Cart items
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(state.cartItems) { cartItem ->
-                ProductCard(
-                    imageUrl = cartItem.image,
-                    productName = cartItem.name,
-                    productPrice = cartItem.price,
-                    quantity = cartItem.quantity,
-                    onQuantityChange = { quantity ->
-                        onAction(
-                            CartActions.OnCartItemQuantityChange(
-                                reference = cartItem.reference,
-                                quantity = quantity
-                            )
-                        )
-                    },
-                    onDeleteClicked = {
-                        onAction(CartActions.OnDeleteCartItemClick(cartItem.reference))
-                    },
-                    extraToppings = cartItem.extraToppingsRelated,
-                )
-            }
-        }
-
-        // Right side — Recommendations and checkout
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .background(
-                    color = surfaceHigher,
-                    shape = RoundedCornerShape(16.dp)
-                )
-                .padding(16.dp)
-            ,
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Spacer(modifier = Modifier.height(24.dp))
-
-            if (state.recommendedItems.isNotEmpty()) {
-                Column {
-                    Text(
-                        text = stringResource(R.string.recommended_title).uppercase(),
-                        style = label_2_semiBold.copy(color = textSecondary),
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        items(state.recommendedItems) { recommendedItem ->
-                            CartToppingCard(
-                                imageUrl = recommendedItem.image,
-                                cartItem = recommendedItem,
-                                onClick = {
-                                    onAction(
-                                        CartActions.OnCartItemQuantityChange(
-                                            reference = recommendedItem.reference,
-                                            quantity = recommendedItem.quantity
-                                        )
+        if (state.isLoading) {
+            LoadingComponent(text = "Getting your cart, please wait ...")
+        } else if (state.cartItems.isEmpty()) {
+            EmptyCartComponent(
+                modifier = Modifier
+                    .padding(top = 120.dp),
+                onBackToMenuClick = { onAction(CartActions.OnNavigateToMenuClick) }
+            )
+        } else {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+                // Left side — Cart items
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(state.cartItems) { cartItem ->
+                        ProductCard(
+                            imageUrl = cartItem.image,
+                            productName = cartItem.name,
+                            productPrice = cartItem.price,
+                            quantity = cartItem.quantity,
+                            onQuantityChange = { quantity ->
+                                onAction(
+                                    CartActions.OnCartItemQuantityChange(
+                                        reference = cartItem.reference,
+                                        quantity = quantity
                                     )
-                                }
-                            )
-                        }
+                                )
+                            },
+                            onDeleteClicked = {
+                                onAction(CartActions.OnDeleteCartItemClick(cartItem.reference))
+                            },
+                            extraToppings = cartItem.extraToppingsRelated,
+                        )
                     }
                 }
-            }
+
+                // Right side — Recommendations and checkout
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .background(
+                            color = surfaceHigher,
+                            shape = RoundedCornerShape(16.dp)
+                        )
+                        .padding(16.dp)
+                    ,
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    if (state.recommendedItems.isNotEmpty()) {
+                        Column {
+                            Text(
+                                text = stringResource(R.string.recommended_title).uppercase(),
+                                style = label_2_semiBold.copy(color = textSecondary),
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                items(state.recommendedItems) { recommendedItem ->
+                                    CartToppingCard(
+                                        imageUrl = recommendedItem.image,
+                                        cartItem = recommendedItem,
+                                        onClick = {
+                                            onAction(
+                                                CartActions.OnCartItemQuantityChange(
+                                                    reference = recommendedItem.reference,
+                                                    quantity = recommendedItem.quantity
+                                                )
+                                            )
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
 
 //            Spacer(modifier = Modifier.height(16.dp))
 
@@ -141,6 +152,8 @@ private fun TabletCartScreenUI(
 //                buttonText = "Proceed to Checkout (${state.totalPrice.formatToPrice()})",
 //                onClick = { /* Checkout click */ }
 //            )
+                }
+            }
         }
     }
 }
