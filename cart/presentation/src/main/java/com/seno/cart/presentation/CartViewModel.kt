@@ -38,10 +38,7 @@ class CartViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             _state.update { it.copy(isLoading = true) }
 
-            // Load available drinks and sauces
             val allDrinksAndSnacks = loadAllDrinksAndSnacks().shuffled()
-
-            // Update the state with base recommended items
             _state.update { it.copy(recommendedItems = allDrinksAndSnacks.take(MAX_RECOMMENDED_ITEMS_TO_SHOW)) }
 
             val cartId = userData.getCartId().first()
@@ -62,7 +59,6 @@ class CartViewModel(
                                 return@collect
                             }
 
-                            // Fetch corresponding product details
                             val products = productRepository.getProductsByReference(
                                 cartItems.map { item -> item.reference }
                             ).first()

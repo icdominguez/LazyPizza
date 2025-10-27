@@ -2,8 +2,8 @@ package com.seno.cart.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -14,11 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -105,7 +105,7 @@ private fun TabletCartScreenUI(
                     }
                 }
 
-                // Right side — Recommendations and checkout
+                // Right side — Recommendations
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -126,7 +126,10 @@ private fun TabletCartScreenUI(
                                 style = label_2_semiBold.copy(color = textSecondary),
                                 modifier = Modifier.padding(bottom = 8.dp)
                             )
-                            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            LazyRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                contentPadding = PaddingValues(horizontal = 8.dp)
+                            ) {
                                 items(state.recommendedItems) { recommendedItem ->
                                     CartToppingCard(
                                         imageUrl = recommendedItem.image,
@@ -144,14 +147,6 @@ private fun TabletCartScreenUI(
                             }
                         }
                     }
-
-//            Spacer(modifier = Modifier.height(16.dp))
-
-//            LazyPizzaPrimaryButton(
-//                modifier = Modifier.fillMaxWidth(),
-//                buttonText = "Proceed to Checkout (${state.totalPrice.formatToPrice()})",
-//                onClick = { /* Checkout click */ }
-//            )
                 }
             }
         }
@@ -206,7 +201,6 @@ private fun MobileCartScreenUI(
                 item {
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Recommended section - only show if there are recommended items
                     if (state.recommendedItems.isNotEmpty()) {
                         Text(
                             text = stringResource(R.string.recommended_title).uppercase(),
@@ -220,9 +214,10 @@ private fun MobileCartScreenUI(
 
                         LazyRow(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            contentPadding = PaddingValues(horizontal = 8.dp)
                         ) {
-                            items(state.recommendedItems) { recommendedItem ->
+                            itemsIndexed(state.recommendedItems) { index, recommendedItem ->
                                 CartToppingCard(
                                     imageUrl = recommendedItem.image,
                                     cartItem = recommendedItem,
@@ -238,25 +233,8 @@ private fun MobileCartScreenUI(
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.height(24.dp))
-
                 }
             }
-            val totalPrice = remember(state.cartItems) {
-                state.cartItems.sumOf { it.price * it.quantity }
-            }
-//            if (state.recommendedItems.isNotEmpty()) {
-//                LazyPizzaPrimaryButton(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(bottom = 24.dp)
-//                    ,
-//                    buttonText = "Proceed to Checkout $(${state.totalPrice.formatToPrice()})",
-//                    onClick = {
-//
-//                    }
-//                )
-//            }
         }
     }
 }
