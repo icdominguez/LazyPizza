@@ -1,7 +1,6 @@
 package com.seno.cart.presentation
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,12 +20,10 @@ import androidx.compose.ui.unit.dp
 import com.seno.cart.presentation.components.CartToppingCard
 import com.seno.cart.presentation.components.EmptyCartComponent
 import com.seno.core.presentation.components.LoadingComponent
-import com.seno.core.presentation.components.button.LazyPizzaPrimaryButton
 import com.seno.core.presentation.components.card.ProductCard
 import com.seno.core.presentation.theme.LazyPizzaTheme
 import com.seno.core.presentation.theme.label_2_semiBold
 import com.seno.core.presentation.theme.textSecondary
-import com.seno.core.presentation.utils.formatToPrice
 
 @Composable
 fun CartScreen(
@@ -96,7 +93,6 @@ fun CartScreen(
                                 CartToppingCard(
                                     imageUrl = recommendedItem.image,
                                     cartItem = recommendedItem,
-                                    extraToppings = recommendedItem.extraToppingsRelated,
                                     onClick = {
                                         onAction(CartActions.OnAddRecommendedItemClick(recommendedItem.reference))
                                     }

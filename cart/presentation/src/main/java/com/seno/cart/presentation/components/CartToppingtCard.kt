@@ -5,7 +5,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -42,7 +41,6 @@ internal fun CartToppingCard(
     imageUrl: String,
     onClick: () -> Unit,
     cartItem: CartItemUI,
-    extraToppings: List<String>,
 ) {
     Column(
         modifier = modifier
@@ -71,17 +69,12 @@ internal fun CartToppingCard(
                 ),
             contentScale = ContentScale.Fit
         )
-        if (extraToppings.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = cartItem.extraToppingsRelated.joinToString(","),
-                style = body_1_regular.copy(
-                    color = textSecondary
-                ),
-                modifier = Modifier.padding(start = 8.dp)
-            )
-        }
+        Text(
+            text = cartItem.name,
+            style = body_1_regular.copy(color = textSecondary),
+            modifier = Modifier.padding(start = 8.dp, top = 8.dp, bottom = 8.dp)
+        )
 
         Row(
             modifier = Modifier
@@ -97,11 +90,7 @@ internal fun CartToppingCard(
                 )
             )
             IconButton(
-                onClick = {
-                    // handle the logic when item is selected add to the list of items in the cart,
-                    // once it's selected remove from recommended list.
-                    onClick()
-                },
+                onClick = onClick,
                 modifier = Modifier
                     .padding(start = 8.dp)
                     .border(
@@ -114,7 +103,7 @@ internal fun CartToppingCard(
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.plus_ic),
-                    contentDescription = "Increase",
+                    contentDescription = "Add to cart",
                     tint = primary
                 )
             }
@@ -132,12 +121,9 @@ private fun CartToppingCardPreview() {
         cartItem = CartItemUI(
             reference = "",
             image = "",
-            name = "",
-            price = 3.12,
+            name = "BBQ Sauce",
+            price = 0.59,
             type = ProductType.EXTRA_TOPPING,
-        ),
-        extraToppings = listOf(
-            "BBQ Sauce",
         )
     )
 }

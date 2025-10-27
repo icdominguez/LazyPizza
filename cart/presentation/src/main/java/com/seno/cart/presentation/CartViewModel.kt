@@ -172,10 +172,11 @@ class CartViewModel(
             val allProducts = productRepository.getAllProducts().first()
 
             allDrinksAndSnacks = allProducts.filter {
-                it.type == ProductType.DRINK || it.type == ProductType.SAUCE
+                it.type == ProductType.DRINK ||
+                        it.type == ProductType.SAUCE
             }.map { product ->
                 CartItemUI(
-                    reference = "products/${product.id}", /* <= this should have same reference with firestore database*/
+                    reference = "${product.type.name.lowercase()}s/${product.id}",
                     quantity = 1,
                     image = product.image,
                     name = product.name,
@@ -187,7 +188,6 @@ class CartViewModel(
             allDrinksAndSnacks = emptyList()
         }
     }
-
     private fun getFilteredRecommendedItems(cartItems: List<CartItemUI>): List<CartItemUI> {
         val cartReferences = cartItems.map { it.reference }
         return allDrinksAndSnacks
