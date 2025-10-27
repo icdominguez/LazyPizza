@@ -1,5 +1,6 @@
 package com.seno.cart.presentation
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -120,8 +122,9 @@ private fun TabletCartScreenUI(
                                 cartItem = recommendedItem,
                                 onClick = {
                                     onAction(
-                                        CartActions.OnAddRecommendedItemClick(
-                                            recommendedItem.reference
+                                        CartActions.OnCartItemQuantityChange(
+                                            reference = recommendedItem.reference,
+                                            quantity = recommendedItem.quantity
                                         )
                                     )
                                 }
@@ -212,8 +215,9 @@ private fun MobileCartScreenUI(
                                     cartItem = recommendedItem,
                                     onClick = {
                                         onAction(
-                                            CartActions.OnAddRecommendedItemClick(
-                                                recommendedItem.reference
+                                            CartActions.OnCartItemQuantityChange(
+                                                reference = recommendedItem.reference,
+                                                quantity = recommendedItem.quantity
                                             )
                                         )
                                     }
@@ -224,6 +228,9 @@ private fun MobileCartScreenUI(
                     Spacer(modifier = Modifier.height(24.dp))
 
                 }
+            }
+            val totalPrice = remember(state.cartItems) {
+                state.cartItems.sumOf { it.price * it.quantity }
             }
 //            if (state.recommendedItems.isNotEmpty()) {
 //                LazyPizzaPrimaryButton(

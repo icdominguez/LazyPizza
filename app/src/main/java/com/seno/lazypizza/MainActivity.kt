@@ -1,6 +1,5 @@
 package com.seno.lazypizza
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -31,9 +30,6 @@ class MainActivity : ComponentActivity() {
                     state = state,
                     navHostController = navHostController
                 )
-
-                val intent = Intent()
-                val something = intent.putExtra("data","Hello world")
             }
         }
     }

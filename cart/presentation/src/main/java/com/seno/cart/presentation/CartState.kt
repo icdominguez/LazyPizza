@@ -8,5 +8,4 @@ data class CartState(
     val cartItems: List<CartItemUI> = emptyList(),
     val recommendedItems: List<CartItemUI> = emptyList(),
     val cartId: String = "",
-    val totalPrice: Double = 0.0
 )
