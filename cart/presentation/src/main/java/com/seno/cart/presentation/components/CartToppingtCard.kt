@@ -46,6 +46,7 @@ internal fun CartToppingCard(
 ) {
     Column(
         modifier = modifier
+            .padding(start = 8.dp)
             .width(160.dp)
             .shadow(
                 elevation = 8.dp,
