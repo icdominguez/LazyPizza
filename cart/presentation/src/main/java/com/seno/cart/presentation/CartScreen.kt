@@ -283,7 +283,7 @@ private fun MobileCartScreenUI(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                         .padding(bottom = 24.dp),
-                    buttonText = "Proceed to Checkout (${totalPrice.formatToPrice()})",
+                    buttonText = "Proceed to Checkout ($${totalPrice.formatToPrice()})",
                     onClick = { /* Checkout click */ }
                 )
             }
