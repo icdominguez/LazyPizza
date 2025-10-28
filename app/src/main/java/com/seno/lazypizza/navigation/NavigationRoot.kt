@@ -17,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navigation
 import com.seno.cart.presentation.CartRoot
+import com.seno.cart.presentation.components.CartTopBar
 import com.seno.core.presentation.components.LazyPizzaDefaultScreen
 import com.seno.core.presentation.components.bar.LazyPizzaMenuBar
 import com.seno.core.presentation.model.NavigationMenu
@@ -81,6 +82,9 @@ fun NavigationRoot(
 
                 currentRoute?.hasRoute<Screen.History.HistoryScreen>() == true -> {
                     HistoryTopBar()
+                }
+                currentRoute?.hasRoute<Screen.Cart.CartScreen>() == true -> {
+                    CartTopBar()
                 }
             }
         },

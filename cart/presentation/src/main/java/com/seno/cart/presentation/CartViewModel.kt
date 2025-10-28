@@ -35,90 +35,88 @@ class CartViewModel(
     val event = _event.receiveAsFlow()
 
     init {
-        viewModelScope.launch(context = Dispatchers.IO) {
-
+        viewModelScope.launch(Dispatchers.IO) {
             _state.update { it.copy(isLoading = true) }
 
-            val cartId = userData.getCartId().first()
+            val allDrinksAndSnacks = loadAllDrinksAndSnacks().shuffled()
+            _state.update { it.copy(recommendedItems = allDrinksAndSnacks.take(MAX_RECOMMENDED_ITEMS_TO_SHOW)) }
 
+            val cartId = userData.getCartId().first()
             cartId?.let {
-                // 1. Get all cart items. Now we need to keep the flow open to listen for changes in all products screen
-                cartRepository.getCart(cartId).collect { cartItemsResponse ->
-                    when (cartItemsResponse) {
+                cartRepository.getCart(it).collect { response ->
+                    when (response) {
                         is FirebaseResult.Success -> {
-                            val cartItems = cartItemsResponse.data
-                            // 2. Get products in cart to know the price, images etc
-                            val productsInCart = productRepository.getProductsByReference(
-                                references = cartItems.map { it.reference }
+                            val cartItems = response.data
+                            if (cartItems.isEmpty()) {
+                                _state.update { state ->
+                                    state.copy(
+                                        cartItems = emptyList(),
+                                        cartId = it,
+                                        isLoading = false,
+                                        recommendedItems = allDrinksAndSnacks.take(MAX_RECOMMENDED_ITEMS_TO_SHOW)
+                                    )
+                                }
+                                return@collect
+                            }
+
+                            val products = productRepository.getProductsByReference(
+                                cartItems.map { item -> item.reference }
                             ).first()
 
-                            // 3. Iterate through products to create cart items
-                            val cartItemsUI = productsInCart.mapIndexed { index, product ->
-                                // If the product is a pizza it could have extra toppings. So we need to get them and calculate the price. Also create the corresponding string for showing them
+                            val cartItemsUI = products.mapIndexed { index, product ->
+                                val cartItem = cartItems[index]
                                 if (product.type == ProductType.PIZZA) {
-                                    val identityKey = (cartItems[index]).identityKey()
+                                    val extraToppings = productRepository.getProductsByReference(
+                                        cartItem.extraToppings.map { it.reference }
+                                    ).first()
 
-                                    val pizzaExtraToppings =
-                                        productRepository.getProductsByReference(
-                                            references = cartItems[index].extraToppings.map { it.reference }
-                                        ).first()
+                                    val formattedExtras = extraToppings.map { topping ->
+                                        val qty = cartItem.extraToppings.find {
+                                            it.reference.substringAfterLast("/") == topping.id
+                                        }?.quantity ?: 0
+                                        "${qty}x ${topping.name}"
+                                    }
 
-                                    val pizzaExtraToppingsFormatted =
-                                        pizzaExtraToppings.map { extraTopping ->
-                                            val quantity = cartItems[index].extraToppings.find {
-                                                it.reference.substringAfterLast("/") == extraTopping.id
-                                            }?.quantity ?: 0
-                                            "${quantity}x ${extraTopping.name}"
-                                        }
-
-                                    val extraToppingsTotal =
-                                        pizzaExtraToppings.sumOf { extraTopping ->
-                                            val quantity = cartItems[index].extraToppings.find {
-                                                it.reference.substringAfterLast("/") == extraTopping.id
-                                            }?.quantity ?: 0
-                                            extraTopping.price * quantity
-                                        }
-
-                                    val totalPrice = product.price + extraToppingsTotal
+                                    val extraCost = extraToppings.sumOf { topping ->
+                                        val qty = cartItem.extraToppings.find {
+                                            it.reference.substringAfterLast("/") == topping.id
+                                        }?.quantity ?: 0
+                                        topping.price * qty
+                                    }
 
                                     CartItemUI(
-                                        reference = identityKey,
-                                        quantity = cartItems[index].quantity,
+                                        reference = cartItem.identityKey(),
+                                        quantity = cartItem.quantity,
                                         image = product.image,
                                         name = product.name,
-                                        price = totalPrice,
+                                        price = product.price + extraCost,
                                         type = product.type,
-                                        extraToppingsRelated = pizzaExtraToppingsFormatted,
+                                        extraToppingsRelated = formattedExtras
                                     )
                                 } else {
                                     CartItemUI(
-                                        reference = cartItems[index].reference,
-                                        quantity = cartItems[index].quantity,
+                                        reference = cartItem.reference,
+                                        quantity = cartItem.quantity,
                                         image = product.image,
                                         name = product.name,
                                         price = product.price,
-                                        type = product.type,
+                                        type = product.type
                                     )
                                 }
                             }
 
-                            // 4. Update cart with the data
                             _state.update { state ->
                                 state.copy(
+                                    cartId = it,
                                     cartItems = cartItemsUI,
-                                    cartId = cartId,
                                     isLoading = false,
+                                    recommendedItems = getFilteredRecommendedItems(allDrinksAndSnacks, cartItemsUI)
                                 )
                             }
-
                         }
 
                         is FirebaseResult.Error -> {
-                            _event.trySend(
-                                CartEvents.Error(
-                                    cartItemsResponse.exception.message ?: "Error getting the cart"
-                                )
-                            )
+                            _event.trySend(CartEvents.Error(response.exception.message ?: "Error getting the cart"))
                         }
                     }
                 }
@@ -128,78 +126,130 @@ class CartViewModel(
         }
     }
 
+    private suspend fun loadAllDrinksAndSnacks(): List<CartItemUI> = try {
+        val allProducts = productRepository.getAllProducts().first()
+
+        allProducts.filter {
+            it.type == ProductType.DRINK || it.type == ProductType.SAUCE
+        }.map { product ->
+            CartItemUI(
+                reference = "${product.type.name.lowercase()}s/${product.id}",
+                quantity = 1,
+                image = product.image,
+                name = product.name,
+                price = product.price,
+                type = product.type
+            )
+        }
+    } catch (e: Exception) {
+        _event.trySend(
+            CartEvents.Error(
+                error = "Failed to load all drinks and sauces: ${e.message}"
+            )
+        )
+
+        emptyList()
+    }
+
+
+    private fun getFilteredRecommendedItems(
+        allDrinksAndSnacks: List<CartItemUI>,
+        cartItems: List<CartItemUI>
+    ): List<CartItemUI> {
+        val currentRefs = cartItems.map { it.reference }
+        return allDrinksAndSnacks.filter { it.reference !in currentRefs }.take(10)
+    }
+
     fun onAction(action: CartActions) {
         when (action) {
-            is CartActions.OnCartItemQuantityChange -> onCartItemQuantityChange(
-                action.reference,
-                action.quantity
-            )
-
+            is CartActions.OnCartItemQuantityChange -> onCartItemQuantityChange(action.reference, action.quantity)
             is CartActions.OnDeleteCartItemClick -> onDeleteProductClick(action.reference)
             else -> Unit
         }
     }
 
     private fun onCartItemQuantityChange(reference: String, quantity: Int) {
-        viewModelScope.launch(context = Dispatchers.IO) {
-            val productName = _state.value.cartItems.find { it.reference == reference }?.name
+        viewModelScope.launch(Dispatchers.IO) {
+            _state.update { it.copy(isUpdatingCart = true) }
 
-            _state.update {
-                it.copy(isUpdatingCart = true)
-            }
+            try {
+                val current = _state.value
+                val existing = current.cartItems.find { it.reference == reference }
+                val recommended = current.recommendedItems.find { it.reference == reference }
 
-            val updatedCartItems = _state.value.cartItems.toMutableList().apply {
-                val selectedCartItemIndex = this.indexOfFirst { it.reference == reference }
-                if (selectedCartItemIndex != -1) {
-                    this[selectedCartItemIndex] =
-                        this[selectedCartItemIndex].copy(quantity = quantity)
-                }
-            }.map { it.toCartItem() }
+                when {
+                    // Add new recommended item
+                    existing == null && recommended != null && quantity > 0 -> {
+                        val newItem = recommended.copy(quantity = quantity)
+                        val newCart = (current.cartItems + newItem).map { it.toCartItem() }
 
-            cartRepository.updateCart(_state.value.cartId, updatedCartItems)
-            _state.update {
-                it.copy(isUpdatingCart = false)
-            }
-            if (quantity == 0) {
-                SnackbarController.sendEvent(
-                    event = SnackbarEvent(
-                        message = "$productName removed from cart",
-                        action = SnackbarAction(
-                            name = "OK",
-                            action = {}
+                        when (val result = cartRepository.updateCart(current.cartId, newCart)) {
+                            is FirebaseResult.Success -> {
+                                _state.update {
+                                    it.copy(
+                                        cartItems = current.cartItems + newItem,
+                                        recommendedItems = current.recommendedItems.filterNot { it.reference == reference },
+                                        isUpdatingCart = false
+                                    )
+                                }
+                                SnackbarController.sendEvent(
+                                    SnackbarEvent("${recommended.name} added to cart", SnackbarAction("OK") {})
+                                )
+                            }
+                            is FirebaseResult.Error -> {
+                                _state.update { it.copy(isUpdatingCart = false) }
+                                _event.trySend(CartEvents.Error("Failed to add item: ${result.exception.message}"))
+                            }
+                        }
+                    }
+
+                    // Remove item
+                    existing != null && quantity == 0 -> {
+                        val updated = current.cartItems.filterNot { it.reference == reference }.map { it.toCartItem() }
+                        cartRepository.updateCart(current.cartId, updated)
+                        _state.update { it.copy(isUpdatingCart = false) }
+
+                        SnackbarController.sendEvent(
+                            SnackbarEvent("${existing.name} removed from cart", SnackbarAction("OK") {})
                         )
-                    )
-                )
+                    }
+
+                    // Update quantity
+                    existing != null && quantity > 0 -> {
+                        val updatedCartItems = current.cartItems.map {
+                            if (it.reference == reference) it.copy(quantity = quantity) else it
+                        }
+                        val updated = updatedCartItems.map { it.toCartItem() }
+                        cartRepository.updateCart(current.cartId, updated)
+                        _state.update { it.copy(cartItems = updatedCartItems, isUpdatingCart = false) }
+                    }
+
+                    else -> _state.update { it.copy(isUpdatingCart = false) }
+                }
+            } catch (e: Exception) {
+                _state.update { it.copy(isUpdatingCart = false) }
+                _event.trySend(CartEvents.Error("Failed to update cart: ${e.message}"))
             }
         }
     }
 
     private fun onDeleteProductClick(reference: String) {
-        viewModelScope.launch(context = Dispatchers.IO) {
-            val productName = _state.value.cartItems.find { it.reference == reference }?.name
+        viewModelScope.launch(Dispatchers.IO) {
+            val current = _state.value
+            val itemName = current.cartItems.find { it.reference == reference }?.name
 
-            _state.update {
-                it.copy(isUpdatingCart = true)
-            }
+            val updated = current.cartItems.filterNot { it.reference == reference }.map { it.toCartItem() }
+            cartRepository.updateCart(current.cartId, updated)
 
-            val updatedCartItems = _state.value.cartItems
-                .filter { it.reference != reference }
-                .map { it.toCartItem() }
-            cartRepository.updateCart(_state.value.cartId, updatedCartItems)
-
-            _state.update {
-                it.copy(isUpdatingCart = false)
-            }
+            _state.update { it.copy(isUpdatingCart = false) }
 
             SnackbarController.sendEvent(
-                event = SnackbarEvent(
-                    message = "$productName removed from cart",
-                    action = SnackbarAction(
-                        name = "OK",
-                        action = {}
-                    )
-                )
+                SnackbarEvent("$itemName removed from cart", SnackbarAction("OK") {})
             )
         }
+    }
+
+    companion object {
+        const val MAX_RECOMMENDED_ITEMS_TO_SHOW = 10
     }
 }

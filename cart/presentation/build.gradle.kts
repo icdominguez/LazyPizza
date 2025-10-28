@@ -14,5 +14,6 @@ dependencies {
         }
         implementation(products.domain)
         implementation(cart.domain)
+        implementation(libs.coil.compose)
     }
 }
