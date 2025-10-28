@@ -174,7 +174,7 @@ private fun NavGraphBuilder.mainGraph(navHostController: NavHostController) {
     composable<Screen.Menu.ProductDetail> {
         ProductDetailRoot(
             onAddToCartClick = {
-                navHostController.navigateUp()
+                navHostController.navigate(Screen.Cart)
             }
         )
     }

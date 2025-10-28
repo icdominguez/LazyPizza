@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -153,7 +154,7 @@ fun ProductCard(
                 } else {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(
-                            onClick = { if (quantity >= 1) onQuantityChange(quantity - 1) },
+                            onClick = { if (quantity > 1) onQuantityChange(quantity - 1) },
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .border(
@@ -162,12 +163,13 @@ fun ProductCard(
                                     shape = RoundedCornerShape(12.dp)
                                 )
                                 .padding(4.dp)
-                                .size(22.dp)
+                                .size(22.dp),
+                            enabled = quantity > 1
                         ) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(R.drawable.minus_ic),
                                 contentDescription = "Decrease",
-                                modifier = Modifier.size(16.dp)
+                                modifier = Modifier.size(16.dp),
                             )
                         }
 
@@ -195,6 +197,7 @@ fun ProductCard(
                             )
                         }
                     }
+
 
                     Column(horizontalAlignment = Alignment.End) {
                         Text(
