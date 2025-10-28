@@ -2,6 +2,7 @@ package com.seno.cart.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,12 +17,14 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -172,94 +175,117 @@ private fun MobileCartScreenUI(
     state: CartState,
     onAction: (CartActions) -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                start = 16.dp,
-                end = 16.dp,
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally,
+    val totalPrice = remember(state.cartItems) {
+        state.cartItems.sumOf { it.price * it.quantity }
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        if (state.isLoading) {
-            LoadingComponent(text = "Getting your cart, please wait ...")
-        } else if (state.cartItems.isEmpty()) {
-            EmptyCartComponent(
-                modifier = Modifier
-                    .padding(top = 120.dp),
-                onBackToMenuClick = { onAction(CartActions.OnNavigateToMenuClick) }
-            )
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                items(state.cartItems) { cartItem ->
-                    ProductCard(
-                        imageUrl = cartItem.image,
-                        productName = cartItem.name,
-                        productPrice = cartItem.price,
-                        quantity = cartItem.quantity,
-                        onQuantityChange = { quantity ->
-                            onAction(
-                                CartActions.OnCartItemQuantityChange(
-                                    reference = cartItem.reference,
-                                    quantity = quantity,
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            if (state.isLoading) {
+                LoadingComponent(text = "Getting your cart, please wait ...")
+            } else if (state.cartItems.isEmpty()) {
+                EmptyCartComponent(
+                    modifier = Modifier
+                        .padding(top = 120.dp),
+                    onBackToMenuClick = { onAction(CartActions.OnNavigateToMenuClick) }
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    contentPadding = PaddingValues(bottom = 140.dp)
+                ) {
+                    items(state.cartItems) { cartItem ->
+                        ProductCard(
+                            imageUrl = cartItem.image,
+                            productName = cartItem.name,
+                            productPrice = cartItem.price,
+                            quantity = cartItem.quantity,
+                            onQuantityChange = { quantity ->
+                                onAction(
+                                    CartActions.OnCartItemQuantityChange(
+                                        reference = cartItem.reference,
+                                        quantity = quantity,
+                                    )
                                 )
-                            )
-                        },
-                        onDeleteClicked = { onAction(CartActions.OnDeleteCartItemClick(cartItem.reference)) },
-                        extraToppings = cartItem.extraToppingsRelated,
-                    )
-                }
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    if (state.recommendedItems.isNotEmpty()) {
-                        Text(
-                            text = stringResource(R.string.recommended_title).uppercase(),
-                            style = label_2_semiBold.copy(
-                                color = textSecondary
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 8.dp)
+                            },
+                            onDeleteClicked = { onAction(CartActions.OnDeleteCartItemClick(cartItem.reference)) },
+                            extraToppings = cartItem.extraToppingsRelated,
                         )
+                    }
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                        LazyRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            contentPadding = PaddingValues(horizontal = 8.dp)
-                        ) {
-                            itemsIndexed(state.recommendedItems) { index, recommendedItem ->
-                                CartToppingCard(
-                                    imageUrl = recommendedItem.image,
-                                    cartItem = recommendedItem,
-                                    onClick = {
-                                        onAction(
-                                            CartActions.OnCartItemQuantityChange(
-                                                reference = recommendedItem.reference,
-                                                quantity = recommendedItem.quantity
+                        if (state.recommendedItems.isNotEmpty()) {
+                            Text(
+                                text = stringResource(R.string.recommended_title).uppercase(),
+                                style = label_2_semiBold.copy(
+                                    color = textSecondary
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 8.dp)
+                            )
+
+                            LazyRow(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                contentPadding = PaddingValues(horizontal = 8.dp)
+                            ) {
+                                itemsIndexed(state.recommendedItems) { index, recommendedItem ->
+                                    CartToppingCard(
+                                        imageUrl = recommendedItem.image,
+                                        cartItem = recommendedItem,
+                                        onClick = {
+                                            onAction(
+                                                CartActions.OnCartItemQuantityChange(
+                                                    reference = recommendedItem.reference,
+                                                    quantity = recommendedItem.quantity
+                                                )
                                             )
-                                        )
-                                    }
-                                )
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
-                    val totalPrice = remember(state.cartItems) {
-                        state.cartItems.sumOf { it.price * it.quantity }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    LazyPizzaPrimaryButton(
-                        modifier = Modifier.fillMaxWidth(),
-                        buttonText = "Proceed to Checkout (${totalPrice.formatToPrice()})",
-                        onClick = { /* Checkout click */ }
-                    )
-                    Spacer(modifier = Modifier.height(24.dp))
                 }
+            }
+        }
+        if (!state.isLoading && state.cartItems.isNotEmpty()) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .height(125.dp)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.surface.copy(alpha = 0f),
+                                MaterialTheme.colorScheme.surface
+                            ),
+                        )
+                    ),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                LazyPizzaPrimaryButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 24.dp),
+                    buttonText = "Proceed to Checkout (${totalPrice.formatToPrice()})",
+                    onClick = { /* Checkout click */ }
+                )
             }
         }
     }
