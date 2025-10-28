@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -27,12 +28,14 @@ import androidx.compose.ui.unit.dp
 import com.seno.cart.presentation.components.CartToppingCard
 import com.seno.cart.presentation.components.EmptyCartComponent
 import com.seno.core.presentation.components.LoadingComponent
+import com.seno.core.presentation.components.button.LazyPizzaPrimaryButton
 import com.seno.core.presentation.components.card.ProductCard
 import com.seno.core.presentation.theme.LazyPizzaTheme
 import com.seno.core.presentation.theme.label_2_semiBold
 import com.seno.core.presentation.theme.surfaceHigher
 import com.seno.core.presentation.theme.textSecondary
 import com.seno.core.presentation.utils.DeviceConfiguration
+import com.seno.core.presentation.utils.formatToPrice
 
 @Composable
 fun CartScreen(
@@ -146,6 +149,17 @@ private fun TabletCartScreenUI(
                                 }
                             }
                         }
+                        val totalPrice = remember(state.cartItems) {
+                            state.cartItems.sumOf { it.price * it.quantity }
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            LazyPizzaPrimaryButton(
+                                modifier = Modifier.fillMaxWidth(),
+                                buttonText = "Proceed to Checkout (${totalPrice.formatToPrice()})",
+                                onClick = { /* Checkout click */ }
+                            )
                     }
                 }
             }
@@ -233,6 +247,18 @@ private fun MobileCartScreenUI(
                             }
                         }
                     }
+                    val totalPrice = remember(state.cartItems) {
+                        state.cartItems.sumOf { it.price * it.quantity }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    LazyPizzaPrimaryButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        buttonText = "Proceed to Checkout (${totalPrice.formatToPrice()})",
+                        onClick = { /* Checkout click */ }
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
                 }
             }
         }
