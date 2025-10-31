@@ -4,15 +4,23 @@
 
 ## Project Status
 
-This project is divided in 4 different milestones that are launched every fortnight. Was started being developed at 1st October.
+This project is divided in 4 different milestones that are launched every fortnight. Was started being developed at 1st October. We are currently working on Milestone 3.
 
 ### 🚨 Latest Features ###
 
-- **Main menu screen**
-  - List all available products showing them order by type with sticky headers. Pizza item click opens product detail and Menu item add it to the cart changing the state to select the amount.
-  - Search functionality. Filter products keeping sticky headers. 
-- **Detail screen**
-  - Shows the pizza ingredients and allows users to pick the extra toppings showing the add to cart button in order to go navigate there in the next milestone. 
+- **Cart**
+  -  We implemented the model in firebase to store the cart items through out the app. Because of we don't have users logged in we stored the cart id in the device using data store. The model is the following
+  <img src="assets/cart_model.png" style="width: 100%; height: auto;"/>
+
+  - Navigation Rail to show the bottom navigation bar at the left in tablet devices.
+  - The user receives feedback confirming that the item is successfully added to the cart through a snackbar.
+  - The Cart icon in the bottom navigation bar instantly updates its badge to show the current number of items in the cart.
+  - If the user changes the product quantity on any product card (using the − 1 + selector), both the badge count and the cart data are updated dynamically.
+  - For pizzas, after tapping the Add to Cart button on the Product Details screen, the app returns the user to the main Menu screen so they can continue selecting other products.
+- **History**
+  -  For the moment shows a "Not Signed In" state. Sign in will be implemented in the  next milestone
+- **Consistent code styling with ktlint**
+  - We added ktlint support to ensure consistent code style throughout project. This helps keep the code clean and consistent among all team members.
 
 ## 🧑🏽‍💻 Technical implementation
 
@@ -25,7 +33,7 @@ This project is divided in 4 different milestones that are launched every fortni
 
 ## 🎥 Demo ##
 
-https://github.com/user-attachments/assets/a930b66e-5029-46fe-8280-497891b3be67
+https://github.com/user-attachments/assets/8a7d2b22-e5b5-47b1-8c74-cb4713cd838b
 
 ## 📱 Screenshots ##
 
@@ -47,6 +55,23 @@ https://github.com/user-attachments/assets/a930b66e-5029-46fe-8280-497891b3be67
 
 </details>
 
+<details>
+  <summary>Cart</summary>
+
+| Mobile                                                            | Tablet                                                             |
+|-------------------------------------------------------------------|--------------------------------------------------------------------|
+| <img src="assets/screenshots/cart/cart_mobile.png" width="600" /> | <img src="assets/screenshots/cart/cart_tablet.png" width="1200" /> |
+
+</details>
+
+<details>
+  <summary>History</summary>
+
+| Mobile                                                                  | Tablet                                                                   |
+|-------------------------------------------------------------------------|--------------------------------------------------------------------------|
+| <img src="assets/screenshots/history/history_mobile.png" width="600" /> | <img src="assets/screenshots/history/history_tablet.png" width="1200" /> |
+</details>
+
 ## 🪪 License
 
 This project is an open-source and free to use. Feel free to fork and upload your commits.
@@ -55,8 +80,11 @@ This project is an open-source and free to use. Feel free to fork and upload you
 
 - Firebase implementation.
 - Mastering Koin dependency.
+- Data store for user preferences.
+- Navigation rail
 - Backend development.
 - Responsive design.
+- Ktlint for consistent code style.
 - Cooperating between co-workers.
 
 ---
