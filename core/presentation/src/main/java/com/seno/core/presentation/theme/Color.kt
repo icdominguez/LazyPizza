@@ -17,10 +17,11 @@ val outline = Color(0xFFE6E7ED)
 val outline50 = Color(0x80E6E7ED)
 val primary = Color(0xFFF36B50)
 val primary8 = Color(0x14F36B50)
-val primaryGradient = listOf(
-    Color(0xFFF36B50),
-    Color(0xFFF9966F)
-)
+val primaryGradient =
+    listOf(
+        Color(0xFFF36B50),
+        Color(0xFFF9966F),
+    )
 
 val ColorScheme.success: Color
     get() = Color(0xFF2F9E5A)

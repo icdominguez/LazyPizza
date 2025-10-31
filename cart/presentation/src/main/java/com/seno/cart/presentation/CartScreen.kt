@@ -48,12 +48,17 @@ fun CartScreen(
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     val deviceConfiguration = DeviceConfiguration.fromWindowSizeClass(windowSizeClass)
 
-    when(deviceConfiguration) {
+    when (deviceConfiguration) {
         DeviceConfiguration.MOBILE_PORTRAIT,
-        DeviceConfiguration.MOBILE_LANDSCAPE -> { MobileCartScreenUI(state, onAction) }
+        DeviceConfiguration.MOBILE_LANDSCAPE -> {
+            MobileCartScreenUI(state, onAction)
+        }
+
         DeviceConfiguration.TABLET_PORTRAIT,
         DeviceConfiguration.TABLET_LANDSCAPE,
-        DeviceConfiguration.DESKTOP -> { TabletCartScreenUI(state, onAction) }
+        DeviceConfiguration.DESKTOP -> {
+            TabletCartScreenUI(state, onAction)
+        }
     }
 }
 
@@ -63,147 +68,35 @@ private fun TabletCartScreenUI(
     onAction: (CartActions) -> Unit
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier =
+            Modifier
+                .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (state.isLoading) {
             LoadingComponent(text = "Getting your cart, please wait ...")
         } else if (state.cartItems.isEmpty()) {
             EmptyCartComponent(
-                modifier = Modifier
-                    .padding(top = 120.dp),
-                onBackToMenuClick = { onAction(CartActions.OnNavigateToMenuClick) }
+                modifier =
+                    Modifier
+                        .padding(top = 120.dp),
+                onBackToMenuClick = { onAction(CartActions.OnNavigateToMenuClick) },
             )
         } else {
             Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(24.dp)
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(24.dp),
             ) {
                 // Left side — Cart items
                 LazyColumn(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight(),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(state.cartItems) { cartItem ->
-                        ProductCard(
-                            imageUrl = cartItem.image,
-                            productName = cartItem.name,
-                            productPrice = cartItem.price,
-                            quantity = cartItem.quantity,
-                            onQuantityChange = { quantity ->
-                                onAction(
-                                    CartActions.OnCartItemQuantityChange(
-                                        reference = cartItem.reference,
-                                        quantity = quantity
-                                    )
-                                )
-                            },
-                            onDeleteClicked = {
-                                onAction(CartActions.OnDeleteCartItemClick(cartItem.reference))
-                            },
-                            extraToppings = cartItem.extraToppingsRelated,
-                        )
-                    }
-                }
-
-                // Right side — Recommendations
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .background(
-                            color = surfaceHigher,
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .padding(16.dp)
-                    ,
-                    verticalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    if (state.recommendedItems.isNotEmpty()) {
-                        Column {
-                            Text(
-                                text = stringResource(R.string.recommended_title).uppercase(),
-                                style = label_2_semiBold.copy(color = textSecondary),
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
-                            LazyRow(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                contentPadding = PaddingValues(horizontal = 8.dp)
-                            ) {
-                                items(state.recommendedItems) { recommendedItem ->
-                                    CartToppingCard(
-                                        imageUrl = recommendedItem.image,
-                                        cartItem = recommendedItem,
-                                        onClick = {
-                                            onAction(
-                                                CartActions.OnCartItemQuantityChange(
-                                                    reference = recommendedItem.reference,
-                                                    quantity = recommendedItem.quantity
-                                                )
-                                            )
-                                        }
-                                    )
-                                }
-                            }
-                        }
-                        val totalPrice = remember(state.cartItems) {
-                            state.cartItems.sumOf { it.price * it.quantity }
-                            }
-
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            LazyPizzaPrimaryButton(
-                                modifier = Modifier.fillMaxWidth(),
-                                buttonText = "Proceed to Checkout (${totalPrice.formatToPrice()})",
-                                onClick = { /* Checkout click */ }
-                            )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun MobileCartScreenUI(
-    state: CartState,
-    onAction: (CartActions) -> Unit
-) {
-    val totalPrice = remember(state.cartItems) {
-        state.cartItems.sumOf { it.price * it.quantity }
-    }
-
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            if (state.isLoading) {
-                LoadingComponent(text = "Getting your cart, please wait ...")
-            } else if (state.cartItems.isEmpty()) {
-                EmptyCartComponent(
-                    modifier = Modifier
-                        .padding(top = 120.dp),
-                    onBackToMenuClick = { onAction(CartActions.OnNavigateToMenuClick) }
-                )
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    contentPadding = PaddingValues(bottom = 140.dp)
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     items(state.cartItems) { cartItem ->
                         ProductCard(
@@ -216,10 +109,130 @@ private fun MobileCartScreenUI(
                                     CartActions.OnCartItemQuantityChange(
                                         reference = cartItem.reference,
                                         quantity = quantity,
-                                    )
+                                    ),
                                 )
                             },
-                            onDeleteClicked = { onAction(CartActions.OnDeleteCartItemClick(cartItem.reference)) },
+                            onDeleteClick = {
+                                onAction(CartActions.OnDeleteCartItemClick(cartItem.reference))
+                            },
+                            extraToppings = cartItem.extraToppingsRelated,
+                        )
+                    }
+                }
+
+                // Right side — Recommendations
+                Column(
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .background(
+                                color = surfaceHigher,
+                                shape = RoundedCornerShape(16.dp),
+                            ).padding(16.dp),
+                    verticalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    if (state.recommendedItems.isNotEmpty()) {
+                        Column {
+                            Text(
+                                text = stringResource(R.string.recommended_title).uppercase(),
+                                style = label_2_semiBold.copy(color = textSecondary),
+                                modifier = Modifier.padding(bottom = 8.dp),
+                            )
+                            LazyRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                contentPadding = PaddingValues(horizontal = 8.dp),
+                            ) {
+                                items(state.recommendedItems) { recommendedItem ->
+                                    CartToppingCard(
+                                        imageUrl = recommendedItem.image,
+                                        cartItem = recommendedItem,
+                                        onClick = {
+                                            onAction(
+                                                CartActions.OnCartItemQuantityChange(
+                                                    reference = recommendedItem.reference,
+                                                    quantity = recommendedItem.quantity,
+                                                ),
+                                            )
+                                        },
+                                    )
+                                }
+                            }
+                        }
+                        val totalPrice =
+                            remember(state.cartItems) {
+                                state.cartItems.sumOf { it.price * it.quantity }
+                            }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        LazyPizzaPrimaryButton(
+                            modifier = Modifier.fillMaxWidth(),
+                            buttonText = "Proceed to Checkout (${totalPrice.formatToPrice()})",
+                            onClick = { /* Checkout click */ },
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MobileCartScreenUI(
+    state: CartState,
+    onAction: (CartActions) -> Unit
+) {
+    val totalPrice =
+        remember(state.cartItems) {
+            state.cartItems.sumOf { it.price * it.quantity }
+        }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                    ),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            if (state.isLoading) {
+                LoadingComponent(text = "Getting your cart, please wait ...")
+            } else if (state.cartItems.isEmpty()) {
+                EmptyCartComponent(
+                    modifier =
+                        Modifier
+                            .padding(top = 120.dp),
+                    onBackToMenuClick = { onAction(CartActions.OnNavigateToMenuClick) },
+                )
+            } else {
+                LazyColumn(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(),
+                    contentPadding = PaddingValues(bottom = 140.dp),
+                ) {
+                    items(state.cartItems) { cartItem ->
+                        ProductCard(
+                            imageUrl = cartItem.image,
+                            productName = cartItem.name,
+                            productPrice = cartItem.price,
+                            quantity = cartItem.quantity,
+                            onQuantityChange = { quantity ->
+                                onAction(
+                                    CartActions.OnCartItemQuantityChange(
+                                        reference = cartItem.reference,
+                                        quantity = quantity,
+                                    ),
+                                )
+                            },
+                            onDeleteClick = { onAction(CartActions.OnDeleteCartItemClick(cartItem.reference)) },
                             extraToppings = cartItem.extraToppingsRelated,
                         )
                     }
@@ -229,18 +242,20 @@ private fun MobileCartScreenUI(
                         if (state.recommendedItems.isNotEmpty()) {
                             Text(
                                 text = stringResource(R.string.recommended_title).uppercase(),
-                                style = label_2_semiBold.copy(
-                                    color = textSecondary
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(bottom = 8.dp)
+                                style =
+                                    label_2_semiBold.copy(
+                                        color = textSecondary,
+                                    ),
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 8.dp),
                             )
 
                             LazyRow(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                contentPadding = PaddingValues(horizontal = 8.dp)
+                                contentPadding = PaddingValues(horizontal = 8.dp),
                             ) {
                                 itemsIndexed(state.recommendedItems) { index, recommendedItem ->
                                     CartToppingCard(
@@ -250,10 +265,10 @@ private fun MobileCartScreenUI(
                                             onAction(
                                                 CartActions.OnCartItemQuantityChange(
                                                     reference = recommendedItem.reference,
-                                                    quantity = recommendedItem.quantity
-                                                )
+                                                    quantity = recommendedItem.quantity,
+                                                ),
                                             )
-                                        }
+                                        },
                                     )
                                 }
                             }
@@ -264,27 +279,31 @@ private fun MobileCartScreenUI(
         }
         if (!state.isLoading && state.cartItems.isNotEmpty()) {
             Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .height(125.dp)
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(
-                                MaterialTheme.colorScheme.surface.copy(alpha = 0f),
-                                MaterialTheme.colorScheme.surface
-                            ),
-                        )
-                    ),
-                contentAlignment = Alignment.BottomCenter
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .height(125.dp)
+                        .background(
+                            brush =
+                                Brush.verticalGradient(
+                                    colors =
+                                        listOf(
+                                            MaterialTheme.colorScheme.surface.copy(alpha = 0f),
+                                            MaterialTheme.colorScheme.surface,
+                                        ),
+                                ),
+                        ),
+                contentAlignment = Alignment.BottomCenter,
             ) {
                 LazyPizzaPrimaryButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 24.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .padding(bottom = 24.dp),
                     buttonText = "Proceed to Checkout ($${totalPrice.formatToPrice()})",
-                    onClick = { /* Checkout click */ }
+                    onClick = { /* Checkout click */ },
                 )
             }
         }

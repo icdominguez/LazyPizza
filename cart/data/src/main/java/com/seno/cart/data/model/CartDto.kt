@@ -12,27 +12,25 @@ data class CartDto(
     var extraToppings: List<ExtraTopping> = emptyList(),
 )
 
-fun CartItem.toCharDto(): CartDto {
-    return CartDto(
+fun CartItem.toCharDto(): CartDto =
+    CartDto(
         reference = reference,
         quantity = quantity,
-        extraToppings = extraToppings
+        extraToppings = extraToppings,
     )
-}
 
-fun CartDto.toCartItem(): CartItem {
-    return CartItem(
+fun CartDto.toCartItem(): CartItem =
+    CartItem(
         reference = reference,
         quantity = quantity,
-        extraToppings = extraToppings
+        extraToppings = extraToppings,
     )
-}
 
 fun CartDto.identityKey(): String {
-    val signature = extraToppings
-        .map { "${it.reference}:${it.quantity}" }
-        .sorted()
-        .joinToString("|")
+    val signature =
+        extraToppings
+            .map { "${it.reference}:${it.quantity}" }
+            .sorted()
+            .joinToString("|")
     return if (signature.isEmpty()) reference else "$reference##$signature"
 }
-

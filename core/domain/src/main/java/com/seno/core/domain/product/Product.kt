@@ -13,7 +13,7 @@ sealed class Product {
         override val name: String,
         override val image: String,
         override val price: Double,
-        val ingredients: List<String>
+        val ingredients: List<String>,
     ) : Product()
 
     data class Drink(
@@ -22,7 +22,7 @@ sealed class Product {
         override val name: String,
         override val image: String,
         override val price: Double,
-    ): Product()
+    ) : Product()
 
     data class IceCream(
         override val id: String,
@@ -30,7 +30,7 @@ sealed class Product {
         override val name: String,
         override val image: String,
         override val price: Double,
-    ): Product()
+    ) : Product()
 
     data class ExtraTopping(
         override val id: String,
@@ -38,7 +38,7 @@ sealed class Product {
         override val name: String,
         override val image: String,
         override val price: Double,
-    ): Product()
+    ) : Product()
 
     data class Sauce(
         override val id: String,
@@ -46,5 +46,5 @@ sealed class Product {
         override val name: String,
         override val image: String,
         override val price: Double,
-    ): Product()
+    ) : Product()
 }

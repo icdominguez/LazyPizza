@@ -23,8 +23,8 @@ import com.seno.core.presentation.theme.textPrimary
 
 @Composable
 fun LazyPizzaDefaultScreen(
-    modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
+    modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.background,
     contentWindowInsets: WindowInsets = WindowInsets.safeDrawing,
     topAppBar: @Composable () -> Unit = {},
@@ -42,9 +42,9 @@ fun LazyPizzaDefaultScreen(
                         actionContentColor = textPrimary,
                         dismissActionContentColor = textPrimary,
                         actionColor = textPrimary,
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(8.dp),
                     )
-                }
+                },
             )
         },
         modifier = modifier,
@@ -55,10 +55,11 @@ fun LazyPizzaDefaultScreen(
         val view = LocalView.current
 
         Box(
-            modifier = modifier
-                .padding(
-                    top = innerPadding.calculateTopPadding(),
-                ),
+            modifier =
+                Modifier
+                    .padding(
+                        top = innerPadding.calculateTopPadding(),
+                    ),
         ) {
             content()
         }

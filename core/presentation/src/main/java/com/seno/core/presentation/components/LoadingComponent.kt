@@ -17,21 +17,20 @@ import com.seno.core.presentation.theme.body_1_medium
 import com.seno.core.presentation.theme.primary
 
 @Composable
-fun LoadingComponent(
-    text: String,
-) {
+fun LoadingComponent(text: String) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         CircularProgressIndicator()
         Spacer(modifier = Modifier.size(8.dp))
         Text(
             text = text,
-            style = body_1_medium.copy(
-                color = primary
-            ),
+            style =
+                body_1_medium.copy(
+                    color = primary,
+                ),
         )
     }
 }

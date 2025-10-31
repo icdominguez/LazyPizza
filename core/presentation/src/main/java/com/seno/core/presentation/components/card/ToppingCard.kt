@@ -53,78 +53,80 @@ fun ToppingCard(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable { if (quantity == 0) onQuantityPlus() }
-            .border(
-                width = 1.dp,
-                color = if (quantity > 0) primary else outline50,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .background(
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .padding(8.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    color = if (quantity > 0) primary else outline50,
+                    shape = RoundedCornerShape(12.dp),
+                ).background(
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    shape = RoundedCornerShape(12.dp),
+                ).padding(8.dp)
+                .clickable { if (quantity == 0) onQuantityPlus() },
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically)
+        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
     ) {
         Box(
-            modifier = Modifier
-                .size(64.dp)
-                .background(
-                    color = primary8.copy(alpha = 0.08f),
-                    shape = RoundedCornerShape(100)
-                ),
-            contentAlignment = Alignment.Center
+            modifier =
+                Modifier
+                    .size(64.dp)
+                    .background(
+                        color = primary8.copy(alpha = 0.08f),
+                        shape = RoundedCornerShape(100),
+                    ),
+            contentAlignment = Alignment.Center,
         ) {
             AsyncImage(
                 model = imageUrl,
                 contentDescription = "Pizza",
-                modifier = Modifier
-                    .size(56.dp),
-                contentScale = ContentScale.Crop
+                modifier =
+                    Modifier
+                        .size(56.dp),
+                contentScale = ContentScale.Crop,
             )
         }
 
         Text(
             text = toppingName,
-            style = body_3_regular.copy(color = textSecondary)
+            style = body_3_regular.copy(color = textSecondary),
         )
 
         Box(
-            modifier = Modifier
-                .height(36.dp)
-                .fillMaxWidth(),
-            contentAlignment = Alignment.Center
+            modifier =
+                Modifier
+                    .height(36.dp)
+                    .fillMaxWidth(),
+            contentAlignment = Alignment.Center,
         ) {
             if (quantity == 0) {
                 Text(
                     text = "$${toppingPrice.formatToPrice()}",
-                    style = title_2.copy(color = textPrimary)
+                    style = title_2.copy(color = textPrimary),
                 )
             } else {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     IconButton(
                         onClick = { onQuantityMinus() },
-                        modifier = Modifier
-                            .padding(end = 8.dp)
-                            .border(
-                                width = 1.dp,
-                                color = outline50,
-                                shape = RoundedCornerShape(12.dp)
-                            )
-                            .padding(4.dp)
-                            .size(22.dp)
+                        modifier =
+                            Modifier
+                                .padding(end = 8.dp)
+                                .border(
+                                    width = 1.dp,
+                                    color = outline50,
+                                    shape = RoundedCornerShape(12.dp),
+                                ).padding(4.dp)
+                                .size(22.dp),
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.minus_ic),
                             contentDescription = "Decrease",
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(16.dp),
                         )
                     }
 
@@ -132,7 +134,7 @@ fun ToppingCard(
                         quantity,
                         transitionSpec = {
                             slideInVertically { -it } + fadeIn() togetherWith slideOutVertically { it } + fadeOut()
-                        }
+                        },
                     ) {
                         Text(
                             text = it.toString(),
@@ -142,20 +144,20 @@ fun ToppingCard(
 
                     IconButton(
                         onClick = { onQuantityPlus() },
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .border(
-                                width = 1.dp,
-                                color = outline50,
-                                shape = RoundedCornerShape(12.dp)
-                            )
-                            .padding(4.dp)
-                            .size(22.dp)
+                        modifier =
+                            Modifier
+                                .padding(start = 8.dp)
+                                .border(
+                                    width = 1.dp,
+                                    color = outline50,
+                                    shape = RoundedCornerShape(12.dp),
+                                ).padding(4.dp)
+                                .size(22.dp),
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.plus_ic),
                             contentDescription = "Increase",
-                            modifier = Modifier.size(22.dp)
+                            modifier = Modifier.size(22.dp),
                         )
                     }
                 }
@@ -174,7 +176,7 @@ private fun ToppingCardPreview() {
             toppingPrice = 1.00,
             quantity = 1,
             onQuantityPlus = {},
-            onQuantityMinus = {}
+            onQuantityMinus = {},
         )
     }
 }

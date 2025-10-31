@@ -14,7 +14,8 @@ data class CartItemUI(
     val extraToppingsRelated: List<String> = emptyList(),
 )
 
-fun CartItemUI.toCartItem() = CartItem(
-    reference = reference,
-    quantity = quantity,
-)
+fun CartItemUI.toCartItem() =
+    CartItem(
+        reference = reference,
+        quantity = quantity,
+    )

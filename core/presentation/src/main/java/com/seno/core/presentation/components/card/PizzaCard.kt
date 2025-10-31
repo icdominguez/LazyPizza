@@ -36,71 +36,78 @@ import com.seno.core.presentation.utils.formatToPrice
 
 @Composable
 fun PizzaCard(
-    modifier: Modifier = Modifier,
     imageUrl: String,
     pizzaName: String,
     pizzaDescription: String,
     pizzaPrice: Double,
+    modifier: Modifier = Modifier,
     onPizzaClick: () -> Unit = {},
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(shape = RoundedCornerShape(12.dp))
-            .height(IntrinsicSize.Min)
-            .clickable { onPizzaClick() }
-            .background(
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                shape = RoundedCornerShape(12.dp)
-            ),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(shape = RoundedCornerShape(12.dp))
+                .height(IntrinsicSize.Min)
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    shape = RoundedCornerShape(12.dp),
+                ).clickable { onPizzaClick() },
     ) {
         AsyncImage(
-            model = ImageRequest.Builder(context = LocalContext.current)
-                .data(imageUrl)
-                .crossfade(true)
-                .build(),
+            model =
+                ImageRequest
+                    .Builder(context = LocalContext.current)
+                    .data(imageUrl)
+                    .crossfade(true)
+                    .build(),
             error = painterResource(id = R.drawable.ic_broken_image),
             placeholder = painterResource(id = R.drawable.loading_img),
             contentDescription = "Pizza",
-            modifier = Modifier
-                .size(120.dp)
-                .padding(start = 1.dp, top = 1.dp, bottom = 1.dp, end = 8.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    shape = RoundedCornerShape(
-                        topStart = 12.dp,
-                        bottomStart = 12.dp,
-                        topEnd = 0.dp,
-                        bottomEnd = 0.dp
-                    )
-                ),
-            contentScale = ContentScale.Crop
+            modifier =
+                Modifier
+                    .size(120.dp)
+                    .padding(start = 1.dp, top = 1.dp, bottom = 1.dp, end = 8.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        shape =
+                            RoundedCornerShape(
+                                topStart = 12.dp,
+                                bottomStart = 12.dp,
+                                topEnd = 0.dp,
+                                bottomEnd = 0.dp,
+                            ),
+                    ),
+            contentScale = ContentScale.Crop,
         )
 
         Spacer(modifier = Modifier.width(16.dp))
 
         Column(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         ) {
             Text(
                 text = pizzaName,
-                style = body_1_medium.copy(
-                    color = textPrimary
-                )
+                style =
+                    body_1_medium.copy(
+                        color = textPrimary,
+                    ),
             )
             Text(
                 text = pizzaDescription,
-                style = body_3_regular.copy(
-                    color = textSecondary
-                )
+                style =
+                    body_3_regular.copy(
+                        color = textSecondary,
+                    ),
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "$${pizzaPrice.formatToPrice()}",
-                style = title_1_semiBold.copy(
-                    color = textPrimary
-                )
+                style =
+                    title_1_semiBold.copy(
+                        color = textPrimary,
+                    ),
             )
         }
     }
@@ -114,7 +121,7 @@ private fun PizzaCardPreview() {
             imageUrl = "",
             pizzaName = "Margherita",
             pizzaDescription = "Tomato sauce, mozzarella, fresh basil, olive oil",
-            pizzaPrice = 8.00
+            pizzaPrice = 8.00,
         )
     }
 }

@@ -63,91 +63,101 @@ internal fun ProductDetailMobile(
     }
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
+        modifier =
+            modifier
+                .fillMaxSize(),
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(
-                    RoundedCornerShape(
-                        bottomEnd = 16.dp
-                    )
-                )
-                .background(
-                    color = MaterialTheme.colorScheme.background,
-                ),
-            contentAlignment = Alignment.Center
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clip(
+                        RoundedCornerShape(
+                            bottomEnd = 16.dp,
+                        ),
+                    ).background(
+                        color = MaterialTheme.colorScheme.background,
+                    ),
+            contentAlignment = Alignment.Center,
         ) {
             state.selectedPizza?.let {
                 AsyncImage(
-                    model = ImageRequest.Builder(context = LocalContext.current)
-                        .data(state.selectedPizza.image)
-                        .crossfade(true)
-                        .build(),
+                    model =
+                        ImageRequest
+                            .Builder(context = LocalContext.current)
+                            .data(state.selectedPizza.image)
+                            .crossfade(true)
+                            .build(),
                     error = painterResource(id = R.drawable.ic_broken_image),
                     placeholder = painterResource(id = R.drawable.loading_img),
                     contentDescription = "Pizza",
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .size(240.dp),
-                    contentScale = ContentScale.Crop
+                    modifier =
+                        Modifier
+                            .wrapContentSize()
+                            .size(240.dp),
+                    contentScale = ContentScale.Crop,
                 )
             }
         }
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .drawBehind {
-                    drawRect(
-                        color = background,
-                        size = Size(
-                            width = 100.dp.toPx(),
-                            height = 50.dp.toPx()
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .drawBehind {
+                        drawRect(
+                            color = background,
+                            size =
+                                Size(
+                                    width = 100.dp.toPx(),
+                                    height = 50.dp.toPx(),
+                                ),
                         )
-                    )
-                }
-                .clip(
-                    RoundedCornerShape(
-                        topStart = 16.dp
-                    )
-                )
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                .padding(horizontal = 16.dp, vertical = 20.dp)
+                    }.clip(
+                        RoundedCornerShape(
+                            topStart = 16.dp,
+                        ),
+                    ).background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                    .padding(horizontal = 16.dp, vertical = 20.dp),
         ) {
             Text(
                 text = state.selectedPizza?.name.orEmpty(),
                 style = title_1_semiBold,
-                color = textPrimary
+                color = textPrimary,
             )
 
             Text(
-                text = state.selectedPizza?.ingredients.orEmpty().joinToString(", "),
+                text =
+                    state.selectedPizza
+                        ?.ingredients
+                        .orEmpty()
+                        .joinToString(", "),
                 style = body_3_regular,
                 color = textSecondary,
             )
 
             Text(
-                modifier = Modifier
-                    .padding(top = 8.dp),
+                modifier =
+                    Modifier
+                        .padding(top = 8.dp),
                 text = stringResource(com.seno.products.presentation.R.string.add_extra_toppings),
                 style = label_2_semiBold,
-                color = textSecondary
+                color = textSecondary,
             )
 
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
+                modifier =
+                    Modifier
+                        .fillMaxSize(),
             ) {
                 LazyVerticalGrid(
                     contentPadding = PaddingValues(top = 8.dp, bottom = buttonHeight / 2),
                     columns = GridCells.Fixed(3),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     items(
                         items = state.listExtraToppings,
-                        key = { it.name }
+                        key = { it.name },
                     ) { topping ->
                         ToppingCard(
                             imageUrl = topping.image,
@@ -159,35 +169,39 @@ internal fun ProductDetailMobile(
                             },
                             onQuantityMinus = {
                                 onAction(ProductDetailAction.OnToppingMinus(topping))
-                            }
+                            },
                         )
                     }
                 }
 
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.BottomCenter)
-                        .height(125.dp)
-                        .background(
-                            brush = Brush.verticalGradient(
-                                colors = listOf(
-                                    MaterialTheme.colorScheme.surface.copy(alpha = 0f),
-                                    MaterialTheme.colorScheme.surface
-                                ),
-                            )
-                        ),
-                    contentAlignment = Alignment.BottomCenter
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.BottomCenter)
+                            .height(125.dp)
+                            .background(
+                                brush =
+                                    Brush.verticalGradient(
+                                        colors =
+                                            listOf(
+                                                MaterialTheme.colorScheme.surface.copy(alpha = 0f),
+                                                MaterialTheme.colorScheme.surface,
+                                            ),
+                                    ),
+                            ),
+                    contentAlignment = Alignment.BottomCenter,
                 ) {
                     LazyPizzaPrimaryButton(
                         isLoading = state.isUpdatingCart,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .onGloballyPositioned {
-                                buttonHeight = it.size.height.dp
-                            },
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .onGloballyPositioned {
+                                    buttonHeight = it.size.height.dp
+                                },
                         onClick = { onAction(ProductDetailAction.OnAddToCartButtonClick) },
-                        buttonText = "Add to Cart for $${state.selectedPizza?.price?.formatToPrice()}"
+                        buttonText = "Add to Cart for $${state.selectedPizza?.price?.formatToPrice()}",
                     )
                 }
             }
@@ -200,20 +214,23 @@ internal fun ProductDetailMobile(
 private fun ProductDetailMobilePreview() {
     LazyPizzaTheme {
         ProductDetailMobile(
-            state = ProductDetailState(
-                selectedPizza = Product.Pizza(
-                    id = "",
-                    name = "Margherita",
-                    price = 8.00,
-                    image = "",
-                    ingredients = listOf(
-                        "Tomato sauce",
-                        "Mozzarella",
-                        "Basil"
-                    )
-                )
-            ),
-            onAction = {}
+            state =
+                ProductDetailState(
+                    selectedPizza =
+                        Product.Pizza(
+                            id = "",
+                            name = "Margherita",
+                            price = 8.00,
+                            image = "",
+                            ingredients =
+                                listOf(
+                                    "Tomato sauce",
+                                    "Mozzarella",
+                                    "Basil",
+                                ),
+                        ),
+                ),
+            onAction = {},
         )
     }
 }

@@ -26,18 +26,15 @@ import com.seno.core.presentation.utils.ObserveAsEvents
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun HistoryScreenRoot(
-    viewModel: HistoryViewModel = koinViewModel()
-) {
+fun HistoryScreenRoot(viewModel: HistoryViewModel = koinViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     ObserveAsEvents(viewModel.event) { event ->
-
     }
 
     HistoryScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
     )
 }
 
@@ -47,31 +44,31 @@ internal fun HistoryScreen(
     onAction: (HistoryAction) -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .padding(top = 120.dp)
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min),
+        modifier =
+            Modifier
+                .padding(top = 120.dp)
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
             text = stringResource(R.string.not_signed_in),
             style = title_1_medium,
-            color = textPrimary
+            color = textPrimary,
         )
         Text(
             text = stringResource(R.string.please_sign_in_to_view_your_order_history),
             style = body_3_regular,
-            color = textSecondary
+            color = textSecondary,
         )
         Spacer(
-            modifier = Modifier.height(16.dp)
+            modifier = Modifier.height(16.dp),
         )
         LazyPizzaPrimaryButton(
             buttonText = stringResource(R.string.sign_in),
             onClick = {
-
-            }
+            },
         )
     }
 }
@@ -82,7 +79,7 @@ private fun Preview() {
     LazyPizzaTheme {
         HistoryScreen(
             state = HistoryState(),
-            onAction = {}
+            onAction = {},
         )
     }
 }

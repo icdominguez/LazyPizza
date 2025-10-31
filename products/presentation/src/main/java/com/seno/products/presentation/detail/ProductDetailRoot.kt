@@ -19,7 +19,7 @@ fun ProductDetailRoot(
     ObserveAsEvents(
         flow = viewModel.event,
     ) { event ->
-        when(event) {
+        when (event) {
             is ProductDetailEvent.Error -> {
                 Toast.makeText(context, event.error, Toast.LENGTH_LONG).show()
             }
@@ -31,6 +31,6 @@ fun ProductDetailRoot(
 
     ProductDetailScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
     )
 }

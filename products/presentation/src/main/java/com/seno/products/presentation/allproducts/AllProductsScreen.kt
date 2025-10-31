@@ -58,19 +58,21 @@ fun AllProductsScreen(
     val deviceType = DeviceConfiguration.fromWindowSizeClass(windowSizeClass)
 
     Column(
-        modifier = Modifier
-            .padding(
-                start = 16.dp,
-                end = 16.dp,
-            ),
+        modifier =
+            Modifier
+                .padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                ),
     ) {
         Image(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-                .clip(
-                    shape = RoundedCornerShape(16.dp),
-                ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(150.dp)
+                    .clip(
+                        shape = RoundedCornerShape(16.dp),
+                    ),
             contentScale = ContentScale.Crop,
             painter = painterResource(com.seno.products.presentation.R.drawable.banner),
             contentDescription = "Banner",
@@ -84,14 +86,15 @@ fun AllProductsScreen(
         )
 
         LazyRow(
-            modifier = Modifier
-                .padding(vertical = 12.dp),
+            modifier =
+                Modifier
+                    .padding(vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             items(
                 ProductType.entries,
-                key = { it.name }
+                key = { it.name },
             ) { productType ->
                 if (productType != ProductType.EXTRA_TOPPING) {
                     ProductChip(
@@ -99,10 +102,10 @@ fun AllProductsScreen(
                         onClick = {
                             coroutineScope.launch {
                                 listState.animateScrollToItem(
-                                    state.headerIndexMap[productType] ?: 0
+                                    state.headerIndexMap[productType] ?: 0,
                                 )
                             }
-                        }
+                        },
                     )
                 }
             }
@@ -118,25 +121,30 @@ fun AllProductsScreen(
             }
         } else {
             LazyColumn(
-                contentPadding = PaddingValues(
-                    bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-                ),
+                contentPadding =
+                    PaddingValues(
+                        bottom = WindowInsets.navigationBars
+                            .asPaddingValues()
+                            .calculateBottomPadding(),
+                    ),
                 state = listState,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 state.productsFiltered.forEach { (type, products) ->
                     stickyHeader {
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(color = background)
-                                .padding(vertical = 8.dp)
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .background(color = background)
+                                    .padding(vertical = 8.dp),
                         ) {
                             Text(
                                 text = type.name.replaceUnderscores(),
-                                style = label_2_semiBold.copy(
-                                    color = textSecondary,
-                                ),
+                                style =
+                                    label_2_semiBold.copy(
+                                        color = textSecondary,
+                                    ),
                             )
                         }
                     }
@@ -146,9 +154,10 @@ fun AllProductsScreen(
                         val rowItems = chunkedProducts[rowIndex]
 
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             rowItems.forEach { product ->
                                 Box(modifier = Modifier.weight(1f)) {
@@ -157,17 +166,18 @@ fun AllProductsScreen(
                                             PizzaCard(
                                                 imageUrl = product.image,
                                                 pizzaName = product.name,
-                                                pizzaDescription = product.ingredients.joinToString(
-                                                    ", "
-                                                ),
+                                                pizzaDescription =
+                                                    product.ingredients.joinToString(
+                                                        ", ",
+                                                    ),
                                                 pizzaPrice = product.price,
                                                 onPizzaClick = {
                                                     onAction(
                                                         AllProductsAction.OnProductClicked(
-                                                            pizzaName = product.name
-                                                        )
+                                                            pizzaName = product.name,
+                                                        ),
                                                     )
-                                                }
+                                                },
                                             )
                                         }
                                         else -> {
@@ -181,35 +191,35 @@ fun AllProductsScreen(
                                                         newQuantity == 0 -> {
                                                             onAction(
                                                                 AllProductsAction.OnProductMinus(
-                                                                    product
-                                                                )
+                                                                    product,
+                                                                ),
                                                             )
                                                         }
 
                                                         newQuantity > product.quantity -> {
                                                             onAction(
                                                                 AllProductsAction.OnProductPlus(
-                                                                    product
-                                                                )
+                                                                    product,
+                                                                ),
                                                             )
                                                         }
 
                                                         newQuantity < product.quantity -> {
                                                             onAction(
                                                                 AllProductsAction.OnProductMinus(
-                                                                    product
-                                                                )
+                                                                    product,
+                                                                ),
                                                             )
                                                         }
                                                     }
                                                 },
-                                                onDeleteClicked = {
+                                                onDeleteClick = {
                                                     onAction(
                                                         AllProductsAction.OnProductDelete(
-                                                            product
-                                                        )
+                                                            product,
+                                                        ),
                                                     )
-                                                }
+                                                },
                                             )
                                         }
                                     }

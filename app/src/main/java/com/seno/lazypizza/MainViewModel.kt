@@ -37,18 +37,16 @@ class MainViewModel(
                         .getCart(cartId)
                         .map { result ->
                             when (result) {
-                                is FirebaseResult.Success -> result.data.size
+                                is FirebaseResult.Success -> result.data.sumOf { it.quantity }
                                 is FirebaseResult.Error -> 0
                             }
                         }
                 }
-            }
-            .distinctUntilChanged()
+            }.distinctUntilChanged()
             .onEach {
                 _state.update { state ->
                     state.copy(totalCartItem = it)
                 }
-            }
-            .launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
     }
 }

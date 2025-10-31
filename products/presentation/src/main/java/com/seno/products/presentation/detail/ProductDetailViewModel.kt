@@ -41,24 +41,24 @@ class ProductDetailViewModel(
     init {
         combine(
             productsRepository.getPizzaByName(pizzaName),
-            productsRepository.getExtraToppingsFlow()
+            productsRepository.getExtraToppingsFlow(),
         ) { pizza, toppings ->
             _state.update {
                 it.copy(
                     selectedPizza = pizza,
-                    listExtraToppings = toppings.map { product ->
-                        ToppingsUI(
-                            id = product.id,
-                            name = product.name,
-                            image = product.image,
-                            price = product.price,
-                            quantity = 0
-                        )
-                    }
+                    listExtraToppings =
+                        toppings.map { product ->
+                            ToppingsUI(
+                                id = product.id,
+                                name = product.name,
+                                image = product.image,
+                                price = product.price,
+                                quantity = 0,
+                            )
+                        },
                 )
             }
-        }
-            .flowOn(Dispatchers.Default)
+        }.flowOn(Dispatchers.Default)
             .launchIn(viewModelScope)
     }
 
@@ -74,23 +74,24 @@ class ProductDetailViewModel(
         _state.update {
             it.copy(isUpdatingCart = true)
         }
-        val extraToppings = _state.value.listExtraToppings
-            .filterNot { it.quantity == 0 }
-            .map {
-                ExtraTopping(
-                    reference = "${it.type.name.lowercase()}s/${it.id}",
-                    quantity = it.quantity
-                )
-            }
-            .toMutableList()
+        val extraToppings =
+            _state.value.listExtraToppings
+                .filterNot { it.quantity == 0 }
+                .map {
+                    ExtraTopping(
+                        reference = "${it.type.name.lowercase()}s/${it.id}",
+                        quantity = it.quantity,
+                    )
+                }.toMutableList()
 
-        val pizzaItem = _state.value.selectedPizza?.let {
-            CartItem(
-                reference = "${it.type.name.lowercase()}s/${it.id}",
-                quantity = 1,
-                extraToppings = extraToppings
-            )
-        } ?: CartItem()
+        val pizzaItem =
+            _state.value.selectedPizza?.let {
+                CartItem(
+                    reference = "${it.type.name.lowercase()}s/${it.id}",
+                    quantity = 1,
+                    extraToppings = extraToppings,
+                )
+            } ?: CartItem()
 
         viewModelScope.launch(context = Dispatchers.IO) {
             // Used first because if we use collect the flow with be always open and receiving value if it change
@@ -104,13 +105,15 @@ class ProductDetailViewModel(
                         userData.setCardId(createCartResponse.data)
                         _event.trySend(ProductDetailEvent.OnCartSuccessfullySaved)
                         SnackbarController.sendEvent(
-                            event = SnackbarEvent(
-                                message = "${_state.value.selectedPizza?.name} added to cart",
-                                action = SnackbarAction(
-                                    name = "OK",
-                                    action = {}
-                                )
-                            )
+                            event =
+                                SnackbarEvent(
+                                    message = "${_state.value.selectedPizza?.name} added to cart",
+                                    action =
+                                        SnackbarAction(
+                                            name = "OK",
+                                            action = {},
+                                        ),
+                                ),
                         )
                     }
 
@@ -119,8 +122,8 @@ class ProductDetailViewModel(
                         _event.trySend(
                             ProductDetailEvent.Error(
                                 createCartResponse.exception.message
-                                    ?: "Error creating the cart. Try again later"
-                            )
+                                    ?: "Error creating the cart. Try again later",
+                            ),
                         )
                     }
                 }
@@ -129,21 +132,24 @@ class ProductDetailViewModel(
                 val getCartResponse = cartRepository.getCart(cartId).first()
                 when (getCartResponse) {
                     is FirebaseResult.Success -> {
-                        val updateCartResponse = cartRepository.updateCart(
-                            cartId = cartId,
-                            items = getCartResponse.data + pizzaItem
-                        )
+                        val updateCartResponse =
+                            cartRepository.updateCart(
+                                cartId = cartId,
+                                items = getCartResponse.data + pizzaItem,
+                            )
                         when (updateCartResponse) {
                             is FirebaseResult.Success -> {
                                 _event.trySend(ProductDetailEvent.OnCartSuccessfullySaved)
                                 SnackbarController.sendEvent(
-                                    event = SnackbarEvent(
-                                        message = "${_state.value.selectedPizza?.name} added to cart",
-                                        action = SnackbarAction(
-                                            name = "OK",
-                                            action = {}
-                                        )
-                                    )
+                                    event =
+                                        SnackbarEvent(
+                                            message = "${_state.value.selectedPizza?.name} added to cart",
+                                            action =
+                                                SnackbarAction(
+                                                    name = "OK",
+                                                    action = {},
+                                                ),
+                                        ),
                                 )
                             }
 
@@ -151,8 +157,8 @@ class ProductDetailViewModel(
                                 _event.trySend(
                                     ProductDetailEvent.Error(
                                         updateCartResponse.exception.message
-                                            ?: "Error creating the cart. Try again later"
-                                    )
+                                            ?: "Error creating the cart. Try again later",
+                                    ),
                                 )
                             }
                         }
@@ -162,8 +168,8 @@ class ProductDetailViewModel(
                         _event.trySend(
                             ProductDetailEvent.Error(
                                 getCartResponse.exception.message
-                                    ?: "Error creating the cart. Try again later"
-                            )
+                                    ?: "Error creating the cart. Try again later",
+                            ),
                         )
                     }
                 }
@@ -176,46 +182,50 @@ class ProductDetailViewModel(
     }
 
     fun onToppingPlus(toppingsUI: ToppingsUI) {
-        val updatedTopping = _state.value.listExtraToppings.map {
-            if (it == toppingsUI) {
-                it.copy(quantity = it.quantity + 1)
-            } else {
-                it
+        val updatedTopping =
+            _state.value.listExtraToppings.map {
+                if (it == toppingsUI) {
+                    it.copy(quantity = it.quantity + 1)
+                } else {
+                    it
+                }
             }
-        }
-        val updatedPizza = _state.value.selectedPizza?.let {
-            it.copy(
-                price = it.price + toppingsUI.price
-            )
-        }
+        val updatedPizza =
+            _state.value.selectedPizza?.let {
+                it.copy(
+                    price = it.price + toppingsUI.price,
+                )
+            }
 
         _state.update {
             it.copy(
                 selectedPizza = updatedPizza,
-                listExtraToppings = updatedTopping
+                listExtraToppings = updatedTopping,
             )
         }
     }
 
     fun onToppingMinus(toppingsUI: ToppingsUI) {
-        val updatedTopping = _state.value.listExtraToppings.map {
-            if (it == toppingsUI) {
-                it.copy(quantity = it.quantity - 1)
-            } else {
-                it
+        val updatedTopping =
+            _state.value.listExtraToppings.map {
+                if (it == toppingsUI) {
+                    it.copy(quantity = it.quantity - 1)
+                } else {
+                    it
+                }
             }
-        }
 
-        val updatedPizza = _state.value.selectedPizza?.let {
-            it.copy(
-                price = it.price - toppingsUI.price
-            )
-        }
+        val updatedPizza =
+            _state.value.selectedPizza?.let {
+                it.copy(
+                    price = it.price - toppingsUI.price,
+                )
+            }
 
         _state.update {
             it.copy(
                 selectedPizza = updatedPizza,
-                listExtraToppings = updatedTopping
+                listExtraToppings = updatedTopping,
             )
         }
     }

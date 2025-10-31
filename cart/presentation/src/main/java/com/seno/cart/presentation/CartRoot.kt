@@ -22,7 +22,7 @@ fun CartRoot(
     ObserveAsEvents(
         flow = viewModel.event,
     ) { event ->
-        when(event) {
+        when (event) {
             is CartEvents.Error -> {
                 Toast.makeText(context, event.error, Toast.LENGTH_LONG).show()
             }
@@ -40,10 +40,10 @@ fun CartRoot(
     CartScreen(
         state = state,
         onAction = { action ->
-            when(action) {
+            when (action) {
                 is CartActions.OnNavigateToMenuClick -> onNavigateToMenu()
                 else -> viewModel.onAction(action)
             }
-        }
+        },
     )
 }

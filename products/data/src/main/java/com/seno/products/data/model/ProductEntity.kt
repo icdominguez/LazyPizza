@@ -1,7 +1,11 @@
 package com.seno.products.data.model
 
 import com.seno.core.domain.product.Product
-import com.seno.core.domain.product.Product.*
+import com.seno.core.domain.product.Product.Drink
+import com.seno.core.domain.product.Product.ExtraTopping
+import com.seno.core.domain.product.Product.IceCream
+import com.seno.core.domain.product.Product.Pizza
+import com.seno.core.domain.product.Product.Sauce
 import com.seno.core.domain.product.ProductType
 
 data class ProductEntity(
@@ -13,12 +17,18 @@ data class ProductEntity(
     val ingredients: List<String>? = null,
 )
 
-fun ProductEntity.toProduct(): Product? {
-    return when (type) {
+fun ProductEntity.toProduct(): Product? =
+    when (type) {
         ProductType.PIZZA -> Pizza(id = id, type = type, name = name, price = price, image = image, ingredients = ingredients.orEmpty())
         ProductType.DRINK -> Drink(id = id, type = type, name = name, price = price, image = image)
         ProductType.ICE_CREAM -> IceCream(id = id, type = type, name = name, price = price, image = image)
-        ProductType.SAUCE -> IceCream(id = id,type = type, name = name, price = price, image = image)
-        ProductType.EXTRA_TOPPING -> IceCream(id = id, type = type, name = name, price = price, image = image)
+        ProductType.SAUCE -> Sauce(id = id, type = type, name = name, price = price, image = image)
+        ProductType.EXTRA_TOPPING ->
+            ExtraTopping(
+                id = id,
+                type = type,
+                name = name,
+                price = price,
+                image = image,
+            )
     }
-}

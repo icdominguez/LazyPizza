@@ -7,10 +7,11 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-val cartDataModule = module {
-    single {
-        FirebaseFirestore.getInstance()
-    }
+val cartDataModule =
+    module {
+        single {
+            FirebaseFirestore.getInstance()
+        }
 
-    singleOf(::FirestoreCartRepository) bind CartRepository::class
-}
+        singleOf(::FirestoreCartRepository) bind CartRepository::class
+    }

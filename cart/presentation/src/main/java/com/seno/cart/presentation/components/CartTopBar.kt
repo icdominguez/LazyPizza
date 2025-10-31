@@ -18,9 +18,7 @@ import com.seno.core.presentation.theme.body_1_medium
 import com.seno.core.presentation.utils.DeviceConfiguration
 
 @Composable
-fun CartTopBar(
-    modifier: Modifier = Modifier,
-) {
+fun CartTopBar(modifier: Modifier = Modifier) {
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     val deviceType = DeviceConfiguration.fromWindowSizeClass(windowSizeClass)
 
@@ -30,11 +28,12 @@ fun CartTopBar(
             Text(
                 text = stringResource(R.string.cart),
                 style = body_1_medium,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = if (deviceType.isTablet()) 50.dp else 0.dp)
-                    .offset(x = if (!deviceType.isTablet()) (-8).dp else 0.dp),
-                textAlign = TextAlign.Center
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(start = if (deviceType.isTablet()) 50.dp else 0.dp)
+                        .offset(x = if (!deviceType.isTablet()) (-8).dp else 0.dp),
+                textAlign = TextAlign.Center,
             )
         },
     )

@@ -34,36 +34,36 @@ import com.seno.core.presentation.theme.textSecondary
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomizableSearchBar(
-    modifier: Modifier = Modifier,
     query: String,
     onQueryChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var hasFocus by remember { mutableStateOf(false) }
 
     BasicTextField(
-        modifier = modifier.onFocusChanged { focusState ->
-            hasFocus = focusState.isFocused
-        },
+        modifier =
+            modifier.onFocusChanged { focusState ->
+                hasFocus = focusState.isFocused
+            },
         singleLine = true,
         value = query,
         onValueChange = { onQueryChange(it) },
         textStyle = body_1_regular,
         decorationBox = { innerTextField ->
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .shadow(
-                        shape = RoundedCornerShape(16.dp),
-                        elevation = 2.dp
-                    )
-                    .background(
-                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                        shape = RoundedCornerShape(16.dp),
-                    )
-                    .padding(
-                        vertical = 14.dp,
-                        horizontal = 16.dp,
-                    ),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .shadow(
+                            shape = RoundedCornerShape(16.dp),
+                            elevation = 2.dp,
+                        ).background(
+                            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                            shape = RoundedCornerShape(16.dp),
+                        ).padding(
+                            vertical = 14.dp,
+                            horizontal = 16.dp,
+                        ),
                 contentAlignment = Alignment.CenterStart,
             ) {
                 Row(
@@ -75,18 +75,18 @@ fun CustomizableSearchBar(
                         contentDescription = "Search icon",
                         tint = MaterialTheme.colorScheme.primary,
                     )
-                    if(query.isEmpty() && !hasFocus) {
+                    if (query.isEmpty() && !hasFocus) {
                         Text(
                             text = "Search for delicious food...",
                             style = body_1_regular,
-                            color = textSecondary
+                            color = textSecondary,
                         )
                     }
                     innerTextField()
                 }
             }
         },
-        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary)
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
     )
 }
 
