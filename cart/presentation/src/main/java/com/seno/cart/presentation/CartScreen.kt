@@ -1,5 +1,6 @@
 package com.seno.cart.presentation
 
+import android.R.attr.bottom
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

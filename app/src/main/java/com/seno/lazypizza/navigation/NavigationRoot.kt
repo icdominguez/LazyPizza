@@ -28,7 +28,9 @@ import com.seno.history.presentation.component.HistoryTopBar
 import com.seno.lazypizza.MainState
 import com.seno.lazypizza.util.getSelectedMenu
 import com.seno.products.presentation.allproducts.AllProductsRoot
+import com.seno.products.presentation.allproducts.LoginState
 import com.seno.products.presentation.allproducts.component.AllProductsTopBar
+import com.seno.products.presentation.allproducts.component.ConfirmationDialog
 import com.seno.products.presentation.detail.ProductDetailRoot
 import com.seno.products.presentation.detail.component.ProductDetailTopBar
 import kotlinx.coroutines.launch
@@ -36,6 +38,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun NavigationRoot(
     state: MainState,
+    onAction: (LoginState) -> Unit,
     navHostController: NavHostController,
 ) {
     val navBackStackEntry by navHostController.currentBackStackEntryAsState()
@@ -64,6 +67,16 @@ fun NavigationRoot(
             }
         }
     }
+    if (state.dialogState) {
+        ConfirmationDialog(
+            onDismissRequest = {
+                onAction(LoginState.DismissLogoutDialog)
+            },
+            onConfirmation = {
+                onAction(LoginState.LoggedOut)
+            }
+        )
+    }
 
     LazyPizzaDefaultScreen(
         snackbarHostState = snackbarHostState,
@@ -78,7 +91,15 @@ fun NavigationRoot(
                 }
 
                 currentRoute?.hasRoute<Screen.Menu.AllProducts>() == true -> {
-                    AllProductsTopBar()
+                    AllProductsTopBar(
+                        loginState = state.loginState,
+                        onLoginClick = {
+                            onAction(LoginState.LoggedIn)
+                        },
+                        onLogoutClick = {
+                            onAction(LoginState.ShowLogoutDialog)
+                        },
+                    )
                 }
 
                 currentRoute?.hasRoute<Screen.History.HistoryScreen>() == true -> {

@@ -28,6 +28,7 @@ class MainActivity : ComponentActivity() {
 
                 NavigationRoot(
                     state = state,
+                    onAction = mainViewModel::onAction,
                     navHostController = navHostController,
                 )
             }

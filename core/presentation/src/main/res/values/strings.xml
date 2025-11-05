@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="search_placeholder_txt">Search for delicious food…</string>
+    <string name="confirmation_dialog_title">Are you sure you want to log out?</string>
+    <string name="cancel">Cancel</string>
+    <string name="logout">Log Out</string>
 </resources>

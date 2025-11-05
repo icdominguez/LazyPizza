@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -22,9 +24,15 @@ import com.seno.core.presentation.theme.body_1_regular
 import com.seno.core.presentation.theme.body_3_body
 import com.seno.core.presentation.theme.textPrimary
 import com.seno.core.presentation.theme.textSecondary
+import com.seno.products.presentation.allproducts.LoginState
 
 @Composable
-fun AllProductsTopBar(modifier: Modifier = Modifier) {
+fun AllProductsTopBar(
+    modifier: Modifier = Modifier,
+    loginState: LoginState,
+    onLoginClick: () -> Unit = {},
+    onLogoutClick: () -> Unit = {},
+) {
     LazyPizzaTopAppBar(
         title = {
             Row(
@@ -77,6 +85,31 @@ fun AllProductsTopBar(modifier: Modifier = Modifier) {
 
                 Spacer(modifier = Modifier.size(16.dp))
             }
+            when (loginState) {
+                LoginState.LoggedOut -> {
+                    IconButton(
+                        onClick = onLoginClick,
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.profile_ic),
+                            contentDescription = null,
+                            tint = Color.Unspecified
+                        )
+                    }
+                }
+                LoginState.LoggedIn -> {
+                    IconButton(
+                        onClick = onLogoutClick,
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.logout_ic),
+                            contentDescription = null,
+                            tint = Color.Unspecified,
+                        )
+                    }
+                }
+                else -> Unit
+            }
         },
     )
 }
@@ -85,6 +118,8 @@ fun AllProductsTopBar(modifier: Modifier = Modifier) {
 @Composable
 private fun AllProductsTopBarPreview() {
     LazyPizzaTheme {
-        AllProductsTopBar()
+        AllProductsTopBar(
+            loginState = LoginState.LoggedOut
+        )
     }
 }

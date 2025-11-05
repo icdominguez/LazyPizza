@@ -1,6 +1,7 @@
 package com.seno.core.presentation.theme
 
 import androidx.compose.material3.ColorScheme
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 val PurpleGrey40 = Color(0xFF625b71)
@@ -17,11 +18,11 @@ val outline = Color(0xFFE6E7ED)
 val outline50 = Color(0x80E6E7ED)
 val primary = Color(0xFFF36B50)
 val primary8 = Color(0x14F36B50)
-val primaryGradient =
+val primaryGradient = Brush.linearGradient(
     listOf(
         Color(0xFFF36B50),
         Color(0xFFF9966F),
     )
-
+)
 val ColorScheme.success: Color
     get() = Color(0xFF2F9E5A)
