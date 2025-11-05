@@ -3,14 +3,12 @@ plugins {
 }
 
 android {
-    namespace = "com.seno.cart.data"
+    namespace = "com.seno.auth.data"
 }
 
 dependencies {
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.firestore)
     with(projects) {
-        implementation(cart.domain)
+        implementation(auth.domain)
         implementation(core.domain)
         implementation(core.data)
     }

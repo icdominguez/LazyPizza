@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.seno.cart.presentation"
+    namespace = "com.seno.auth.presentation"
 }
 
 dependencies {
@@ -12,7 +12,6 @@ dependencies {
             implementation(domain)
             implementation(presentation)
         }
-        implementation(cart.domain)
-        implementation(libs.coil.compose)
+        implementation(auth.domain)
     }
 }

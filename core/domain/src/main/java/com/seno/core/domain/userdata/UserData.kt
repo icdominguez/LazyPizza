@@ -7,5 +7,13 @@ interface UserData {
 
     suspend fun setCardId(cartId: String)
 
+    fun getTotalItemCart(): Flow<Int>
+
+    suspend fun setTotalItemCart(totalItem: Int)
+
+    fun getIsLogin(): Flow<Boolean>
+
+    suspend fun setIsLogin(isLogin: Boolean)
+
     suspend fun clear()
 }

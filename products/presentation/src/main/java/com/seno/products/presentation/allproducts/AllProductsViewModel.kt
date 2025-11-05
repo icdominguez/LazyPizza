@@ -4,10 +4,10 @@ package com.seno.products.presentation.allproducts
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.seno.cart.domain.CartRepository
 import com.seno.core.domain.FirebaseResult
 import com.seno.core.domain.product.Product
 import com.seno.core.domain.product.ProductType
+import com.seno.core.domain.repository.CoreRepository
 import com.seno.core.domain.userdata.UserData
 import com.seno.core.presentation.model.CartItemUI
 import com.seno.core.presentation.model.toCartItem
@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
 
 class AllProductsViewModel(
     private val productsRepository: ProductsRepository,
-    private val cartRepository: CartRepository,
+    private val coreRepository: CoreRepository,
     private val userData: UserData,
 ) : ViewModel() {
     private val _state = MutableStateFlow(AllProductsState())
@@ -94,7 +94,7 @@ class AllProductsViewModel(
                     it.copy(isCreateNewCart = true)
                 }
                 val createCartResponse =
-                    cartRepository.createCart(items = listOf(cartItemSelected))
+                    productsRepository.createCart(items = listOf(cartItemSelected))
 
                 when (createCartResponse) {
                     is FirebaseResult.Success -> {
@@ -123,7 +123,7 @@ class AllProductsViewModel(
                 }
             } else {
                 cartId?.let {
-                    val getCartResponse = cartRepository.getCart(it).first()
+                    val getCartResponse = coreRepository.getCart(it).first()
 
                     when (getCartResponse) {
                         is FirebaseResult.Success -> {
@@ -137,7 +137,7 @@ class AllProductsViewModel(
                                             this[cartItemSelectedIndex].copy(quantity = product.quantity + 1)
                                     }
                                 }
-                            cartRepository.updateCart(
+                            coreRepository.updateCart(
                                 cartId = it,
                                 items = updatedCartItems,
                             )
@@ -174,7 +174,7 @@ class AllProductsViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val cartItemSelected = product.copy(quantity = product.quantity - 1).toCartItem()
             if (cartId == null) {
-                cartRepository.createCart(
+                productsRepository.createCart(
                     items =
                         listOf(
                             product.toCartItem().copy(quantity = 1),
@@ -182,7 +182,7 @@ class AllProductsViewModel(
                 )
             } else {
                 cartId?.let {
-                    val getCartResponse = cartRepository.getCart(it).first()
+                    val getCartResponse = coreRepository.getCart(it).first()
 
                     when (getCartResponse) {
                         is FirebaseResult.Success -> {
@@ -196,7 +196,7 @@ class AllProductsViewModel(
                                             this[cartItemSelectedIndex].copy(quantity = product.quantity - 1)
                                     }
                                 }
-                            cartRepository.updateCart(
+                            coreRepository.updateCart(
                                 cartId = it,
                                 items = updatedCartItems,
                             )
@@ -238,7 +238,7 @@ class AllProductsViewModel(
         viewModelScope.launch(context = Dispatchers.IO) {
             val cartItemToDelete = product.toCartItem()
             cartId?.let { cartId ->
-                val getCartResponse = cartRepository.getCart(cartId).first()
+                val getCartResponse = coreRepository.getCart(cartId).first()
 
                 when (getCartResponse) {
                     is FirebaseResult.Success -> {
@@ -247,7 +247,7 @@ class AllProductsViewModel(
                                 .data
                                 .filter { it.reference != cartItemToDelete.reference }
 
-                        cartRepository.updateCart(
+                        coreRepository.updateCart(
                             cartId = cartId,
                             items = updatedCartItems,
                         )
@@ -286,7 +286,7 @@ class AllProductsViewModel(
                     if (cartId == null) {
                         flowOf(emptyMap())
                     } else {
-                        cartRepository
+                        coreRepository
                             .getCart(cartId)
                             .map { result ->
                                 when (result) {

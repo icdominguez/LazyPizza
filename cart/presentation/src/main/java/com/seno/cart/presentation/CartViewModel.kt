@@ -6,13 +6,13 @@ import com.seno.cart.domain.CartRepository
 import com.seno.core.domain.FirebaseResult
 import com.seno.core.domain.cart.identityKey
 import com.seno.core.domain.product.ProductType
+import com.seno.core.domain.repository.CoreRepository
 import com.seno.core.domain.userdata.UserData
 import com.seno.core.presentation.model.CartItemUI
 import com.seno.core.presentation.model.toCartItem
 import com.seno.core.presentation.utils.SnackbarAction
 import com.seno.core.presentation.utils.SnackbarController
 import com.seno.core.presentation.utils.SnackbarEvent
-import com.seno.products.domain.repository.ProductsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 
 class CartViewModel(
     private val cartRepository: CartRepository,
-    private val productRepository: ProductsRepository,
+    private val coreRepository: CoreRepository,
     private val userData: UserData
 ) : ViewModel() {
     private val _state = MutableStateFlow(CartState())
@@ -49,7 +49,7 @@ class CartViewModel(
 
             val cartId = userData.getCartId().first()
             cartId?.let {
-                cartRepository.getCart(it).collect { response ->
+                coreRepository.getCart(it).collect { response ->
                     when (response) {
                         is FirebaseResult.Success -> {
                             val cartItems = response.data
@@ -69,7 +69,7 @@ class CartViewModel(
                             }
 
                             val products =
-                                productRepository
+                                cartRepository
                                     .getProductsByReference(
                                         cartItems.map { item -> item.reference },
                                     ).first()
@@ -79,7 +79,7 @@ class CartViewModel(
                                     val cartItem = cartItems[index]
                                     if (product.type == ProductType.PIZZA) {
                                         val extraToppings =
-                                            productRepository
+                                            cartRepository
                                                 .getProductsByReference(
                                                     cartItem.extraToppings.map { it.reference },
                                                 ).first()
@@ -156,12 +156,10 @@ class CartViewModel(
 
     private suspend fun loadAllDrinksAndSnacks(): List<CartItemUI> =
         try {
-            val allProducts = productRepository.getAllProducts().first()
+            val recommendedProduct = cartRepository.getRecommendedProducts().first()
 
-            allProducts
-                .filter {
-                    it.type == ProductType.DRINK || it.type == ProductType.SAUCE
-                }.map { product ->
+            recommendedProduct
+                .map { product ->
                     CartItemUI(
                         reference = "${product.type.name.lowercase()}s/${product.id}",
                         quantity = 1,
@@ -220,7 +218,7 @@ class CartViewModel(
                         val newItem = recommended.copy(quantity = quantity)
                         val newCart = (current.cartItems + newItem).map { it.toCartItem() }
 
-                        when (val result = cartRepository.updateCart(current.cartId, newCart)) {
+                        when (val result = coreRepository.updateCart(current.cartId, newCart)) {
                             is FirebaseResult.Success -> {
                                 _state.update {
                                     it.copy(
@@ -250,7 +248,7 @@ class CartViewModel(
                             current.cartItems
                                 .filterNot { it.reference == reference }
                                 .map { it.toCartItem() }
-                        cartRepository.updateCart(current.cartId, updated)
+                        coreRepository.updateCart(current.cartId, updated)
                         _state.update { it.copy(isUpdatingCart = false) }
 
                         SnackbarController.sendEvent(
@@ -268,7 +266,7 @@ class CartViewModel(
                                 if (it.reference == reference) it.copy(quantity = quantity) else it
                             }
                         val updated = updatedCartItems.map { it.toCartItem() }
-                        cartRepository.updateCart(current.cartId, updated)
+                        coreRepository.updateCart(current.cartId, updated)
                         _state.update {
                             it.copy(
                                 cartItems = updatedCartItems,
@@ -294,7 +292,7 @@ class CartViewModel(
 
             val updated =
                 current.cartItems.filterNot { it.reference == reference }.map { it.toCartItem() }
-            cartRepository.updateCart(current.cartId, updated)
+            coreRepository.updateCart(current.cartId, updated)
 
             _state.update { it.copy(isUpdatingCart = false) }
 
