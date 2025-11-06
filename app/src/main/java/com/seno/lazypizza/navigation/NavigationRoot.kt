@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navigation
+import com.seno.auth.presentation.login.LoginRoot
 import com.seno.cart.presentation.CartRoot
 import com.seno.cart.presentation.components.CartTopBar
 import com.seno.core.presentation.components.LazyPizzaDefaultScreen
@@ -25,12 +26,9 @@ import com.seno.core.presentation.utils.ObserveAsEvents
 import com.seno.core.presentation.utils.SnackbarController
 import com.seno.history.presentation.HistoryScreenRoot
 import com.seno.history.presentation.component.HistoryTopBar
-import com.seno.lazypizza.MainAction
 import com.seno.lazypizza.MainState
 import com.seno.lazypizza.util.getSelectedMenu
 import com.seno.products.presentation.allproducts.AllProductsRoot
-import com.seno.products.presentation.allproducts.component.AllProductsTopBar
-import com.seno.products.presentation.allproducts.component.LogoutConfirmationDialog
 import com.seno.products.presentation.detail.ProductDetailRoot
 import com.seno.products.presentation.detail.component.ProductDetailTopBar
 import kotlinx.coroutines.launch
@@ -38,7 +36,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun NavigationRoot(
     state: MainState,
-    onAction: (MainAction) -> Unit = {},
     navHostController: NavHostController,
 ) {
     val navBackStackEntry by navHostController.currentBackStackEntryAsState()
@@ -67,16 +64,6 @@ fun NavigationRoot(
             }
         }
     }
-    if (state.showLogoutDialog) {
-        LogoutConfirmationDialog(
-            onDismissRequest = {
-                onAction(MainAction.DismissLogoutDialog)
-            },
-            onConfirmation = {
-                onAction(MainAction.ConfirmLogout)
-            }
-        )
-    }
 
     LazyPizzaDefaultScreen(
         snackbarHostState = snackbarHostState,
@@ -89,19 +76,6 @@ fun NavigationRoot(
                         },
                     )
                 }
-
-                currentRoute?.hasRoute<Screen.Menu.AllProducts>() == true -> {
-                    AllProductsTopBar(
-                        isLoggedIn = state.isLoggedIn,
-                        onLoginClick = {
-//                            navHostController.navigate(Screen.Login)
-                        },
-                        onLogoutClick = {
-                            onAction(MainAction.ShowLogoutDialog)
-                        },
-                    )
-                }
-
                 currentRoute?.hasRoute<Screen.History.HistoryScreen>() == true -> {
                     HistoryTopBar()
                 }
@@ -179,6 +153,7 @@ fun NavigationRoot(
                 mainGraph(navHostController)
                 cartGraph(navHostController)
                 historyGraph(navHostController)
+                authGraph(navHostController)
             }
         }
     }
@@ -190,6 +165,9 @@ private fun NavGraphBuilder.mainGraph(navHostController: NavHostController) {
     ) {
         composable<Screen.Menu.AllProducts> {
             AllProductsRoot(
+                onNavigateToAuthenticationScreen = {
+                    navHostController.navigate(route = Screen.Authentication.LoginScreen)
+                },
                 onNavigateToProductDetail = { pizzaName ->
                     navHostController.navigate(route = Screen.Menu.ProductDetail(pizzaName))
                 },
@@ -229,6 +207,16 @@ private fun NavGraphBuilder.historyGraph(navHostController: NavHostController) {
     ) {
         composable<Screen.History.HistoryScreen> {
             HistoryScreenRoot()
+        }
+    }
+}
+
+private fun NavGraphBuilder.authGraph(navHostController: NavHostController) {
+    navigation<Screen.Authentication>(
+        startDestination = Screen.Authentication.LoginScreen,
+    ) {
+        composable<Screen.Authentication.LoginScreen> {
+            LoginRoot()
         }
     }
 }

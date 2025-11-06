@@ -3,6 +3,7 @@ package com.seno.products.presentation.allproducts
 import com.seno.core.presentation.model.CartItemUI
 
 sealed interface AllProductsAction {
+
     data class OnProductClicked(val pizzaName: String) : AllProductsAction
 
     data class OnQueryChange(val newSearchQuery: String) : AllProductsAction
@@ -12,4 +13,10 @@ sealed interface AllProductsAction {
     data class OnProductMinus(val productState: CartItemUI) : AllProductsAction
 
     data class OnProductDelete(val productState: CartItemUI) : AllProductsAction
+
+    data object ShowLogoutDialog : AllProductsAction
+
+    data object DismissLogoutDialog : AllProductsAction
+
+    data object ConfirmLogout : AllProductsAction
 }

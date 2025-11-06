@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class Screen {
+
     @Serializable
     data object Menu {
         @Serializable
@@ -25,5 +26,15 @@ sealed class Screen {
     data object History {
         @Serializable
         data object HistoryScreen
+    }
+
+    @Serializable
+    data object Authentication {
+
+        @Serializable
+        data object LoginScreen
+
+        @Serializable
+        data object OTPScreen
     }
 }

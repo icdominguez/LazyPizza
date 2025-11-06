@@ -25,6 +25,9 @@ dependencies {
     implementation(libs.bundles.koin.compose)
 
     with(projects) {
+        with(auth) {
+            implementation(presentation)
+        }
         with(core) {
             implementation(data)
             implementation(domain)

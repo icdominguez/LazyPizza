@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class MainViewModel(
     userData: UserData,
@@ -29,22 +28,5 @@ class MainViewModel(
                     state.copy(totalCartItem = it)
                 }
             }.launchIn(viewModelScope)
-    }
-    fun onAction(event: MainAction) {
-        when (event) {
-            MainAction.ShowLogoutDialog -> {
-                _state.update { it.copy(showLogoutDialog = true) }
-            }
-
-            MainAction.DismissLogoutDialog -> {
-                _state.update { it.copy(showLogoutDialog = false) }
-            }
-
-            MainAction.ConfirmLogout -> {
-                viewModelScope.launch {
-                    _state.update { it.copy(showLogoutDialog = false) }
-                }
-            }
-        }
     }
 }
