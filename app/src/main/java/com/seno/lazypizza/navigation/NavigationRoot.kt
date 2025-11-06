@@ -25,12 +25,12 @@ import com.seno.core.presentation.utils.ObserveAsEvents
 import com.seno.core.presentation.utils.SnackbarController
 import com.seno.history.presentation.HistoryScreenRoot
 import com.seno.history.presentation.component.HistoryTopBar
+import com.seno.lazypizza.MainAction
 import com.seno.lazypizza.MainState
 import com.seno.lazypizza.util.getSelectedMenu
 import com.seno.products.presentation.allproducts.AllProductsRoot
-import com.seno.products.presentation.allproducts.LoginState
 import com.seno.products.presentation.allproducts.component.AllProductsTopBar
-import com.seno.products.presentation.allproducts.component.ConfirmationDialog
+import com.seno.products.presentation.allproducts.component.LogoutConfirmationDialog
 import com.seno.products.presentation.detail.ProductDetailRoot
 import com.seno.products.presentation.detail.component.ProductDetailTopBar
 import kotlinx.coroutines.launch
@@ -38,7 +38,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun NavigationRoot(
     state: MainState,
-    onAction: (LoginState) -> Unit,
+    onAction: (MainAction) -> Unit = {},
     navHostController: NavHostController,
 ) {
     val navBackStackEntry by navHostController.currentBackStackEntryAsState()
@@ -67,13 +67,13 @@ fun NavigationRoot(
             }
         }
     }
-    if (state.dialogState) {
-        ConfirmationDialog(
+    if (state.showLogoutDialog) {
+        LogoutConfirmationDialog(
             onDismissRequest = {
-                onAction(LoginState.DismissLogoutDialog)
+                onAction(MainAction.DismissLogoutDialog)
             },
             onConfirmation = {
-                onAction(LoginState.LoggedOut)
+                onAction(MainAction.ConfirmLogout)
             }
         )
     }
@@ -92,12 +92,12 @@ fun NavigationRoot(
 
                 currentRoute?.hasRoute<Screen.Menu.AllProducts>() == true -> {
                     AllProductsTopBar(
-                        loginState = state.loginState,
+                        isLoggedIn = state.isLoggedIn,
                         onLoginClick = {
-                            onAction(LoginState.LoggedIn)
+//                            navHostController.navigate(Screen.Login)
                         },
                         onLogoutClick = {
-                            onAction(LoginState.ShowLogoutDialog)
+                            onAction(MainAction.ShowLogoutDialog)
                         },
                     )
                 }

@@ -27,7 +27,7 @@ import com.seno.core.presentation.theme.title_1_medium
 import com.seno.core.presentation.theme.title_3
 
 @Composable
-fun ConfirmationDialog(
+fun LogoutConfirmationDialog(
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
 ) {
@@ -90,8 +90,8 @@ fun ConfirmationDialog(
 
 @Preview
 @Composable
-private fun ConfirmationDialogPreview() {
-    ConfirmationDialog(
+private fun LogoutConfirmationDialogPreview() {
+    LogoutConfirmationDialog(
         onDismissRequest = {},
         onConfirmation = {},
     )

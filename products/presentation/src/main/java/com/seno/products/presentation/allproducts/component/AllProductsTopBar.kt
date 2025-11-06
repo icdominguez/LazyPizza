@@ -24,12 +24,11 @@ import com.seno.core.presentation.theme.body_1_regular
 import com.seno.core.presentation.theme.body_3_body
 import com.seno.core.presentation.theme.textPrimary
 import com.seno.core.presentation.theme.textSecondary
-import com.seno.products.presentation.allproducts.LoginState
 
 @Composable
 fun AllProductsTopBar(
     modifier: Modifier = Modifier,
-    loginState: LoginState,
+    isLoggedIn: Boolean,
     onLoginClick: () -> Unit = {},
     onLogoutClick: () -> Unit = {},
 ) {
@@ -85,30 +84,26 @@ fun AllProductsTopBar(
 
                 Spacer(modifier = Modifier.size(16.dp))
             }
-            when (loginState) {
-                LoginState.LoggedOut -> {
-                    IconButton(
-                        onClick = onLoginClick,
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.profile_ic),
-                            contentDescription = null,
-                            tint = Color.Unspecified
-                        )
-                    }
+            if (isLoggedIn) {
+                IconButton(
+                    onClick = onLogoutClick,
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.logout_ic),
+                        contentDescription = null,
+                        tint = Color.Unspecified,
+                    )
                 }
-                LoginState.LoggedIn -> {
-                    IconButton(
-                        onClick = onLogoutClick,
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.logout_ic),
-                            contentDescription = null,
-                            tint = Color.Unspecified,
-                        )
-                    }
+            } else {
+                IconButton(
+                    onClick = onLoginClick,
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.profile_ic),
+                        contentDescription = null,
+                        tint = Color.Unspecified
+                    )
                 }
-                else -> Unit
             }
         },
     )
@@ -119,7 +114,7 @@ fun AllProductsTopBar(
 private fun AllProductsTopBarPreview() {
     LazyPizzaTheme {
         AllProductsTopBar(
-            loginState = LoginState.LoggedOut
+            isLoggedIn = true,
         )
     }
 }
