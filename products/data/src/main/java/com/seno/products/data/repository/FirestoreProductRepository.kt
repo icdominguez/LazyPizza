@@ -1,19 +1,26 @@
 package com.seno.products.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.seno.core.data.model.ProductEntity
+import com.seno.core.data.model.toCharDto
+import com.seno.core.data.model.toProduct
+import com.seno.core.data.repository.FirestoreCoreRepository.Companion.CART_COLLECTION
+import com.seno.core.data.repository.FirestoreCoreRepository.Companion.CART_ITEMS_COLLECTION
+import com.seno.core.domain.FirebaseResult
+import com.seno.core.domain.cart.CartItem
 import com.seno.core.domain.product.Product
 import com.seno.core.domain.product.ProductType
-import com.seno.products.data.model.ProductEntity
-import com.seno.products.data.model.toProduct
+import com.seno.core.domain.userdata.UserData
 import com.seno.products.domain.repository.ProductsRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.await
 
 class FirestoreProductRepository(
+    private val userData: UserData,
     private val db: FirebaseFirestore
 ) : ProductsRepository {
     override fun getAllProducts(): Flow<List<Product>> = getAllProductsFlow()
@@ -40,10 +47,13 @@ class FirestoreProductRepository(
 
                                 val entities =
                                     snapshot?.documents.orEmpty().mapNotNull { document ->
-                                        document.toObject(ProductEntity::class.java)?.copy(id = document.id)
+                                        document
+                                            .toObject(ProductEntity::class.java)
+                                            ?.copy(id = document.id)
                                     }
 
-                                val products = entities.mapNotNull { it.copy(type = type).toProduct() }
+                                val products =
+                                    entities.mapNotNull { it.copy(type = type).toProduct() }
                                 trySend(products)
                             }
 
@@ -108,24 +118,49 @@ class FirestoreProductRepository(
             awaitClose { listener.remove() }
         }
 
-    override fun getProductsByReference(references: List<String>): Flow<List<Product>> =
-        flow {
-            val products =
-                references.mapNotNull { documentReferences ->
-                    try {
-                        val snapshot = db.document(documentReferences).get().await()
-                        val collectionName = snapshot.reference.parent.id
+    override suspend fun createCart(items: List<CartItem>): FirebaseResult<String> =
+        try {
+            val cartId = db.collection(CART_COLLECTION).document().id
+            val cartReference = db.collection(CART_COLLECTION).document(cartId)
 
-                        snapshot
-                            .toObject(ProductEntity::class.java)
-                            ?.copy(
-                                id = snapshot.id,
-                                type = ProductType.valueOf(collectionName.dropLast(1).uppercase()),
-                            )?.toProduct()
-                    } catch (e: Exception) {
-                        null
-                    }
-                }
-            emit(products)
+            // 1. Create the cart document empty
+            cartReference.set(mapOf<String, Any>()).await()
+
+            val batch = db.batch()
+
+            // 2. Iterate through items and create them
+            items.map { it.toCharDto() }.forEach { item ->
+                val itemReference = cartReference.collection(CART_ITEMS_COLLECTION).document()
+                batch.set(itemReference, item)
+            }
+
+            // 3. Save everything
+            batch.commit().await()
+
+            FirebaseResult.Success(cartId)
+        } catch (exception: Exception) {
+            FirebaseResult.Error(exception)
         }
+
+    override suspend fun logoutAndDeleteCart(): FirebaseResult<Unit> {
+        return try {
+            val cartId = userData.getCartId().first()
+                ?: return FirebaseResult.Error(Exception("Cart id is null"))
+            val cartReference = db.collection(CART_COLLECTION).document(cartId)
+            val cartItems = cartReference.collection(CART_ITEMS_COLLECTION).get().await()
+
+            db
+                .runTransaction { transaction ->
+                    for (document in cartItems.documents) {
+                        transaction.delete(document.reference)
+                    }
+
+                    transaction.delete(cartReference)
+                }.await()
+            userData.clear()
+            FirebaseResult.Success(Unit)
+        } catch (exception: Exception) {
+            FirebaseResult.Error(exception)
+        }
+    }
 }

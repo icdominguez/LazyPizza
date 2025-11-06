@@ -14,6 +14,5 @@ dependencies {
         implementation(core.presentation)
         implementation(core.domain)
         implementation(products.domain)
-        implementation(cart.domain)
     }
 }

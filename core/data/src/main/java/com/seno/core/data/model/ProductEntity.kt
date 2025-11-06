@@ -1,4 +1,4 @@
-package com.seno.products.data.model
+package com.seno.core.data.model
 
 import com.seno.core.domain.product.Product
 import com.seno.core.domain.product.Product.Drink

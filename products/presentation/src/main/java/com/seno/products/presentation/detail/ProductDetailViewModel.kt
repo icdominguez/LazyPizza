@@ -3,10 +3,10 @@ package com.seno.products.presentation.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.seno.cart.domain.CartRepository
 import com.seno.core.domain.FirebaseResult
 import com.seno.core.domain.cart.CartItem
 import com.seno.core.domain.cart.ExtraTopping
+import com.seno.core.domain.repository.CoreRepository
 import com.seno.core.domain.userdata.UserData
 import com.seno.core.presentation.utils.SnackbarAction
 import com.seno.core.presentation.utils.SnackbarController
@@ -26,8 +26,8 @@ import kotlinx.coroutines.launch
 
 class ProductDetailViewModel(
     savedStateHandle: SavedStateHandle,
-    productsRepository: ProductsRepository,
-    private val cartRepository: CartRepository,
+    private val productsRepository: ProductsRepository,
+    private val coreRepository: CoreRepository,
     private val userData: UserData,
 ) : ViewModel() {
     private val pizzaName = savedStateHandle.get<String>(PIZZA_NAME_NAV_ARG) ?: ""
@@ -99,7 +99,7 @@ class ProductDetailViewModel(
 
             // If cart is null then we need to create it with the pizza item only
             if (cartId == null) {
-                val createCartResponse = cartRepository.createCart(items = listOf(pizzaItem))
+                val createCartResponse = productsRepository.createCart(items = listOf(pizzaItem))
                 when (createCartResponse) {
                     is FirebaseResult.Success -> {
                         userData.setCardId(createCartResponse.data)
@@ -129,11 +129,11 @@ class ProductDetailViewModel(
                 }
             } else {
                 // Here we need to get the cart and add the new pizza item. Again need to use first because if not, the flow will be opened
-                val getCartResponse = cartRepository.getCart(cartId).first()
+                val getCartResponse = coreRepository.getCart(cartId).first()
                 when (getCartResponse) {
                     is FirebaseResult.Success -> {
                         val updateCartResponse =
-                            cartRepository.updateCart(
+                            coreRepository.updateCart(
                                 cartId = cartId,
                                 items = getCartResponse.data + pizzaItem,
                             )

@@ -1,4 +1,4 @@
-package com.seno.cart.data.model
+package com.seno.core.data.model
 
 import com.google.firebase.firestore.PropertyName
 import com.seno.core.domain.cart.CartItem
