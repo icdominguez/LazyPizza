@@ -4,7 +4,6 @@ import android.app.Activity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -26,7 +25,6 @@ fun LazyPizzaDefaultScreen(
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.background,
-    contentWindowInsets: WindowInsets = WindowInsets.safeDrawing,
     topAppBar: @Composable () -> Unit = {},
     content: @Composable () -> Unit = {},
 ) {
@@ -48,7 +46,7 @@ fun LazyPizzaDefaultScreen(
             )
         },
         modifier = modifier,
-        contentWindowInsets = contentWindowInsets,
+        contentWindowInsets = WindowInsets(0,0,0,0),
         topBar = topAppBar,
         containerColor = containerColor,
     ) { innerPadding ->

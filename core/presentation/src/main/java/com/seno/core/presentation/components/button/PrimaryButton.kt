@@ -35,10 +35,7 @@ fun LazyPizzaPrimaryButton(
         modifier =
             modifier
                 .background(
-                    brush =
-                        Brush.linearGradient(
-                            colors = primaryGradient,
-                        ),
+                    brush = primaryGradient,
                     shape = CircleShape,
                 ).dropShadow(
                     RoundedCornerShape(20.dp),

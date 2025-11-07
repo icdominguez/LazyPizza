@@ -10,4 +10,6 @@ data class AllProductsState(
     val headerIndexMap: Map<ProductType, Int> = emptyMap(),
     val productsFiltered: Map<ProductType, List<CartItemUI>> = emptyMap(),
     val searchQuery: String = "",
+    val isLoggedIn: Boolean = false,
+    val showLogoutDialog: Boolean = false,
 )

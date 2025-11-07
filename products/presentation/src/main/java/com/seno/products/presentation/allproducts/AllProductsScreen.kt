@@ -45,10 +45,12 @@ import com.seno.core.presentation.theme.textSecondary
 import com.seno.core.presentation.utils.DeviceConfiguration
 import com.seno.core.presentation.utils.replaceUnderscores
 import com.seno.core.presentation.utils.toCamelCase
+import com.seno.products.presentation.allproducts.component.LogoutConfirmationDialog
 import kotlinx.coroutines.launch
 
 @Composable
 fun AllProductsScreen(
+    modifier: Modifier = Modifier,
     state: AllProductsState = AllProductsState(),
     onAction: (AllProductsAction) -> Unit = {},
 ) {
@@ -57,9 +59,20 @@ fun AllProductsScreen(
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     val deviceType = DeviceConfiguration.fromWindowSizeClass(windowSizeClass)
 
+    if (state.showLogoutDialog) {
+        LogoutConfirmationDialog(
+            onDismissRequest = {
+                onAction(AllProductsAction.DismissLogoutDialog)
+            },
+            onConfirmation = {
+                onAction(AllProductsAction.ConfirmLogout)
+            }
+        )
+    }
+
     Column(
         modifier =
-            Modifier
+            modifier
                 .padding(
                     start = 16.dp,
                     end = 16.dp,

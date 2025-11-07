@@ -46,6 +46,11 @@ class AllProductsViewModel(
     private var cartId: String? = null
 
     init {
+        userData.getIsLogin()
+            .onEach { isLoggedIn ->
+                _state.update { it.copy(isLoggedIn = isLoggedIn) }
+            }
+            .launchIn(viewModelScope)
         userData
             .getCartId()
             .distinctUntilChanged()
@@ -78,10 +83,20 @@ class AllProductsViewModel(
                     )
                 }
             }
-
             is AllProductsAction.OnProductMinus -> onProductMinus(action.productState)
             is AllProductsAction.OnProductPlus -> onProductPlus(action.productState)
             is AllProductsAction.OnProductDelete -> onProductDelete(action.productState)
+            AllProductsAction.ConfirmLogout -> {
+                viewModelScope.launch {
+                    _state.update { it.copy(showLogoutDialog = false) }
+                }
+            }
+            AllProductsAction.DismissLogoutDialog -> {
+                _state.update { it.copy(showLogoutDialog = false) }
+            }
+            AllProductsAction.ShowLogoutDialog -> {
+                _state.update { it.copy(showLogoutDialog = true) }
+            }
             else -> Unit
         }
     }
