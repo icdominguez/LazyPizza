@@ -1,6 +1,7 @@
 package com.seno.auth.presentation.login
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,18 +24,22 @@ fun LoginRoot(
     val defaultPadding = when (deviceConfiguration) {
         DeviceConfiguration.MOBILE_PORTRAIT,
         DeviceConfiguration.MOBILE_LANDSCAPE -> 16.dp
+
         else -> 220.dp
     }
 
-    LoginScreen(
-        modifier = Modifier
-            .padding(defaultPadding),
-        state = state,
-        onAction = { action ->
-            when (action) {
-                is LoginAction.OnContinueWithoutSignInClick -> onContinueWithoutSignIn()
-                else -> viewModel.onAction(action)
-            }
-        },
-    )
+    Scaffold {
+        LoginScreen(
+            modifier = Modifier
+                .padding(it)
+                .padding(defaultPadding),
+            state = state,
+            onAction = { action ->
+                when (action) {
+                    is LoginAction.OnContinueWithoutSignInClick -> onContinueWithoutSignIn()
+                    else -> viewModel.onAction(action)
+                }
+            },
+        )
+    }
 }

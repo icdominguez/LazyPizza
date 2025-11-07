@@ -8,6 +8,7 @@ lifecycleRuntimeKtx = "2.9.4"
 activityCompose = "1.11.0"
 composeBom = "2025.10.01"
 koin = "4.1.1"
+ktor = "3.3.1"
 material3Adaptive = "1.2.0"
 navigationSuite = "1.4.0"
 materialIconsExtended = "1.7.8"
@@ -59,6 +60,12 @@ kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-seria
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
 koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
+
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
@@ -127,4 +134,11 @@ koin-compose = ["koin-core", "koin-android", "koin-androidx-compose"]
 room = [
     "room-runtime",
     "room-ktx",
+]
+ktor = [
+    "ktor-client-core",
+    "ktor-client-okhttp",
+    "ktor-client-content-negotiation",
+    "ktor-serialization-kotlinx-json",
+    "ktor-client-logging"
 ]
