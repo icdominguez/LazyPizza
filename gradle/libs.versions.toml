@@ -24,6 +24,7 @@ firebase-bom = "34.4.0"
 google-services = "4.4.4"
 ktlint = "13.0.0" ## Fix version for compability with compose-rules
 compose-rules = "0.4.24" ## Fix version for compability with ktlint
+libphonenumber = "9.0.18"
 
 # Project versions
 projectAppId = "com.seno.lazypizza"
@@ -72,6 +73,8 @@ androidx-compose-material3-adaptive-navigation-suite = { module = "androidx.comp
 androidx-compose-material3-adaptive-navigation = { module = "androidx.compose.material3.adaptive:adaptive-navigation", version.ref = "material3Adaptive" }
 
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+
+com-googlecode-libphonenumber = { module = "com.googlecode.libphonenumber:libphonenumber", version.ref = "libphonenumber" }
 
 # Gradle
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }

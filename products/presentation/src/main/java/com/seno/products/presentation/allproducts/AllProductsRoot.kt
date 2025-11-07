@@ -51,7 +51,7 @@ fun AllProductsRoot(
                     viewModel.onAction(AllProductsAction.ShowLogoutDialog)
                 },
             )
-        }
+        },
     ) {
         AllProductsScreen(
             modifier = Modifier.padding(it),

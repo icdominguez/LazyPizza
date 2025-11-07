@@ -88,7 +88,9 @@ fun NavigationRoot(
         val suiteScaffoldState = rememberNavigationSuiteScaffoldState()
 
         LaunchedEffect(currentRoute) {
-            if (currentRoute?.hasRoute<Screen.Menu.ProductDetail>() == true) {
+            if (currentRoute?.hasRoute<Screen.Menu.ProductDetail>() == true ||
+                currentRoute?.hasRoute<Screen.Authentication.LoginScreen>() == true
+            ) {
                 suiteScaffoldState.hide()
             } else {
                 suiteScaffoldState.show()
@@ -216,7 +218,14 @@ private fun NavGraphBuilder.authGraph(navHostController: NavHostController) {
         startDestination = Screen.Authentication.LoginScreen,
     ) {
         composable<Screen.Authentication.LoginScreen> {
-            LoginRoot()
+            LoginRoot(
+                onContinueWithoutSignIn = {
+                    navHostController.navigate(Screen.Menu) {
+                        popUpTo(0)
+                        launchSingleTop = true
+                    }
+                },
+            )
         }
     }
 }

@@ -22,7 +22,7 @@ val primaryGradient = Brush.linearGradient(
     listOf(
         Color(0xFFF36B50),
         Color(0xFFF9966F),
-    )
+    ),
 )
 val ColorScheme.success: Color
     get() = Color(0xFF2F9E5A)

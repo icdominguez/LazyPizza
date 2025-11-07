@@ -46,11 +46,11 @@ class AllProductsViewModel(
     private var cartId: String? = null
 
     init {
-        userData.getIsLogin()
+        userData
+            .getIsLogin()
             .onEach { isLoggedIn ->
                 _state.update { it.copy(isLoggedIn = isLoggedIn) }
-            }
-            .launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
         userData
             .getCartId()
             .distinctUntilChanged()
