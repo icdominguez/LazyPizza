@@ -1,5 +1,6 @@
 package com.seno.auth.presentation.login
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.seno.auth.presentation.OtpComponent
 import com.seno.core.presentation.components.DefaultLazyPizzaTextField
 import com.seno.core.presentation.components.button.LazyPizzaPrimaryButton
 import com.seno.core.presentation.theme.LazyPizzaTheme
@@ -67,6 +69,16 @@ fun LoginScreen(
         )
 
         Spacer(modifier = Modifier.size(16.dp))
+
+        AnimatedVisibility(visible = state.isCodeSent) {
+            OtpComponent(
+                otp = state.otp,
+                onOptTextChange = {
+                    onAction(LoginAction.OnOtpChange(it))
+                },
+                isError = state.isWrongOtp,
+            )
+        }
 
         LazyPizzaPrimaryButton(
             modifier = Modifier

@@ -20,6 +20,8 @@ class LoginViewModel(
     fun onAction(action: LoginAction) {
         when (action) {
             is LoginAction.OnPhoneNumberChange -> onPhoneNumberChange(action.phoneNumber)
+            is LoginAction.OnContinueButtonClick -> onContinueButtonClick()
+            is LoginAction.OnOtpChange -> onOtpChange(action.newOtp)
             else -> Unit
         }
     }
@@ -44,6 +46,22 @@ class LoginViewModel(
                     isContinueButtonEnabled = false,
                 )
             }
+        }
+    }
+
+    private fun onContinueButtonClick() {
+        _state.update { currentState ->
+            currentState.copy(
+                isCodeSent = true,
+            )
+        }
+    }
+
+    private fun onOtpChange(newOtp: String) {
+        _state.update { currentState ->
+            currentState.copy(
+                otp = newOtp,
+            )
         }
     }
 }
