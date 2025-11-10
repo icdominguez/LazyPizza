@@ -1,15 +1,13 @@
 package com.seno.products.presentation.allproducts
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.seno.core.presentation.components.LazyPizzaDefaultScreen
 import com.seno.core.presentation.utils.ObserveAsEvents
 import com.seno.products.presentation.allproducts.component.AllProductsTopBar
 import org.koin.androidx.compose.koinViewModel
@@ -40,8 +38,9 @@ fun AllProductsRoot(
             CircularProgressIndicator()
         }
     }
-    Scaffold(
-        topBar = {
+
+    LazyPizzaDefaultScreen(
+        topAppBar = {
             AllProductsTopBar(
                 isLoggedIn = state.isLoggedIn,
                 onLoginClick = {
@@ -54,7 +53,6 @@ fun AllProductsRoot(
         },
     ) {
         AllProductsScreen(
-            modifier = Modifier.padding(it),
             state = state,
             onAction = { action ->
                 when (action) {

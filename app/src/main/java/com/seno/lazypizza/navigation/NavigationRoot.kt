@@ -1,14 +1,12 @@
 package com.seno.lazypizza.navigation
 
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
+import androidx.compose.foundation.background
 import androidx.compose.material3.adaptive.navigationsuite.rememberNavigationSuiteScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -18,20 +16,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navigation
 import com.seno.auth.presentation.login.LoginRoot
 import com.seno.cart.presentation.CartRoot
-import com.seno.cart.presentation.components.CartTopBar
-import com.seno.core.presentation.components.LazyPizzaDefaultScreen
 import com.seno.core.presentation.components.bar.LazyPizzaMenuBar
 import com.seno.core.presentation.model.NavigationMenu
-import com.seno.core.presentation.utils.ObserveAsEvents
-import com.seno.core.presentation.utils.SnackbarController
-import com.seno.history.presentation.HistoryScreenRoot
-import com.seno.history.presentation.component.HistoryTopBar
+import com.seno.history.presentation.HistoryRoot
 import com.seno.lazypizza.MainState
 import com.seno.lazypizza.util.getSelectedMenu
 import com.seno.products.presentation.allproducts.AllProductsRoot
 import com.seno.products.presentation.detail.ProductDetailRoot
-import com.seno.products.presentation.detail.component.ProductDetailTopBar
-import kotlinx.coroutines.launch
 
 @Composable
 fun NavigationRoot(
@@ -41,122 +32,79 @@ fun NavigationRoot(
     val navBackStackEntry by navHostController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination
 
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
+    val suiteScaffoldState = rememberNavigationSuiteScaffoldState()
 
-    ObserveAsEvents(
-        SnackbarController.events,
-        snackbarHostState,
-    ) { event ->
-        scope.launch {
-            snackbarHostState.currentSnackbarData?.dismiss()
-
-            val result =
-                snackbarHostState.showSnackbar(
-                    message = event.message,
-                    actionLabel = event.action?.name,
-                    withDismissAction = event.onDismiss != null,
-                    duration = SnackbarDuration.Short,
-                )
-
-            if (result == SnackbarResult.ActionPerformed) {
-                event.action?.action?.invoke()
-            }
+    LaunchedEffect(currentRoute) {
+        if (currentRoute?.hasRoute<Screen.Menu.ProductDetail>() == true ||
+            currentRoute?.hasRoute<Screen.Authentication.LoginScreen>() == true
+        ) {
+            suiteScaffoldState.hide()
+        } else {
+            suiteScaffoldState.show()
         }
     }
 
-    LazyPizzaDefaultScreen(
-        snackbarHostState = snackbarHostState,
-        topAppBar = {
-            when {
-                currentRoute?.hasRoute<Screen.Menu.ProductDetail>() == true -> {
-                    ProductDetailTopBar(
-                        onBackClick = {
-                            navHostController.navigateUp()
-                        },
-                    )
+    LazyPizzaMenuBar(
+        modifier = Modifier
+            .background(Color.Blue),
+        state = suiteScaffoldState,
+        selectedMenu = currentRoute.getSelectedMenu(),
+        badgeCounts =
+            mapOf(
+                NavigationMenu.CART to state.totalCartItem,
+                NavigationMenu.HISTORY to 0,
+            ),
+        onNavigationMenuClick = { menu ->
+            val currentParentRoute = currentRoute?.parent?.route
+
+            when (menu) {
+                NavigationMenu.HOME -> {
+                    navHostController.navigate(Screen.Menu) {
+                        launchSingleTop = true
+                        restoreState = true
+                        currentParentRoute?.let {
+                            popUpTo(it) {
+                                saveState = true
+                                inclusive = true
+                            }
+                        }
+                    }
                 }
-                currentRoute?.hasRoute<Screen.History.HistoryScreen>() == true -> {
-                    HistoryTopBar()
+
+                NavigationMenu.CART -> {
+                    navHostController.navigate(Screen.Cart) {
+                        launchSingleTop = true
+                        currentParentRoute?.let {
+                            popUpTo(it) {
+                                inclusive = true
+                            }
+                        }
+                    }
                 }
-                currentRoute?.hasRoute<Screen.Cart.CartScreen>() == true -> {
-                    CartTopBar()
+
+                NavigationMenu.HISTORY -> {
+                    navHostController.navigate(Screen.History) {
+                        launchSingleTop = true
+                        restoreState = true
+                        currentParentRoute?.let {
+                            popUpTo(it) {
+                                saveState = true
+                                inclusive = true
+                            }
+                        }
+                    }
                 }
             }
         },
     ) {
-        val suiteScaffoldState = rememberNavigationSuiteScaffoldState()
-
-        LaunchedEffect(currentRoute) {
-            if (currentRoute?.hasRoute<Screen.Menu.ProductDetail>() == true ||
-                currentRoute?.hasRoute<Screen.Authentication.LoginScreen>() == true
-            ) {
-                suiteScaffoldState.hide()
-            } else {
-                suiteScaffoldState.show()
-            }
-        }
-
-        LazyPizzaMenuBar(
-            state = suiteScaffoldState,
-            selectedMenu = currentRoute.getSelectedMenu(),
-            badgeCounts =
-                mapOf(
-                    NavigationMenu.CART to state.totalCartItem,
-                    NavigationMenu.HISTORY to 0,
-                ),
-            onNavigationMenuClick = { menu ->
-                val currentParentRoute = currentRoute?.parent?.route
-
-                when (menu) {
-                    NavigationMenu.HOME -> {
-                        navHostController.navigate(Screen.Menu) {
-                            launchSingleTop = true
-                            restoreState = true
-                            currentParentRoute?.let {
-                                popUpTo(it) {
-                                    saveState = true
-                                    inclusive = true
-                                }
-                            }
-                        }
-                    }
-
-                    NavigationMenu.CART -> {
-                        navHostController.navigate(Screen.Cart) {
-                            launchSingleTop = true
-                            currentParentRoute?.let {
-                                popUpTo(it) {
-                                    inclusive = true
-                                }
-                            }
-                        }
-                    }
-
-                    NavigationMenu.HISTORY -> {
-                        navHostController.navigate(Screen.History) {
-                            launchSingleTop = true
-                            restoreState = true
-                            currentParentRoute?.let {
-                                popUpTo(it) {
-                                    saveState = true
-                                    inclusive = true
-                                }
-                            }
-                        }
-                    }
-                }
-            },
+        NavHost(
+            navController = navHostController,
+            startDestination = Screen.Menu,
         ) {
-            NavHost(
-                navController = navHostController,
-                startDestination = Screen.Menu,
-            ) {
-                mainGraph(navHostController)
-                cartGraph(navHostController)
-                historyGraph(navHostController)
-                authGraph(navHostController)
-            }
+            mainGraph(navHostController)
+            cartGraph(navHostController)
+            historyGraph(navHostController)
+            authGraph(navHostController)
         }
     }
 }
@@ -208,7 +156,20 @@ private fun NavGraphBuilder.historyGraph(navHostController: NavHostController) {
         startDestination = Screen.History.HistoryScreen,
     ) {
         composable<Screen.History.HistoryScreen> {
-            HistoryScreenRoot()
+            HistoryRoot(
+                onSignInClick = {
+                    navHostController.navigate(Screen.Authentication.LoginScreen) {
+                        popUpTo(0)
+                        launchSingleTop = true
+                    }
+                },
+                onGotoMenuClick = {
+                    navHostController.navigate(Screen.Menu) {
+                        popUpTo(0)
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
     }
 }

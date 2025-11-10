@@ -7,6 +7,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.seno.cart.presentation.components.CartTopBar
+import com.seno.core.presentation.components.LazyPizzaDefaultScreen
 import com.seno.core.presentation.utils.ObserveAsEvents
 import org.koin.androidx.compose.koinViewModel
 
@@ -37,13 +39,20 @@ fun CartRoot(
         }
     }
 
-    CartScreen(
-        state = state,
-        onAction = { action ->
-            when (action) {
-                is CartActions.OnNavigateToMenuClick -> onNavigateToMenu()
-                else -> viewModel.onAction(action)
-            }
-        },
-    )
+    LazyPizzaDefaultScreen(
+        topAppBar = {
+            CartTopBar()
+        }
+    ) {
+        CartScreen(
+            state = state,
+            onAction = { action ->
+                when (action) {
+                    is CartActions.OnNavigateToMenuClick -> onNavigateToMenu()
+                    else -> viewModel.onAction(action)
+                }
+            },
+        )
+    }
+
 }

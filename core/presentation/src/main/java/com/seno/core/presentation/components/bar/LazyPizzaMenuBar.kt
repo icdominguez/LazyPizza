@@ -3,7 +3,6 @@ package com.seno.core.presentation.components.bar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Badge
@@ -79,22 +78,8 @@ fun LazyPizzaMenuBar(
         navigationSuiteItems = {
             NavigationMenu.entries.forEachIndexed { index, screen ->
                 val itemCount = badgeCounts[screen] ?: 0
-                val isTablet = deviceType.isTablet()
-                val isTabletPortrait = deviceType == DeviceConfiguration.TABLET_PORTRAIT
-                val isTabletLandscape = deviceType == DeviceConfiguration.TABLET_LANDSCAPE
                 val isSelected = selectedMenu == screen
                 item(
-                    modifier =
-                        Modifier.padding(
-                            start = if (!isTablet && index == 0) 50.dp else 0.dp,
-                            end = if (!isTablet && index == NavigationMenu.entries.size - 1) 50.dp else 0.dp,
-                            top =
-                                when {
-                                    isTabletLandscape && index == 0 -> 200.dp
-                                    isTabletPortrait && index == 0 -> 350.dp
-                                    else -> 0.dp
-                                },
-                        ),
                     selected = isSelected,
                     colors = myNavigationSuiteItemColors,
                     onClick = {},

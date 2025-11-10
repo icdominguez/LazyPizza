@@ -82,11 +82,11 @@ fun AllProductsScreen(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(150.dp)
+                    .height(160.dp)
                     .clip(
                         shape = RoundedCornerShape(16.dp),
                     ),
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.FillWidth,
             painter = painterResource(com.seno.products.presentation.R.drawable.banner),
             contentDescription = "Banner",
         )
