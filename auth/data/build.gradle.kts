@@ -12,7 +12,7 @@ dependencies {
         implementation(core.domain)
         implementation(core.data)
     }
-
+    implementation(libs.bundles.ktor)
     implementation(libs.timber)
     implementation(libs.com.googlecode.libphonenumber)
 }
