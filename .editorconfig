@@ -8,6 +8,7 @@ ktlint_standard_class-signature = disabled # newline expected after opening/clos
 ktlint_standard_function-naming = disabled # camelCase naming function will warn composable
 ktlint_standard_multiline-expression-wrapping = disabled # multiline expression
 ktlint_standard_trailing-comma-on-declaration-site = disabled # traling comma before ";"
+ktlint_standard_package-name = disabled # package name with underscore
 ktlint_standard_no-wildcard-imports = disabled # wildcard import
 ktlint_compose_modifier-missing-check = disabled # default modifier
 # ktlint_standard_trailing-comma-on-call-site = disabled # traling comma before ")"

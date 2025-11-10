@@ -142,6 +142,21 @@ class FirestoreProductRepository(
             FirebaseResult.Error(exception)
         }
 
+    /**
+     * Logs out the user by deleting their entire shopping cart from Firestore and clearing local user data.
+     *
+     * This function performs the following steps in a single Firestore transaction:
+     * 1. Retrieves the current user's cart ID from local storage.
+     * 2. Fetches all items within the corresponding cart in Firestore.
+     * 3. Deletes all cart item documents.
+     * 4. Deletes the parent cart document.
+     * 5. Clears all user data from the local `UserData` store.
+     *
+     * If any step fails, the entire transaction is rolled back, and an error is returned.
+     *
+     * @return [FirebaseResult.Success] with [Unit] if the cart is successfully deleted and user data is cleared.
+     * @return [FirebaseResult.Error] if the cart ID is not found or if any Firestore operation fails.
+     */
     override suspend fun logoutAndDeleteCart(): FirebaseResult<Unit> {
         return try {
             val cartId = userData.getCartId().first()

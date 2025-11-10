@@ -17,6 +17,11 @@ internal fun Project.configureBuildTypes(
     localProperties.load(localPropertiesFile.inputStream())
 
     commonExtension.run {
+        defaultConfig {
+            buildConfigField("String", "TELEGRAM_BASE_URL", localProperties.getProperty("telegram_base_url"))
+            buildConfigField("String", "TELEGRAM_API_KEY", localProperties.getProperty("telegram_api_token"))
+        }
+
         buildFeatures {
             buildConfig = true
         }
