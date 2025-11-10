@@ -14,6 +14,4 @@ data class LoginState(
     val isLoading: Boolean = false,
     val timeLeft: Int = 60,
     val isTimerRunning: Boolean = false,
-
-
-    )
+)

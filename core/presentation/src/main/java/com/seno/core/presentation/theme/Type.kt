@@ -80,6 +80,13 @@ val label_2_semiBold =
         fontSize = 12.sp,
         lineHeight = 16.sp,
     )
+val label_3_medium =
+    TextStyle(
+        fontFamily = FontFamily(Font(R.font.instrument_sans_bold)),
+        fontWeight = FontWeight.Medium,
+        fontSize = 10.sp,
+        lineHeight = 14.sp,
+    )
 val body_1_regular =
     TextStyle(
         fontFamily = FontFamily(Font(R.font.instrument_sans_regular)),

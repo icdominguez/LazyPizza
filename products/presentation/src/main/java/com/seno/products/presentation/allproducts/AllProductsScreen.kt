@@ -53,7 +53,6 @@ fun AllProductsScreen(
     modifier: Modifier = Modifier,
     state: AllProductsState = AllProductsState(),
     onAction: (AllProductsAction) -> Unit = {},
-    onLogout: () -> Unit = {},
 ) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -238,6 +237,10 @@ fun AllProductsScreen(
                                         }
                                     }
                                 }
+                            }
+
+                            if (deviceType.isTablet() && rowItems.size == 1) {
+                                Spacer(modifier = Modifier.weight(1f))
                             }
                         }
                     }

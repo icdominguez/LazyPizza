@@ -24,7 +24,7 @@ import com.seno.core.presentation.components.bar.LazyPizzaMenuBar
 import com.seno.core.presentation.model.NavigationMenu
 import com.seno.core.presentation.utils.ObserveAsEvents
 import com.seno.core.presentation.utils.SnackbarController
-import com.seno.history.presentation.HistoryScreenRoot
+import com.seno.history.presentation.HistoryRoot
 import com.seno.history.presentation.component.HistoryTopBar
 import com.seno.lazypizza.MainState
 import com.seno.lazypizza.util.getSelectedMenu
@@ -208,7 +208,15 @@ private fun NavGraphBuilder.historyGraph(navHostController: NavHostController) {
         startDestination = Screen.History.HistoryScreen,
     ) {
         composable<Screen.History.HistoryScreen> {
-            HistoryScreenRoot()
+            HistoryRoot(
+                onSignInClick = { navHostController.navigate(Screen.Authentication.LoginScreen) },
+                onGotoMenuClick = {
+                    navHostController.navigate(Screen.Menu) {
+                        popUpTo(0)
+                        launchSingleTop = true
+                    }
+                },
+            )
         }
     }
 }
@@ -225,12 +233,12 @@ private fun NavGraphBuilder.authGraph(navHostController: NavHostController) {
                         launchSingleTop = true
                     }
                 },
-                onConfirmButtonClicked = {
+                onConfirmButtonClick = {
                     navHostController.navigate(Screen.Menu) {
                         popUpTo(0)
                         launchSingleTop = true
                     }
-                }
+                },
             )
         }
     }
