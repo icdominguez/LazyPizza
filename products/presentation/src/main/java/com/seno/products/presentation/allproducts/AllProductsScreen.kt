@@ -66,7 +66,7 @@ fun AllProductsScreen(
             },
             onConfirmation = {
                 onAction(AllProductsAction.ConfirmLogout)
-            }
+            },
         )
     }
 

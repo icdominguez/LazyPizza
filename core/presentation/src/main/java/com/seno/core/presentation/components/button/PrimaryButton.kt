@@ -1,8 +1,6 @@
 package com.seno.core.presentation.components.button
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -10,14 +8,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.dropShadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import com.seno.core.presentation.circleGradientShadow
 import com.seno.core.presentation.theme.LazyPizzaTheme
-import com.seno.core.presentation.theme.primary
-import com.seno.core.presentation.theme.primaryGradient
 import com.seno.core.presentation.theme.textOnPrimary
 import com.seno.core.presentation.theme.title_3
 
@@ -26,29 +20,18 @@ fun LazyPizzaPrimaryButton(
     buttonText: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isLoading: Boolean = false
+    isLoading: Boolean = false,
+    enabled: Boolean = true,
 ) {
     Button(
+        enabled = enabled,
         onClick = {
             onClick()
         },
-        modifier =
-            modifier
-                .background(
-                    brush = primaryGradient,
-                    shape = CircleShape,
-                ).dropShadow(
-                    RoundedCornerShape(20.dp),
-                ) {
-                    radius = 10f
-                    color = primary
-                    spread = 6f
-                    alpha = 0.25f
-                },
-        colors =
-            ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent,
-            ),
+        modifier = modifier.circleGradientShadow(enabled),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.Transparent,
+        ),
     ) {
         if (isLoading) {
             CircularProgressIndicator(
@@ -68,10 +51,18 @@ fun LazyPizzaPrimaryButton(
 @Composable
 private fun LazyPizzaPrimaryButtonPreview() {
     LazyPizzaTheme {
-        LazyPizzaPrimaryButton(
-            isLoading = true,
-            buttonText = "Button",
-            onClick = {},
-        )
+        Column {
+            LazyPizzaPrimaryButton(
+                isLoading = false,
+                buttonText = "Button",
+                onClick = {},
+            )
+            LazyPizzaPrimaryButton(
+                isLoading = false,
+                buttonText = "Button",
+                onClick = {},
+                enabled = false,
+            )
+        }
     }
 }

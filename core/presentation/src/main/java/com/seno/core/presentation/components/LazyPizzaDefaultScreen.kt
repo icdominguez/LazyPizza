@@ -46,7 +46,7 @@ fun LazyPizzaDefaultScreen(
             )
         },
         modifier = modifier,
-        contentWindowInsets = WindowInsets(0,0,0,0),
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = topAppBar,
         containerColor = containerColor,
     ) { innerPadding ->

@@ -1,6 +1,18 @@
 package com.seno.core.presentation.utils
 
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.runtime.Composable
 import androidx.window.core.layout.WindowSizeClass
+import androidx.window.core.layout.WindowSizeClass.Companion.HEIGHT_DP_EXPANDED_LOWER_BOUND
+import androidx.window.core.layout.WindowSizeClass.Companion.HEIGHT_DP_MEDIUM_LOWER_BOUND
+import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
+import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_MEDIUM_LOWER_BOUND
+
+@Composable
+fun currentDeviceConfiguration(): DeviceConfiguration {
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    return DeviceConfiguration.fromWindowSizeClass(windowSizeClass)
+}
 
 enum class DeviceConfiguration {
     MOBILE_PORTRAIT,
@@ -12,34 +24,23 @@ enum class DeviceConfiguration {
     fun isTablet() = this == TABLET_PORTRAIT || this == TABLET_LANDSCAPE
 
     companion object {
-        private const val WIDTH_COMPACT_THRESHOLD = 600
-        private const val WIDTH_MEDIUM_THRESHOLD = 840
+        fun fromWindowSizeClass(windowSizeClass: WindowSizeClass): DeviceConfiguration =
+            with(windowSizeClass) {
+                when {
+                    minWidthDp < WIDTH_DP_MEDIUM_LOWER_BOUND &&
+                        minHeightDp >= HEIGHT_DP_MEDIUM_LOWER_BOUND -> MOBILE_PORTRAIT
 
-        private const val HEIGHT_COMPACT_THRESHOLD = 480
-        private const val HEIGHT_MEDIUM_THRESHOLD = 900
+                    minWidthDp >= WIDTH_DP_MEDIUM_LOWER_BOUND &&
+                        minHeightDp < HEIGHT_DP_MEDIUM_LOWER_BOUND -> MOBILE_LANDSCAPE
 
-        fun fromWindowSizeClass(windowSizeClass: WindowSizeClass): DeviceConfiguration {
-            val isCompactWidth = !windowSizeClass.isWidthAtLeastBreakpoint(WIDTH_COMPACT_THRESHOLD)
-            val isMediumWidth =
-                windowSizeClass.isWidthAtLeastBreakpoint(WIDTH_COMPACT_THRESHOLD) &&
-                    !windowSizeClass.isWidthAtLeastBreakpoint(WIDTH_MEDIUM_THRESHOLD)
-            val isExpandedWidth = windowSizeClass.isWidthAtLeastBreakpoint(WIDTH_MEDIUM_THRESHOLD)
+                    minWidthDp < WIDTH_DP_EXPANDED_LOWER_BOUND &&
+                        minHeightDp >=
+                        HEIGHT_DP_EXPANDED_LOWER_BOUND -> TABLET_PORTRAIT
 
-            val isCompactHeight =
-                !windowSizeClass.isHeightAtLeastBreakpoint(HEIGHT_COMPACT_THRESHOLD)
-            val isMediumHeight =
-                windowSizeClass.isHeightAtLeastBreakpoint(HEIGHT_COMPACT_THRESHOLD) &&
-                    !windowSizeClass.isHeightAtLeastBreakpoint(HEIGHT_MEDIUM_THRESHOLD)
-            val isExpandedHeight =
-                windowSizeClass.isHeightAtLeastBreakpoint(HEIGHT_MEDIUM_THRESHOLD)
+                    minWidthDp >= WIDTH_DP_EXPANDED_LOWER_BOUND -> TABLET_LANDSCAPE
 
-            return when {
-                isCompactWidth && (isMediumHeight || isExpandedHeight) -> MOBILE_PORTRAIT
-                isExpandedWidth && isCompactHeight -> MOBILE_LANDSCAPE
-                isMediumWidth && isExpandedHeight -> TABLET_PORTRAIT
-                isExpandedWidth && isMediumHeight -> TABLET_LANDSCAPE
-                else -> DESKTOP
+                    else -> DESKTOP
+                }
             }
-        }
     }
 }

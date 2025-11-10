@@ -32,7 +32,7 @@ fun LogoutConfirmationDialog(
     onConfirmation: () -> Unit,
 ) {
     Dialog(
-        onDismissRequest = { onDismissRequest() }
+        onDismissRequest = { onDismissRequest() },
     ) {
         Card(
             modifier = Modifier
@@ -48,7 +48,7 @@ fun LogoutConfirmationDialog(
                 Text(
                     text = stringResource(R.string.confirmation_dialog_title),
                     modifier = Modifier.padding(16.dp),
-                    style = title_1_medium
+                    style = title_1_medium,
                 )
                 Row(
                     modifier = Modifier
@@ -62,8 +62,8 @@ fun LogoutConfirmationDialog(
                         Text(
                             text = stringResource(R.string.cancel),
                             style = title_3.copy(
-                                color = primary
-                            )
+                                color = primary,
+                            ),
                         )
                     }
                     TextButton(
@@ -72,14 +72,14 @@ fun LogoutConfirmationDialog(
                             .padding(8.dp)
                             .background(
                                 brush = primaryGradient,
-                                shape = CircleShape
+                                shape = CircleShape,
                             ),
                     ) {
                         Text(
                             text = stringResource(R.string.logout),
                             style = title_3.copy(
-                                color = textOnPrimary
-                            )
+                                color = textOnPrimary,
+                            ),
                         )
                     }
                 }

@@ -94,6 +94,13 @@ val body_1_medium =
         fontSize = 16.sp,
         lineHeight = 22.sp,
     )
+val body_2_regular =
+    TextStyle(
+        fontFamily = FontFamily(Font(R.font.instrument_sans_regular)),
+        fontWeight = FontWeight.Normal,
+        fontSize = 15.sp,
+        lineHeight = 22.sp,
+    )
 val body_3_regular =
     TextStyle(
         fontFamily = FontFamily(Font(R.font.instrument_sans_regular)),

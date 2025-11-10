@@ -26,6 +26,7 @@ dependencies {
 
     with(projects) {
         with(auth) {
+            implementation(data)
             implementation(presentation)
         }
         with(core) {

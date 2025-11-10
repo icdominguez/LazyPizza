@@ -1,6 +1,8 @@
 package com.seno.lazypizza
 
 import android.app.Application
+import com.seno.auth.data.di.authDataModule
+import com.seno.auth.presentation.di.authPresentationModule
 import com.seno.cart.data.di.cartDataModule
 import com.seno.cart.presentation.di.cartPresentationModule
 import com.seno.core.data.di.coreDataModule
@@ -32,6 +34,8 @@ class LazyPizzaApp : Application() {
                 historyPresentationModule,
                 cartPresentationModule,
                 cartDataModule,
+                authDataModule,
+                authPresentationModule,
             )
         }
     }

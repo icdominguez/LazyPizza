@@ -12,4 +12,7 @@ dependencies {
         implementation(core.domain)
         implementation(core.data)
     }
+
+    implementation(libs.timber)
+    implementation(libs.com.googlecode.libphonenumber)
 }

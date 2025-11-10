@@ -27,8 +27,8 @@ import com.seno.core.presentation.theme.textSecondary
 
 @Composable
 fun AllProductsTopBar(
-    modifier: Modifier = Modifier,
     isLoggedIn: Boolean,
+    modifier: Modifier = Modifier,
     onLoginClick: () -> Unit = {},
     onLogoutClick: () -> Unit = {},
 ) {
@@ -101,7 +101,7 @@ fun AllProductsTopBar(
                     Icon(
                         painter = painterResource(R.drawable.profile_ic),
                         contentDescription = null,
-                        tint = Color.Unspecified
+                        tint = Color.Unspecified,
                     )
                 }
             }
