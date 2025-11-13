@@ -11,5 +11,9 @@ data class LoginState(
     val isCodeSent: Boolean = false,
     val isWrongOtp: Boolean = false,
     val isValidOtp: Boolean = false,
-    val isLoading: Boolean = false
-)
+    val isLoading: Boolean = false,
+    val timeLeft: Int = 60,
+    val isTimerRunning: Boolean = false,
+
+
+    )

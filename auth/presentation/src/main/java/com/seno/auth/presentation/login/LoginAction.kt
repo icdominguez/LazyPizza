@@ -12,4 +12,7 @@ interface LoginAction {
     object OnContinueWithoutSignInClick : LoginAction
 
     object OnContinueButtonClick : LoginAction
+
+    data object OnTimerTick : LoginAction
+
 }

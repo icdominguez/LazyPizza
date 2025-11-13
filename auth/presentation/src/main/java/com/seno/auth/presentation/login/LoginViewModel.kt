@@ -4,10 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seno.auth.domain.PhoneValidator
 import com.seno.auth.domain.repository.AuthService
+import com.seno.core.domain.DataError
 import com.seno.core.domain.onError
 import com.seno.core.domain.onSuccess
 import com.seno.core.domain.userdata.UserData
+import com.seno.core.presentation.utils.asUiText
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -25,6 +29,8 @@ class LoginViewModel(
     private val _event = Channel<LoginEvent>()
     val event = _event.receiveAsFlow()
 
+    private var timerJob: Job? = null
+
     fun onAction(action: LoginAction) {
         when (action) {
             is LoginAction.OnPhoneNumberChange -> onPhoneNumberChange(action.phoneNumber)
@@ -32,6 +38,15 @@ class LoginViewModel(
             is LoginAction.OnOtpChange -> onOtpChange(action.newOtp)
             is LoginAction.OnOtpResend -> onOtpResend()
             is LoginAction.OnOtpConfirm -> onOtpConfirm()
+            LoginAction.OnTimerTick -> {
+                val currentTimeLeft = _state.value.timeLeft
+                if (currentTimeLeft > 0) {
+                    _state.update { it.copy(timeLeft = currentTimeLeft - 1) }
+                } else {
+                    _state.update { it.copy(isTimerRunning = false) }
+                    timerJob?.cancel()
+                }
+            }
             else -> Unit
         }
     }
@@ -70,13 +85,17 @@ class LoginViewModel(
                     _state.update { it.copy(
                         isCodeSent = true,
                         requestId = requestId,
+                        timeLeft = 60,
+                        isTimerRunning = true
                     )}
+                    startTimer()
                 }.onError { error ->
                     _state.update { it.copy(
                         isCodeSent = false,
                     )}
                 }
             } catch (e: Exception) {
+                _event.send(LoginEvent.LoginError(DataError.Network.UNKNOWN.asUiText()))
                 _state.update { it.copy(
                     isCodeSent = false,
                 )}
@@ -115,6 +134,7 @@ class LoginViewModel(
                     )}
                     _event.send(LoginEvent.LoginSuccess)
                 }.onError { error ->
+                    _event.send(LoginEvent.LoginError(error.asUiText()))
                     _state.update { it.copy(
                         isValidOtp = false,
                         isWrongOtp = true,
@@ -123,6 +143,8 @@ class LoginViewModel(
 
                 }
             } catch (e: Exception) {
+                _event.send(LoginEvent.LoginError(DataError.Network.UNKNOWN.asUiText()))
+
                 _state.update { it.copy(
                     isValidOtp = false,
                     isWrongOtp = true,
@@ -144,18 +166,38 @@ class LoginViewModel(
                         isCodeSent = true,
                         requestId = requestId,
                         otp = "",
-                        isValidOtp = false
+                        isValidOtp = false,
+                        timeLeft = 60,
+                        isTimerRunning = true
                     )}
+                    startTimer()
                 }.onError { error ->
+                    _event.send(LoginEvent.LoginError(error.asUiText()))
                     _state.update { it.copy(
                         isCodeSent = true,
                     )}
                 }
             } catch (e: Exception) {
+                _event.send(LoginEvent.LoginError(DataError.Network.UNKNOWN.asUiText()))
                 _state.update { it.copy(
                     isCodeSent = true,
                 )}
             }
         }
+    }
+
+    private fun startTimer() {
+        timerJob?.cancel()
+        timerJob = viewModelScope.launch {
+            while (_state.value.timeLeft > 0 && _state.value.isTimerRunning) {
+                delay(1000)
+                onAction(LoginAction.OnTimerTick)
+            }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        timerJob?.cancel()
     }
 }

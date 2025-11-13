@@ -41,21 +41,6 @@ fun LoginScreen(
     state: LoginState = LoginState(),
     onAction: (LoginAction) -> Unit = {},
 ) {
-    var timeLeft by remember { mutableStateOf(60) }
-    var isTimerRunning by remember { mutableStateOf(false) }
-
-    LaunchedEffect(state.isCodeSent) {
-        if (state.isCodeSent) {
-            isTimerRunning = true
-            timeLeft = 60
-
-            while (timeLeft > 0 && isTimerRunning) {
-                delay(1000)
-                timeLeft--
-            }
-            isTimerRunning = false
-        }
-    }
 
     Column(
         modifier = modifier
@@ -150,9 +135,9 @@ fun LoginScreen(
         Spacer(modifier = Modifier.size(12.dp))
 
         if (state.isCodeSent) {
-            if (isTimerRunning && timeLeft > 0) {
-                val minutes = timeLeft / 60
-                val seconds = timeLeft % 60
+            if (state.isTimerRunning && state.timeLeft > 0) {
+                val minutes = state.timeLeft / 60
+                val seconds = state.timeLeft % 60
                 Text(
                     text = "You can request a new code in ${String.format("%02d:%02d", minutes, seconds)}",
                     style = body_3_regular.copy(textSecondary),

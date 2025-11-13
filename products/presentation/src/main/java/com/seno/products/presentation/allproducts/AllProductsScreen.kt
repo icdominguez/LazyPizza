@@ -66,7 +66,7 @@ fun AllProductsScreen(
                 onAction(AllProductsAction.DismissLogoutDialog)
             },
             onConfirmation = {
-                onLogout()
+                onAction(AllProductsAction.ConfirmLogout)
             },
         )
     }

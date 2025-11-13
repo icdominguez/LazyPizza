@@ -62,7 +62,6 @@ fun AllProductsRoot(
                     else -> viewModel.onAction(action)
                 }
             },
-            onLogout = {}
         )
     }
 }
