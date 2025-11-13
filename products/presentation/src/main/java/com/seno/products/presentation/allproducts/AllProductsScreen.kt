@@ -53,6 +53,7 @@ fun AllProductsScreen(
     modifier: Modifier = Modifier,
     state: AllProductsState = AllProductsState(),
     onAction: (AllProductsAction) -> Unit = {},
+    onLogout: () -> Unit = {},
 ) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
