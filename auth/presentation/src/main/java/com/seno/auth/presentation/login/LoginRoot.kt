@@ -34,7 +34,7 @@ fun LoginRoot(
         viewModel.event.collect { event ->
             when (event) {
                 LoginEvent.LoginSuccess -> onConfirmButtonClicked()
-                LoginEvent.LoginError -> {}
+                else -> {}
             }
         }
     }

@@ -230,7 +230,7 @@ private fun NavGraphBuilder.authGraph(navHostController: NavHostController) {
                         popUpTo(0)
                         launchSingleTop = true
                     }
-                }
+                },
             )
         }
     }

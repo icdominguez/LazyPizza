@@ -16,6 +16,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -41,7 +42,7 @@ fun LoginScreen(
     state: LoginState = LoginState(),
     onAction: (LoginAction) -> Unit = {},
 ) {
-    var timeLeft by remember { mutableStateOf(60) }
+    var timeLeft by remember { mutableIntStateOf(60) }
     var isTimerRunning by remember { mutableStateOf(false) }
 
     LaunchedEffect(state.isCodeSent) {
@@ -72,6 +73,7 @@ fun LoginScreen(
         )
 
         Spacer(modifier = Modifier.size(6.dp))
+
         if (state.isCodeSent) {
             Text(
                 text = "Enter code",
@@ -120,7 +122,7 @@ fun LoginScreen(
                 onClick = {
                     onAction(LoginAction.OnOtpConfirm)
                 },
-                enabled = state.otp.length == 6 && !state.isLoading
+                enabled = state.otp.length == 6 && !state.isLoading,
             )
         } else {
             LazyPizzaPrimaryButton(
@@ -161,7 +163,7 @@ fun LoginScreen(
                 TextButton(
                     onClick = {
                         onAction(LoginAction.OnOtpResend)
-                    }
+                    },
                 ) {
                     Text(
                         text = "Resend code",
