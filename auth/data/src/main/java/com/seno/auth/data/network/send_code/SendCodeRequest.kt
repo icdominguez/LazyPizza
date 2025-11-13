@@ -8,6 +8,6 @@ data class SendCodeRequest(
     @SerialName("phone_number")
     val phoneNumber: String,
     @SerialName("code_length")
-    val codeLength: Int = 4,
+    val codeLength: Int = 6,
     val ttl: Int = 60
 )

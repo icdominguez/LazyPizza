@@ -225,6 +225,12 @@ private fun NavGraphBuilder.authGraph(navHostController: NavHostController) {
                         launchSingleTop = true
                     }
                 },
+                onConfirmButtonClicked = {
+                    navHostController.navigate(Screen.Menu) {
+                        popUpTo(0)
+                        launchSingleTop = true
+                    }
+                }
             )
         }
     }
