@@ -14,11 +14,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,7 +28,6 @@ import com.seno.core.presentation.theme.textPrimary
 import com.seno.core.presentation.theme.textSecondary
 import com.seno.core.presentation.theme.title_1_medium
 import com.seno.core.presentation.theme.title_3
-import kotlinx.coroutines.delay
 
 @Composable
 fun LoginScreen(
@@ -41,7 +35,6 @@ fun LoginScreen(
     state: LoginState = LoginState(),
     onAction: (LoginAction) -> Unit = {},
 ) {
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -57,6 +50,7 @@ fun LoginScreen(
         )
 
         Spacer(modifier = Modifier.size(6.dp))
+
         if (state.isCodeSent) {
             Text(
                 text = "Enter code",
@@ -105,7 +99,7 @@ fun LoginScreen(
                 onClick = {
                     onAction(LoginAction.OnOtpConfirm)
                 },
-                enabled = state.otp.length == 6 && !state.isLoading
+                enabled = state.otp.length == 6 && !state.isLoading,
             )
         } else {
             LazyPizzaPrimaryButton(
@@ -146,7 +140,7 @@ fun LoginScreen(
                 TextButton(
                     onClick = {
                         onAction(LoginAction.OnOtpResend)
-                    }
+                    },
                 ) {
                     Text(
                         text = "Resend code",

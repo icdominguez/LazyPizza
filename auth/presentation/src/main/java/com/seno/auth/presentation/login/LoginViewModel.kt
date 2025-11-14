@@ -81,33 +81,42 @@ class LoginViewModel(
             try {
                 val result = authService.sendCode(state.value.phoneNumber)
 
-                result.onSuccess { requestId ->
-                    _state.update { it.copy(
-                        isCodeSent = true,
-                        requestId = requestId,
-                        timeLeft = 60,
-                        isTimerRunning = true
-                    )}
-                    startTimer()
-                }.onError { error ->
-                    _state.update { it.copy(
-                        isCodeSent = false,
-                    )}
-                }
+                result
+                    .onSuccess { requestId ->
+                        _state.update {
+                            it.copy(
+                                isCodeSent = true,
+                                requestId = requestId,
+                                timeLeft = 60,
+                                isTimerRunning = true,
+                            )
+                        }
+                        startTimer()
+                    }.onError { error ->
+                        _state.update {
+                            it.copy(
+                                isCodeSent = false,
+                            )
+                        }
+                    }
             } catch (e: Exception) {
                 _event.send(LoginEvent.LoginError(DataError.Network.UNKNOWN.asUiText()))
-                _state.update { it.copy(
-                    isCodeSent = false,
-                )}
+                _state.update {
+                    it.copy(
+                        isCodeSent = false,
+                    )
+                }
             }
         }
     }
 
     private fun onOtpChange(newOtp: String) {
-        _state.update { it.copy(
-            otp = newOtp,
-            isWrongOtp = false
-        )}
+        _state.update {
+            it.copy(
+                otp = newOtp,
+                isWrongOtp = false,
+            )
+        }
     }
 
     private fun onOtpConfirm() {
@@ -122,34 +131,40 @@ class LoginViewModel(
             try {
                 val result = authService.verificationCode(
                     requestId = requestId,
-                    code = currentOtp
+                    code = currentOtp,
                 )
 
-                result.onSuccess {
-                    userData.setIsLogin(true)
-                    _state.update { it.copy(
-                        isLoggedIn = true,
-                        isValidOtp = true,
-                        isLoading = false
-                    )}
-                    _event.send(LoginEvent.LoginSuccess)
-                }.onError { error ->
-                    _event.send(LoginEvent.LoginError(error.asUiText()))
-                    _state.update { it.copy(
-                        isValidOtp = false,
-                        isWrongOtp = true,
-                        isLoading = false
-                    )}
-
-                }
+                result
+                    .onSuccess {
+                        userData.setIsLogin(true)
+                        _state.update {
+                            it.copy(
+                                isLoggedIn = true,
+                                isValidOtp = true,
+                                isLoading = false,
+                            )
+                        }
+                        _event.send(LoginEvent.LoginSuccess)
+                    }.onError { error ->
+                        _event.send(LoginEvent.LoginError(error.asUiText()))
+                        _state.update {
+                            it.copy(
+                                isValidOtp = false,
+                                isWrongOtp = true,
+                                isLoading = false,
+                            )
+                        }
+                    }
             } catch (e: Exception) {
                 _event.send(LoginEvent.LoginError(DataError.Network.UNKNOWN.asUiText()))
 
-                _state.update { it.copy(
-                    isValidOtp = false,
-                    isWrongOtp = true,
-                    isLoading = false
-                )}
+                _state.update {
+                    it.copy(
+                        isValidOtp = false,
+                        isWrongOtp = true,
+                        isLoading = false,
+                    )
+                }
             }
         }
     }
@@ -161,27 +176,34 @@ class LoginViewModel(
             try {
                 val result = authService.sendCode(state.value.phoneNumber)
 
-                result.onSuccess { requestId ->
-                    _state.update { it.copy(
-                        isCodeSent = true,
-                        requestId = requestId,
-                        otp = "",
-                        isValidOtp = false,
-                        timeLeft = 60,
-                        isTimerRunning = true
-                    )}
-                    startTimer()
-                }.onError { error ->
-                    _event.send(LoginEvent.LoginError(error.asUiText()))
-                    _state.update { it.copy(
-                        isCodeSent = true,
-                    )}
-                }
+                result
+                    .onSuccess { requestId ->
+                        _state.update {
+                            it.copy(
+                                isCodeSent = true,
+                                requestId = requestId,
+                                otp = "",
+                                isValidOtp = false,
+                                timeLeft = 60,
+                                isTimerRunning = true,
+                            )
+                        }
+                        startTimer()
+                    }.onError { error ->
+                        _event.send(LoginEvent.LoginError(error.asUiText()))
+                        _state.update {
+                            it.copy(
+                                isCodeSent = true,
+                            )
+                        }
+                    }
             } catch (e: Exception) {
                 _event.send(LoginEvent.LoginError(DataError.Network.UNKNOWN.asUiText()))
-                _state.update { it.copy(
-                    isCodeSent = true,
-                )}
+                _state.update {
+                    it.copy(
+                        isCodeSent = true,
+                    )
+                }
             }
         }
     }

@@ -10,5 +10,6 @@ dependencies {
     with(projects) {
         implementation(history.domain)
         implementation(core.presentation)
+        implementation(core.domain)
     }
 }
