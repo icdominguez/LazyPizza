@@ -1,10 +1,10 @@
 package com.seno.auth.presentation.login
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seno.auth.domain.PhoneValidator
 import com.seno.auth.domain.repository.AuthService
-import com.seno.core.domain.DataError
 import com.seno.core.domain.onError
 import com.seno.core.domain.onSuccess
 import com.seno.core.domain.userdata.UserData
@@ -14,6 +14,10 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -21,7 +25,8 @@ import kotlinx.coroutines.launch
 class LoginViewModel(
     private val phoneValidator: PhoneValidator,
     private val authService: AuthService,
-    private val userData: UserData
+    private val userData: UserData,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val _state = MutableStateFlow(LoginState())
     val state = _state.asStateFlow()
@@ -31,6 +36,17 @@ class LoginViewModel(
 
     private var timerJob: Job? = null
 
+    init {
+        _state
+            .map { it.isTimerRunning }
+            .distinctUntilChanged()
+            .onEach { running ->
+                if (running) {
+                    startTimer()
+                }
+            }.launchIn(viewModelScope)
+    }
+
     fun onAction(action: LoginAction) {
         when (action) {
             is LoginAction.OnPhoneNumberChange -> onPhoneNumberChange(action.phoneNumber)
@@ -38,15 +54,6 @@ class LoginViewModel(
             is LoginAction.OnOtpChange -> onOtpChange(action.newOtp)
             is LoginAction.OnOtpResend -> onOtpResend()
             is LoginAction.OnOtpConfirm -> onOtpConfirm()
-            LoginAction.OnTimerTick -> {
-                val currentTimeLeft = _state.value.timeLeft
-                if (currentTimeLeft > 0) {
-                    _state.update { it.copy(timeLeft = currentTimeLeft - 1) }
-                } else {
-                    _state.update { it.copy(isTimerRunning = false) }
-                    timerJob?.cancel()
-                }
-            }
             else -> Unit
         }
     }
@@ -76,37 +83,28 @@ class LoginViewModel(
 
     private fun onContinueButtonClick() {
         viewModelScope.launch {
-            _state.update { it.copy(isCodeSent = true) }
+            _state.update { it.copy(isLoading = true) }
 
-            try {
-                val result = authService.sendCode(state.value.phoneNumber)
-
-                result
-                    .onSuccess { requestId ->
-                        _state.update {
-                            it.copy(
-                                isCodeSent = true,
-                                requestId = requestId,
-                                timeLeft = 60,
-                                isTimerRunning = true,
-                            )
-                        }
-                        startTimer()
-                    }.onError { error ->
-                        _state.update {
-                            it.copy(
-                                isCodeSent = false,
-                            )
-                        }
+            authService
+                .sendCode(state.value.phoneNumber)
+                .onSuccess { requestId ->
+                    savedStateHandle[REQUEST_ID_KEY] = requestId
+                    _state.update {
+                        it.copy(
+                            isCodeSent = true,
+                            isTimerRunning = true,
+                            isLoading = false,
+                        )
                     }
-            } catch (e: Exception) {
-                _event.send(LoginEvent.LoginError(DataError.Network.UNKNOWN.asUiText()))
-                _state.update {
-                    it.copy(
-                        isCodeSent = false,
-                    )
+                }.onError { error ->
+                    _event.send(LoginEvent.LoginError(error.asUiText()))
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            isCodeSent = false,
+                        )
+                    }
                 }
-            }
         }
     }
 
@@ -114,106 +112,85 @@ class LoginViewModel(
         _state.update {
             it.copy(
                 otp = newOtp,
-                isWrongOtp = false,
             )
         }
     }
 
     private fun onOtpConfirm() {
         val currentOtp = state.value.otp
-        val requestId = state.value.requestId
+        val requestId = savedStateHandle.get<String>(REQUEST_ID_KEY)
 
         if (currentOtp.length != 6 || requestId == null) return
 
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
 
-            try {
-                val result = authService.verificationCode(
+            authService
+                .verificationCode(
                     requestId = requestId,
                     code = currentOtp,
-                )
-
-                result
-                    .onSuccess {
-                        userData.setIsLogin(true)
-                        _state.update {
-                            it.copy(
-                                isLoggedIn = true,
-                                isValidOtp = true,
-                                isLoading = false,
-                            )
-                        }
-                        _event.send(LoginEvent.LoginSuccess)
-                    }.onError { error ->
-                        _event.send(LoginEvent.LoginError(error.asUiText()))
-                        _state.update {
-                            it.copy(
-                                isValidOtp = false,
-                                isWrongOtp = true,
-                                isLoading = false,
-                            )
-                        }
+                ).onSuccess {
+                    userData.setIsLogin(true)
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                        )
                     }
-            } catch (e: Exception) {
-                _event.send(LoginEvent.LoginError(DataError.Network.UNKNOWN.asUiText()))
-
-                _state.update {
-                    it.copy(
-                        isValidOtp = false,
-                        isWrongOtp = true,
-                        isLoading = false,
-                    )
+                    _event.send(LoginEvent.LoginSuccess)
+                }.onError { error ->
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            error = error.asUiText(),
+                        )
+                    }
                 }
-            }
         }
     }
 
     private fun onOtpResend() {
         viewModelScope.launch {
-            _state.update { it.copy(isCodeSent = false) }
-
-            try {
-                val result = authService.sendCode(state.value.phoneNumber)
-
-                result
-                    .onSuccess { requestId ->
-                        _state.update {
-                            it.copy(
-                                isCodeSent = true,
-                                requestId = requestId,
-                                otp = "",
-                                isValidOtp = false,
-                                timeLeft = 60,
-                                isTimerRunning = true,
-                            )
-                        }
-                        startTimer()
-                    }.onError { error ->
-                        _event.send(LoginEvent.LoginError(error.asUiText()))
-                        _state.update {
-                            it.copy(
-                                isCodeSent = true,
-                            )
-                        }
-                    }
-            } catch (e: Exception) {
-                _event.send(LoginEvent.LoginError(DataError.Network.UNKNOWN.asUiText()))
-                _state.update {
-                    it.copy(
-                        isCodeSent = true,
-                    )
-                }
+            _state.update {
+                it.copy(
+                    isLoading = true,
+                )
             }
+
+            authService
+                .sendCode(state.value.phoneNumber)
+                .onSuccess { requestId ->
+                    savedStateHandle[REQUEST_ID_KEY] = requestId
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            error = null,
+                            otp = "",
+                            isTimerRunning = true,
+                        )
+                    }
+                }.onError { error ->
+                    _event.send(LoginEvent.LoginError(error.asUiText()))
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                        )
+                    }
+                }
         }
     }
 
     private fun startTimer() {
         timerJob?.cancel()
         timerJob = viewModelScope.launch {
-            while (_state.value.timeLeft > 0 && _state.value.isTimerRunning) {
+            while (true) {
+                val currentTimeLeft = _state.value.timeLeft
                 delay(1000)
-                onAction(LoginAction.OnTimerTick)
+                if (currentTimeLeft > 0) {
+                    _state.update { it.copy(timeLeft = currentTimeLeft - 1) }
+                } else {
+                    _state.update { it.copy(isTimerRunning = false, timeLeft = 60) }
+                    timerJob?.cancel()
+                }
             }
         }
     }
@@ -221,5 +198,9 @@ class LoginViewModel(
     override fun onCleared() {
         super.onCleared()
         timerJob?.cancel()
+    }
+
+    companion object {
+        private const val REQUEST_ID_KEY = "request_id"
     }
 }

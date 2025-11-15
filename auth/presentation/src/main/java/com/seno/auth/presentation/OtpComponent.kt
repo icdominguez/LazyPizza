@@ -41,7 +41,7 @@ private const val OTP_LENGTH = 6
 fun OtpComponent(
     otp: String,
     onOptTextChange: (String) -> Unit = {},
-    isError: Boolean = false,
+    error: String? = null,
 ) {
     var containerWidthPx by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
@@ -76,7 +76,10 @@ fun OtpComponent(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(otpItemsSpacing, Alignment.CenterHorizontally),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        otpItemsSpacing,
+                        Alignment.CenterHorizontally,
+                    ),
                 ) {
                     repeat(OTP_LENGTH) { index ->
                         val char = when {
@@ -91,11 +94,11 @@ fun OtpComponent(
                                     },
                                 ).height(48.dp)
                                 .background(
-                                    color = if (isError) Color.Transparent else surfaceHighest,
+                                    color = if (error != null) Color.Transparent else surfaceHighest,
                                     shape = RoundedCornerShape(16.dp),
                                 ).border(
                                     width = 1.dp,
-                                    color = if (isError) primary else Color.Transparent,
+                                    color = if (error != null) primary else Color.Transparent,
                                     shape = RoundedCornerShape(16.dp),
                                 ),
                             contentAlignment = Alignment.Center,
@@ -120,9 +123,9 @@ fun OtpComponent(
                 }
             },
         )
-        if (isError) {
+        error?.let {
             Text(
-                text = "Incorrect Code. Please try again",
+                text = it,
                 style = body_4_regular.copy(color = primary),
             )
         }
@@ -144,7 +147,7 @@ private fun OptComponentPreview() {
             OtpComponent(
                 otp = "123456",
                 onOptTextChange = {},
-                isError = true,
+                error = "Error message",
             )
         }
     }

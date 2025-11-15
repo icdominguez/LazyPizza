@@ -4,6 +4,7 @@ import com.seno.auth.data.BuildConfig
 import com.seno.core.domain.DataError
 import com.seno.core.domain.Result
 import io.ktor.client.HttpClient
+import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
@@ -70,12 +71,23 @@ suspend inline fun <reified T> safeCall(execute: () -> HttpResponse): Result<T, 
 
 suspend inline fun <reified T> responseToResult(response: HttpResponse): Result<T, DataError.Network> =
     when (response.status.value) {
-        in 200..299 -> Result.Success(response.body<T>())
+        in 200..299 -> {
+            try {
+                Result.Success(response.body<T>())
+            } catch (e: NoTransformationFoundException) {
+                Result.Error(DataError.Network.SERIALIZATION)
+            }
+        }
+
+        400 -> Result.Error(DataError.Network.BAD_REQUEST)
         401 -> Result.Error(DataError.Network.UNAUTHORIZED)
+        403 -> Result.Error(DataError.Network.FORBIDDEN)
+        404 -> Result.Error(DataError.Network.NOT_FOUND)
         408 -> Result.Error(DataError.Network.REQUEST_TIMEOUT)
         409 -> Result.Error(DataError.Network.CONFLICT)
         413 -> Result.Error(DataError.Network.PAYLOAD_TOO_LARGE)
         429 -> Result.Error(DataError.Network.TOO_MANY_REQUESTS)
+        503 -> Result.Error(DataError.Network.SERVICE_UNAVAILABLE)
         in 500..599 -> Result.Error(DataError.Network.SERVER_ERROR)
         else -> Result.Error(DataError.Network.UNKNOWN)
     }

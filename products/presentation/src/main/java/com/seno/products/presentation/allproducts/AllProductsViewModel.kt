@@ -88,12 +88,12 @@ class AllProductsViewModel(
             is AllProductsAction.OnProductDelete -> onProductDelete(action.productState)
             AllProductsAction.ConfirmLogout -> {
                 viewModelScope.launch {
-                    if(userData.getCartId().first() == null) {
+                    if (userData.getCartId().first() == null) {
                         userData.clear()
                         _state.update { it.copy(showLogoutDialog = false) }
                     } else {
                         val logOutAndDeleteCartResponse = productsRepository.logoutAndDeleteCart()
-                        when(logOutAndDeleteCartResponse) {
+                        when (logOutAndDeleteCartResponse) {
                             is FirebaseResult.Success -> {
                                 _state.update { it.copy(showLogoutDialog = false) }
                             }
