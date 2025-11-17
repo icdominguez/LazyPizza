@@ -42,6 +42,7 @@ import com.seno.core.presentation.utils.formatToPrice
 
 @Composable
 fun CartScreen(
+    modifier: Modifier = Modifier,
     state: CartState = CartState(),
     onAction: (CartActions) -> Unit = {},
 ) {
@@ -51,13 +52,13 @@ fun CartScreen(
     when (deviceConfiguration) {
         DeviceConfiguration.MOBILE_PORTRAIT,
         DeviceConfiguration.MOBILE_LANDSCAPE -> {
-            MobileCartScreenUI(state, onAction)
+            MobileCartScreenUI(state, onAction, modifier)
         }
 
         DeviceConfiguration.TABLET_PORTRAIT,
         DeviceConfiguration.TABLET_LANDSCAPE,
         DeviceConfiguration.DESKTOP -> {
-            TabletCartScreenUI(state, onAction)
+            TabletCartScreenUI(state, onAction, modifier)
         }
     }
 }
@@ -65,11 +66,12 @@ fun CartScreen(
 @Composable
 private fun TabletCartScreenUI(
     state: CartState,
-    onAction: (CartActions) -> Unit
+    onAction: (CartActions) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier =
-            Modifier
+            modifier
                 .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -182,7 +184,8 @@ private fun TabletCartScreenUI(
 @Composable
 private fun MobileCartScreenUI(
     state: CartState,
-    onAction: (CartActions) -> Unit
+    onAction: (CartActions) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val totalPrice =
         remember(state.cartItems) {
@@ -190,7 +193,8 @@ private fun MobileCartScreenUI(
         }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize(),
     ) {
         Column(
             modifier =
@@ -314,6 +318,8 @@ private fun MobileCartScreenUI(
 @Composable
 private fun CartScreenPreview() {
     LazyPizzaTheme {
-        CartScreen(CartState(isLoading = true))
+        CartScreen(
+            state = CartState(isLoading = true)
+        )
     }
 }

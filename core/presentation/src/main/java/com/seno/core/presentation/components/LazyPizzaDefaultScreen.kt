@@ -2,7 +2,6 @@ package com.seno.core.presentation.components
 
 import android.app.Activity
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -25,10 +24,13 @@ fun LazyPizzaDefaultScreen(
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.background,
-    topAppBar: @Composable () -> Unit = {},
+    bottomBar: @Composable () -> Unit = {},
     content: @Composable () -> Unit = {},
 ) {
     Scaffold(
+        bottomBar = {
+            bottomBar()
+        },
         snackbarHost = {
             SnackbarHost(
                 hostState = snackbarHostState,
@@ -46,18 +48,16 @@ fun LazyPizzaDefaultScreen(
             )
         },
         modifier = modifier,
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        topBar = topAppBar,
         containerColor = containerColor,
     ) { innerPadding ->
         val view = LocalView.current
 
         Box(
-            modifier =
-                Modifier
-                    .padding(
-                        top = innerPadding.calculateTopPadding(),
-                    ),
+            modifier = Modifier
+                .padding(
+                    top = innerPadding.calculateTopPadding(),
+                    bottom = innerPadding.calculateBottomPadding(),
+                ),
         ) {
             content()
         }

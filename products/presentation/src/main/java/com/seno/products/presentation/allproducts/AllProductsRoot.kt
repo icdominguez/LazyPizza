@@ -40,6 +40,7 @@ fun AllProductsRoot(
             CircularProgressIndicator()
         }
     }
+
     Scaffold(
         topBar = {
             AllProductsTopBar(
@@ -52,9 +53,13 @@ fun AllProductsRoot(
                 },
             )
         },
-    ) {
+    ) { innerPadding ->
         AllProductsScreen(
-            modifier = Modifier.padding(it),
+            modifier = Modifier
+                .padding(
+                    top = innerPadding.calculateTopPadding(),
+                    bottom = innerPadding.calculateBottomPadding(),
+                ),
             state = state,
             onAction = { action ->
                 when (action) {

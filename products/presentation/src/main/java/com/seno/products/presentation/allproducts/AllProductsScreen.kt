@@ -193,6 +193,7 @@ fun AllProductsScreen(
                                                 },
                                             )
                                         }
+
                                         else -> {
                                             ProductCard(
                                                 imageUrl = product.image,
