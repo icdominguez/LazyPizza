@@ -1,26 +1,30 @@
 <img src="assets/lazy_pizza_cover.png" style="width: 100%; height: auto;"/>
 
-**LazyPizza** is an online pizza delivery app built for the Mobile Dev Campus by [Phillip Lackner](https://pl-coding.com/campus) as part of the monthly challenge. This app is made for fun and to improve skills in collaboration by three community members [@extractive-mana-pulse](https://github.com/extractive-mana-pulse), [@galahseno](https://github.com/galahseno) and [@icdominguez](https://github.com/icdominguez)
+**LazyPizza** is an online pizza delivery app built for the Mobile Dev Campus
+by [Phillip Lackner](https://pl-coding.com/campus) as part of the monthly challenge. This app is
+made for fun and to improve skills in collaboration by three community
+members [@extractive-mana-pulse](https://github.com/extractive-mana-pulse), [@galahseno](https://github.com/galahseno)
+and [@icdominguez](https://github.com/icdominguez)
 
 ## Project Status
 
-This project is divided in 4 different milestones that are launched every fortnight. Was started being developed at 1st October. We are currently working on Milestone 3.
+This project is divided in 4 different milestones that are launched every fortnight. Was started
+being developed at 1st October. We are currently working on Milestone 3.
 
 ### 🚨 Latest Features ###
 
-- **Cart**
-  -  We implemented the model in firebase to store the cart items through out the app. Because of we don't have users logged in we stored the cart id in the device using data store. The model is the following
-  <img src="assets/cart_model.png" style="width: 100%; height: auto;"/>
-
-  - Navigation Rail to show the bottom navigation bar at the left in tablet devices.
-  - The user receives feedback confirming that the item is successfully added to the cart through a snackbar.
-  - The Cart icon in the bottom navigation bar instantly updates its badge to show the current number of items in the cart.
-  - If the user changes the product quantity on any product card (using the − 1 + selector), both the badge count and the cart data are updated dynamically.
-  - For pizzas, after tapping the Add to Cart button on the Product Details screen, the app returns the user to the main Menu screen so they can continue selecting other products.
-- **History**
-  -  For the moment shows a "Not Signed In" state. Sign in will be implemented in the  next milestone
-- **Consistent code styling with ktlint**
-  - We added ktlint support to ensure consistent code style throughout project. This helps keep the code clean and consistent among all team members.
+- **All Products Screen**
+  - Displays a new icon to login or logout.
+  - Log out only deletes cart from remote database (firebase).
+- **Login Screen**
+  - Displays a text field to type phone number.
+  - If number is correct, continue button is enabled and a telegram code will be sent to the phone
+    entered.
+  - Otp component displayed to enter the code previously sent.
+  - If the code is correct, the user will be logged in. If not, an error message will be displayed.
+  - Timer for request a new code after a minute.
+- **History Screen**
+  - Checks if user is logged in or not and if its logged displays a fake order list
 
 ## 🧑🏽‍💻 Technical implementation
 
@@ -33,7 +37,7 @@ This project is divided in 4 different milestones that are launched every fortni
 
 ## 🎥 Demo ##
 
-https://github.com/user-attachments/assets/8a7d2b22-e5b5-47b1-8c74-cb4713cd838b
+https://github.com/user-attachments/assets/17985058-5ab6-4322-8470-cbb9d9e5a368
 
 ## 📱 Screenshots ##
 
@@ -43,6 +47,15 @@ https://github.com/user-attachments/assets/8a7d2b22-e5b5-47b1-8c74-cb4713cd838b
 | Mobile                                                                           | Tablet                                                                            | 
 |----------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
 | <img src="assets/screenshots/all_products/all_products_mobile.png" width="600"/> | <img src="assets/screenshots/all_products/all_products_tablet.png" width="1200"/> |
+
+</details>
+
+<details>
+  <summary>Login</summary>
+
+| Mobile                                                             | Tablet                                                              | 
+|--------------------------------------------------------------------|---------------------------------------------------------------------|
+| <img src="assets/screenshots/login/login_mobile.png" width="600"/> | <img src="assets/screenshots/login/login_tablet.png" width="1200"/> |
 
 </details>
 
@@ -70,7 +83,21 @@ https://github.com/user-attachments/assets/8a7d2b22-e5b5-47b1-8c74-cb4713cd838b
 | Mobile                                                                  | Tablet                                                                   |
 |-------------------------------------------------------------------------|--------------------------------------------------------------------------|
 | <img src="assets/screenshots/history/history_mobile.png" width="600" /> | <img src="assets/screenshots/history/history_tablet.png" width="1200" /> |
+
 </details>
+
+## 🛠️ Setup
+
+For the otp feature we used the telegram GATEWAY api. You can find documentation here: https://core.telegram.org/gateway.
+
+To test this project you need to add this two variables to your local.properties:
+
+```
+telegram_base_url="https://gatewayapi.telegram.org"
+telegram_api_token="your_token"
+```
+
+Just change telegram_api_token with your token and enjoy 🙌
 
 ## 🪪 License
 
@@ -86,5 +113,8 @@ This project is an open-source and free to use. Feel free to fork and upload you
 - Responsive design.
 - Ktlint for consistent code style.
 - Cooperating between co-workers.
+- Phone numbers validation.
+- Ktor Client.
+- Telegram GATEWAY api integration to send code to the users and verify them.
 
 ---
