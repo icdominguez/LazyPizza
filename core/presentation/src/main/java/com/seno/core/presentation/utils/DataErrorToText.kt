@@ -21,6 +21,7 @@ fun DataError.asUiText(): UiText {
         DataError.Network.SERVICE_UNAVAILABLE -> R.string.error_service_unavailable
         DataError.Network.SERIALIZATION -> R.string.error_serialization
         DataError.Network.PHONE_NUMBER_INVALID -> R.string.error_phone_number_invalid
+        DataError.Network.PHONE_NUMBER_NOT_AVAILABLE -> R.string.error_phone_number_invalid
         DataError.Network.REQUEST_ID_INVALID -> R.string.error_request_id_invalid
         DataError.Network.VERIFICATION_CODE_INVALID -> R.string.error_verification_code_invalid
         DataError.Network.BALANCE_NOT_ENOUGH -> R.string.error_balance_not_enough

@@ -2,13 +2,13 @@ package com.seno.core.data.datastore
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.seno.core.domain.userdata.UserData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.util.UUID
 
 class UserDataDataStore(
     private val dataStore: DataStore<Preferences>
@@ -35,14 +35,14 @@ class UserDataDataStore(
         }
     }
 
-    override fun getIsLogin(): Flow<Boolean> =
+    override fun getUserId(): Flow<String?> =
         dataStore.data.map {
-            it[IS_LOGIN_KEY] ?: false
+            it[USER_ID_KEY]
         }
 
-    override suspend fun setIsLogin(isLogin: Boolean) {
+    override suspend fun setUserId(phoneNumber: String) {
         dataStore.edit { preferences ->
-            preferences[IS_LOGIN_KEY] = isLogin
+            preferences[USER_ID_KEY] = UUID.nameUUIDFromBytes(phoneNumber.toByteArray()).toString()
         }
     }
 
@@ -52,7 +52,7 @@ class UserDataDataStore(
 
     companion object {
         private val CART_ID_KEY = stringPreferencesKey("cart_id")
-        private val IS_LOGIN_KEY = booleanPreferencesKey("is_login")
+        private val USER_ID_KEY = stringPreferencesKey("user_id")
         private val TOTAL_ITEM_CART_KEY = intPreferencesKey("total_item_cart_key")
     }
 }

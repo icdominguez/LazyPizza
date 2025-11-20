@@ -51,7 +51,7 @@ fun HistoryItem(orderItem: OrderItem) {
         ) {
             Column {
                 Text(
-                    text = "Order #${orderItem.id}",
+                    text = "Order ${orderItem.id}",
                     style = title_3,
                     color = textPrimary,
                 )

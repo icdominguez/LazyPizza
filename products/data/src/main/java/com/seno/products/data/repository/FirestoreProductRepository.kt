@@ -136,7 +136,8 @@ class FirestoreProductRepository(
 
             // 3. Save everything
             batch.commit().await()
-
+            val totalItemCount = items.sumOf { it.quantity }
+            userData.setTotalItemCart(totalItemCount)
             FirebaseResult.Success(cartId)
         } catch (exception: Exception) {
             FirebaseResult.Error(exception)

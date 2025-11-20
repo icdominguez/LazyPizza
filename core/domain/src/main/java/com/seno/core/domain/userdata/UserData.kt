@@ -11,9 +11,9 @@ interface UserData {
 
     suspend fun setTotalItemCart(totalItem: Int)
 
-    fun getIsLogin(): Flow<Boolean>
+    fun getUserId(): Flow<String?>
 
-    suspend fun setIsLogin(isLogin: Boolean)
+    suspend fun setUserId(phoneNumber: String)
 
     suspend fun clear()
 }
