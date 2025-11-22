@@ -1,4 +1,4 @@
-package com.seno.cart.presentation
+package com.seno.cart.presentation.cart
 
 import com.seno.core.presentation.model.CartItemUI
 
@@ -8,4 +8,5 @@ data class CartState(
     val cartItems: List<CartItemUI> = emptyList(),
     val recommendedItems: List<CartItemUI> = emptyList(),
     val cartId: String = "",
+    val sheetState: Boolean = false
 )

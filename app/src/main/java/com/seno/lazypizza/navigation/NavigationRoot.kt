@@ -17,8 +17,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navigation
 import com.seno.auth.presentation.login.LoginRoot
-import com.seno.cart.presentation.CartRoot
-import com.seno.cart.presentation.components.CartTopBar
+import com.seno.cart.presentation.cart.CartRoot
+import com.seno.cart.presentation.cart.components.CartTopBar
+import com.seno.cart.presentation.checkout.OrderCheckoutRoot
+import com.seno.cart.presentation.checkout.components.OrderCheckoutTopBar
 import com.seno.core.presentation.components.LazyPizzaDefaultScreen
 import com.seno.core.presentation.components.bar.LazyPizzaMenuBar
 import com.seno.core.presentation.model.NavigationMenu
@@ -81,6 +83,13 @@ fun NavigationRoot(
                 }
                 currentRoute?.hasRoute<Screen.Cart.CartScreen>() == true -> {
                     CartTopBar()
+                }
+                currentRoute?.hasRoute<Screen.Cart.OrderCheckoutScreen>() == true -> {
+                    OrderCheckoutTopBar(
+                        onBackClick = {
+                            navHostController.navigateUp()
+                        },
+                    )
                 }
             }
         },
@@ -198,7 +207,16 @@ private fun NavGraphBuilder.cartGraph(navHostController: NavHostController) {
                         launchSingleTop = true
                     }
                 },
+                onNavigateToCheckout = {
+                    navHostController.navigate(Screen.Cart.OrderCheckoutScreen){
+                        popUpTo(0)
+                        launchSingleTop = true
+                    }
+                }
             )
+        }
+        composable<Screen.Cart.OrderCheckoutScreen> {
+            OrderCheckoutRoot()
         }
     }
 }

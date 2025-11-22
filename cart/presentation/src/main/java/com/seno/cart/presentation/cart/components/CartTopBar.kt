@@ -1,4 +1,4 @@
-package com.seno.cart.presentation.components
+package com.seno.cart.presentation.cart.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset

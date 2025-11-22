@@ -29,11 +29,10 @@ val Typography =
             ),
         labelSmall =
             TextStyle(
-                fontFamily = FontFamily.Default,
+                fontFamily = FontFamily(Font(R.font.instrument_sans_medium)),
                 fontWeight = FontWeight.Medium,
-                fontSize = 11.sp,
+                fontSize = 12.sp,
                 lineHeight = 16.sp,
-                letterSpacing = 0.5.sp,
             ),
     )
 val title_1_semiBold =

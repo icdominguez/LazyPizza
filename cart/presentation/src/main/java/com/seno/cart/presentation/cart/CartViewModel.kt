@@ -1,4 +1,4 @@
-package com.seno.cart.presentation
+package com.seno.cart.presentation.cart
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -194,7 +194,6 @@ class CartViewModel(
                     action.reference,
                     action.quantity,
                 )
-
             is CartActions.OnDeleteCartItemClick -> onDeleteProductClick(action.reference)
             else -> Unit
         }
