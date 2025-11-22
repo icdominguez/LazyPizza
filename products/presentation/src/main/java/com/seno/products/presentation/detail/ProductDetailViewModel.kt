@@ -67,6 +67,7 @@ class ProductDetailViewModel(
             is ProductDetailAction.OnToppingPlus -> onToppingPlus(action.toppingsUI)
             is ProductDetailAction.OnToppingMinus -> onToppingMinus(action.toppingsUI)
             is ProductDetailAction.OnAddToCartButtonClick -> onAddToCartButtonClick()
+            else -> Unit
         }
     }
 

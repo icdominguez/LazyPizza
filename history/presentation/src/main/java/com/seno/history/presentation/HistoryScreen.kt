@@ -2,6 +2,7 @@ package com.seno.history.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -21,6 +22,7 @@ import com.seno.core.presentation.utils.applyIf
 import com.seno.core.presentation.utils.currentDeviceConfiguration
 import com.seno.history.presentation.component.HistoryInformationComponent
 import com.seno.history.presentation.component.HistoryItem
+import com.seno.history.presentation.component.HistoryTopBar
 
 @Composable
 internal fun HistoryScreen(
@@ -29,16 +31,59 @@ internal fun HistoryScreen(
 ) {
     val deviceType = currentDeviceConfiguration()
 
-    if (state.isLoading) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
-        }
-        return
-    }
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+    ) {
+        HistoryTopBar()
 
-    when (state.isLoggedIn) {
-        true ->
-            if (state.orderItems.isEmpty()) {
+        if (state.isLoading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+            return
+        }
+
+        when (state.isLoggedIn) {
+            true ->
+                if (state.orderItems.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .applyIf(
+                                deviceType != DeviceConfiguration.MOBILE_LANDSCAPE,
+                            ) {
+                                padding(top = 120.dp)
+                            },
+                        contentAlignment = if (deviceType == DeviceConfiguration.MOBILE_LANDSCAPE) {
+                            Alignment.Center
+                        } else {
+                            Alignment.TopCenter
+                        },
+                    ) {
+                        HistoryInformationComponent(
+                            title = stringResource(R.string.no_orders_yet),
+                            description = stringResource(R.string.your_our_will_appear_here),
+                            buttonText = stringResource(R.string.go_to_menu),
+                            onClick = {
+                                onAction(HistoryAction.OnGoToMenuClick)
+                            },
+                        )
+                    }
+                } else {
+                    LazyVerticalStaggeredGrid(
+                        columns = StaggeredGridCells.Fixed(if (deviceType.isTablet()) 2 else 1),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalItemSpacing = 8.dp,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        items(state.orderItems) { orderItem ->
+                            HistoryItem(orderItem = orderItem)
+                        }
+                    }
+                }
+
+            false -> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -54,50 +99,14 @@ internal fun HistoryScreen(
                     },
                 ) {
                     HistoryInformationComponent(
-                        title = stringResource(R.string.no_orders_yet),
-                        description = stringResource(R.string.your_our_will_appear_here),
-                        buttonText = stringResource(R.string.go_to_menu),
+                        title = stringResource(R.string.not_signed_in),
+                        description = stringResource(R.string.please_sign_in_to_view_your_order_history),
+                        buttonText = stringResource(R.string.sign_in),
                         onClick = {
-                            onAction(HistoryAction.OnGoToMenuClick)
+                            onAction(HistoryAction.OnSingInClick)
                         },
                     )
                 }
-            } else {
-                LazyVerticalStaggeredGrid(
-                    columns = StaggeredGridCells.Fixed(if (deviceType.isTablet()) 2 else 1),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalItemSpacing = 8.dp,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    items(state.orderItems) { orderItem ->
-                        HistoryItem(orderItem = orderItem)
-                    }
-                }
-            }
-
-        false -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .applyIf(
-                        deviceType != DeviceConfiguration.MOBILE_LANDSCAPE,
-                    ) {
-                        padding(top = 120.dp)
-                    },
-                contentAlignment = if (deviceType == DeviceConfiguration.MOBILE_LANDSCAPE) {
-                    Alignment.Center
-                } else {
-                    Alignment.TopCenter
-                },
-            ) {
-                HistoryInformationComponent(
-                    title = stringResource(R.string.not_signed_in),
-                    description = stringResource(R.string.please_sign_in_to_view_your_order_history),
-                    buttonText = stringResource(R.string.sign_in),
-                    onClick = {
-                        onAction(HistoryAction.OnSingInClick)
-                    },
-                )
             }
         }
     }
