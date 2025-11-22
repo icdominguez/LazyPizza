@@ -12,5 +12,6 @@ data class OrderCheckoutState(
     val selectedScheduleTime: LocalTime? = null,
     val showDatePicker: Boolean = false,
     val showTimePicker: Boolean = false,
-    val currentTime: LocalTime = LocalTime.now()
+    val currentTime: LocalTime = LocalTime.now(),
+    val timeValidationError: String? = null
 )

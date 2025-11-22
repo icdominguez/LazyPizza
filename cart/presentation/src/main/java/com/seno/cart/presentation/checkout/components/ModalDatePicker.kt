@@ -1,26 +1,28 @@
 package com.seno.cart.presentation.checkout.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.seno.cart.presentation.checkout.OrderCheckoutActions
 import com.seno.cart.presentation.checkout.OrderCheckoutState
-import com.seno.core.presentation.theme.primaryGradient
+import com.seno.core.presentation.components.button.LazyPizzaPrimaryButton
+import com.seno.core.presentation.theme.label_2_semiBold
+import com.seno.core.presentation.theme.primary
+import com.seno.core.presentation.theme.textPrimary
+import com.seno.core.presentation.theme.textSecondary
+import com.seno.core.presentation.theme.title_1_semiBold
+import com.seno.core.presentation.theme.title_3
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -28,9 +30,10 @@ import java.time.format.DateTimeFormatter
 @Composable
 internal fun ModalDatePicker(
     state: OrderCheckoutState,
-    onAction: (OrderCheckoutActions) -> Unit
+    onDismiss: () -> Unit = {},
+    onDateSelected: (LocalDate) -> Unit = {},
+    onConfirmDatePicker: () -> Unit = {}
 ) {
-    // Get today's date at start of day in milliseconds
     val todayMillis = state.todayDate
         .atStartOfDay(ZoneId.systemDefault())
         .toInstant()
@@ -54,38 +57,58 @@ internal fun ModalDatePicker(
         }
     )
 
+    val displayDate = datePickerState.selectedDateMillis?.let { millis ->
+        Instant.ofEpochMilli(millis)
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate()
+            .format(DateTimeFormatter.ofPattern("MMMM dd"))
+    } ?: state.todayDate.format(DateTimeFormatter.ofPattern("MMMM dd"))
+
     DatePickerDialog(
-        onDismissRequest = { onAction(OrderCheckoutActions.OnDismissDatePicker) },
+        shape = RoundedCornerShape(12.dp),
+        onDismissRequest = { onDismiss() },
         confirmButton = {
-            Button(
+            LazyPizzaPrimaryButton(
                 onClick = {
                     datePickerState.selectedDateMillis?.let { millis ->
                         val selectedDate = Instant.ofEpochMilli(millis)
                             .atZone(ZoneId.systemDefault())
                             .toLocalDate()
-                        onAction(OrderCheckoutActions.OnDateSelected(selectedDate))
+                        onDateSelected(selectedDate)
+
                     }
-                    onAction(OrderCheckoutActions.OnConfirmDatePicker)
-                }
-            ) {
-                Text("Next")
-            }
+                    onConfirmDatePicker()
+                },
+                buttonText = "Ok"
+            )
         },
         dismissButton = {
-            TextButton(onClick = { onAction(OrderCheckoutActions.OnDismissDatePicker) }) {
-                Text("Cancel")
+            TextButton(
+                onClick = {
+                    onDismiss()
+                }
+            ) {
+                Text(
+                    text = "Cancel",
+                    style = title_3.copy(color = primary)
+                )
             }
         }
     ) {
-        // just hello world.
         DatePicker(
             state = datePickerState,
-            colors = DatePickerDefaults.colors(),
+            title = {
+                Text(
+                    text = "Select date".uppercase(),
+                    modifier = Modifier.padding(start = 24.dp, top = 48.dp),
+                    style = label_2_semiBold.copy(color = textSecondary)
+                )
+            },
             headline = {
                 Text(
-                    text = state.todayDate.format(DateTimeFormatter.ofPattern("dd MMMM")),
-                    modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.headlineSmall
+                    text = displayDate,
+                    modifier = Modifier.padding(start = 24.dp, bottom = 24.dp),
+                    style = title_1_semiBold.copy(color = textPrimary)
                 )
             }
         )
@@ -97,6 +120,8 @@ internal fun ModalDatePicker(
 fun DatePickerModalPreview() {
     ModalDatePicker(
         state = OrderCheckoutState(),
-        onAction = {}
+        onDismiss = {},
+        onDateSelected = {},
+        onConfirmDatePicker = {}
     )
 }

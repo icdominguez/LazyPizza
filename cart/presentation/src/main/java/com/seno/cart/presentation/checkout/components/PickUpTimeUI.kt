@@ -22,6 +22,8 @@ import com.seno.core.presentation.theme.label_2_semiBold
 import com.seno.core.presentation.theme.outline
 import com.seno.core.presentation.theme.textPrimary
 import com.seno.core.presentation.theme.textSecondary
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,13 +73,7 @@ internal fun PickUpTimeUI(
                 text = if (state.selectedDeliveryOption == RadioOptions.EARLIEST) {
                     state.currentTime.format(DateTimeFormatter.ofPattern("HH:mm"))
                 } else {
-                    val date = state.selectedScheduleDate?.format(
-                        DateTimeFormatter.ofPattern("dd MMMM")
-                    ) ?: "Select Date"
-                    val time = state.selectedScheduleTime?.format(
-                        DateTimeFormatter.ofPattern("HH:mm")
-                    ) ?: ""
-                    if (time.isNotEmpty()) "$date, $time" else date
+                    formatScheduledPickup(state.selectedScheduleDate, state.selectedScheduleTime, state.todayDate)
                 },
                 style = label_2_semiBold.copy(color = textPrimary)
             )
@@ -91,7 +87,15 @@ internal fun PickUpTimeUI(
     if (state.showDatePicker) {
         ModalDatePicker(
             state = state,
-            onAction = onAction
+            onDismiss = {
+                onAction(OrderCheckoutActions.OnDismissDatePicker)
+            },
+            onDateSelected = { selectedDate ->
+                onAction(OrderCheckoutActions.OnDateSelected(selectedDate))
+            },
+            onConfirmDatePicker = {
+                onAction(OrderCheckoutActions.OnConfirmDatePicker)
+            }
         )
     }
 
@@ -101,7 +105,28 @@ internal fun PickUpTimeUI(
                 onAction(OrderCheckoutActions.OnTimeSelected(selectedTime))
             },
             onDismiss = { onAction(OrderCheckoutActions.OnDismissTimePicker) },
-            initialTime = state.selectedScheduleTime
+            onCancel = { onAction(OrderCheckoutActions.OnCancelTimePicker) },
+            onTimeChanged = { time ->
+                onAction(OrderCheckoutActions.OnTimeChanged(time))
+            },
+            initialTime = state.selectedScheduleTime,
+            validationError = state.timeValidationError
         )
+    }
+}
+
+private fun formatScheduledPickup(
+    selectedDate: LocalDate?,
+    selectedTime: LocalTime?,
+    todayDate: LocalDate
+): String {
+    if (selectedDate == null) return "Select Date"
+
+    val isToday = selectedDate == todayDate
+
+    return when {
+        selectedTime == null -> selectedDate.format(DateTimeFormatter.ofPattern("dd MMMM"))
+        isToday -> selectedTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+        else -> "${selectedDate.format(DateTimeFormatter.ofPattern("MMMM dd"))}, ${selectedTime.format(DateTimeFormatter.ofPattern("HH:mm"))}"
     }
 }

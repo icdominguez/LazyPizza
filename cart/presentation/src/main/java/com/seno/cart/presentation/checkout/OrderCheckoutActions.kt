@@ -8,10 +8,12 @@ sealed interface OrderCheckoutActions {
     data object OnPlaceOrder: OrderCheckoutActions
     data object OnDismissDatePicker : OrderCheckoutActions
     data object OnDismissTimePicker : OrderCheckoutActions
+    data object OnCancelTimePicker : OrderCheckoutActions
     data object OnConfirmDatePicker : OrderCheckoutActions
     data object OnScheduleTimeSelected: OrderCheckoutActions
     data object OnExpandedOrderDetails: OrderCheckoutActions
     data object OnEarliestAvailableSelected: OrderCheckoutActions
     data class OnDateSelected(val date: LocalDate) : OrderCheckoutActions
     data class OnTimeSelected(val time: LocalTime) : OrderCheckoutActions
+    data class OnTimeChanged(val time: LocalTime) : OrderCheckoutActions
 }
