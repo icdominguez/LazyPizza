@@ -7,5 +7,5 @@ sealed interface CartActions {
 
     data object OnNavigateToMenuClick : CartActions
 
-    data object OnNavigateToCheckoutClick: CartActions
+    data object OnNavigateToCheckoutClick : CartActions
 }

@@ -43,7 +43,7 @@ fun InputTimePicker(
     onConfirm: (LocalTime) -> Unit,
     onDismiss: () -> Unit,
     onCancel: () -> Unit,
-    onTimeChanged: (LocalTime) -> Unit,
+    onTimeChange: (LocalTime) -> Unit,
     initialTime: LocalTime? = null,
     validationError: String? = null
 ) {
@@ -55,26 +55,26 @@ fun InputTimePicker(
         is24Hour = true,
     )
 
-    LaunchedEffect(timePickerState.hour, timePickerState.minute) {
+    LaunchedEffect(timePickerState.hour, timePickerState.minute, onTimeChange) {
         val selectedTime = LocalTime.of(timePickerState.hour, timePickerState.minute)
-        onTimeChanged(selectedTime)
+        onTimeChange(selectedTime)
     }
 
     BasicAlertDialog(
-        onDismissRequest = onDismiss
+        onDismissRequest = onDismiss,
     ) {
         Surface(
             modifier = Modifier
                 .width(264.dp),
             shape = RoundedCornerShape(28.dp),
-            color = surfaceHigher
+            color = surfaceHigher,
         ) {
             Column {
                 // Title
                 Text(
                     text = "Select Time".uppercase(),
                     modifier = Modifier.padding(16.dp),
-                    style = label_2_semiBold.copy(color = textSecondary)
+                    style = label_2_semiBold.copy(color = textSecondary),
                 )
 
                 // Time Input
@@ -87,7 +87,7 @@ fun InputTimePicker(
                         containerColor = surfaceHighest,
                         timeSelectorSelectedContainerColor = surfaceHigher,
                         timeSelectorUnselectedContainerColor = surfaceHighest,
-                    )
+                    ),
                 )
 
                 // Validation Error
@@ -104,7 +104,7 @@ fun InputTimePicker(
                         maxLines = 2,
                         modifier = Modifier
                             .padding(horizontal = 16.dp)
-                            .align(Alignment.Start)
+                            .align(Alignment.Start),
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     HorizontalDivider(thickness = 1.dp, color = outline)
@@ -114,14 +114,14 @@ fun InputTimePicker(
                 Row(
                     modifier = Modifier
                         .align(Alignment.End)
-                        .padding(end = 16.dp, bottom = 24.dp, top = 8.dp)
+                        .padding(end = 16.dp, bottom = 24.dp, top = 8.dp),
                 ) {
                     TextButton(
-                        onClick = onCancel
+                        onClick = onCancel,
                     ) {
                         Text(
                             text = "Cancel",
-                            style = title_3.copy(color = primary)
+                            style = title_3.copy(color = primary),
                         )
                     }
 
@@ -132,13 +132,13 @@ fun InputTimePicker(
                             if (validationError == null) {
                                 val selectedTime = LocalTime.of(
                                     timePickerState.hour,
-                                    timePickerState.minute
+                                    timePickerState.minute,
                                 )
                                 onConfirm(selectedTime)
                             }
                         },
                         buttonText = "Ok",
-                        enabled = validationError == null
+                        enabled = validationError == null,
                     )
                 }
             }
@@ -154,7 +154,7 @@ private fun InputTimePickerPreview() {
             onConfirm = {},
             onDismiss = {},
             onCancel = {},
-            onTimeChanged = {},
+            onTimeChange = {},
             initialTime = LocalTime.now(),
         )
     }

@@ -10,7 +10,6 @@ composeBom = "2025.10.01"
 koin = "4.1.1"
 ktor = "3.3.1"
 material3Adaptive = "1.2.0"
-navigationSuite = "1.4.0"
 materialIconsExtended = "1.7.8"
 composeAnimation = "1.9.4"
 navigationCompose = "2.9.5"
@@ -76,9 +75,6 @@ firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
 
 ktlint-compose-rules = { module = "io.nlopez.compose.rules:ktlint", version.ref = "compose-rules" }
 
-androidx-compose-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "navigationSuite" }
-androidx-compose-material3-adaptive-navigation = { module = "androidx.compose.material3.adaptive:adaptive-navigation", version.ref = "material3Adaptive" }
-
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 
 com-googlecode-libphonenumber = { module = "com.googlecode.libphonenumber:libphonenumber", version.ref = "libphonenumber" }
@@ -117,8 +113,6 @@ compose = [
     "androidx-lifecycle-viewmodel-compose",
     "androidx-material3",
     "androidx-material3-adaptive",
-    "androidx-compose-material3-adaptive-navigation",
-    "androidx-compose-material3-adaptive-navigation-suite",
     "androidx-material-icons-extended",
     "androidx-compose-animation",
     "androidx-ui",

@@ -1,8 +1,6 @@
 package com.seno.cart.presentation.checkout.components
 
-import android.R.attr.onClick
 import androidx.compose.foundation.border
-import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,13 +10,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,7 +33,7 @@ enum class RadioOptions(val text: String) {
 @Composable
 internal fun RadioButtonSingleSelection(
     selectedOption: RadioOptions,
-    onSelected: (RadioOptions) -> Unit,
+    onSelect: (RadioOptions) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -49,36 +44,35 @@ internal fun RadioButtonSingleSelection(
                 Modifier
                     .fillMaxWidth()
                     .height(56.dp)
-                    .selectable(
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() },
-                        selected = (option == selectedOption),
-                        onClick = { onSelected(option) },
-                        role = Role.RadioButton,
-                    )
                     .padding(vertical = 4.dp)
                     .border(
                         width = 1.dp,
                         color = outline,
-                        shape = CircleShape
-                    )
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                        shape = CircleShape,
+                    ).padding(horizontal = 16.dp)
+                    .selectable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                        selected = (option == selectedOption),
+                        onClick = { onSelect(option) },
+                        role = Role.RadioButton,
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 RadioButton(
                     colors = RadioButtonDefaults.colors(
                         selectedColor = primary,
-                        unselectedColor = textSecondary
+                        unselectedColor = textSecondary,
                     ),
                     selected = (option == selectedOption),
-                    onClick = null
+                    onClick = null,
                 )
                 Text(
                     text = option.text,
                     style = body_3_medium.copy(
-                        color = if (option == selectedOption) textPrimary else textSecondary
+                        color = if (option == selectedOption) textPrimary else textSecondary,
                     ),
-                    modifier = Modifier.padding(start = 16.dp)
+                    modifier = Modifier.padding(start = 16.dp),
                 )
             }
         }

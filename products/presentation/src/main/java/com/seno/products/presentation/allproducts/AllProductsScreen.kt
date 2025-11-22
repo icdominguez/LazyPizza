@@ -34,6 +34,7 @@ import com.seno.core.presentation.theme.textSecondary
 import com.seno.core.presentation.utils.DeviceConfiguration
 import com.seno.core.presentation.utils.replaceUnderscores
 import com.seno.products.presentation.allproducts.component.AllProductsHeader
+import com.seno.products.presentation.allproducts.component.AllProductsTopBar
 import com.seno.products.presentation.allproducts.component.LogoutConfirmationDialog
 import kotlinx.coroutines.launch
 
@@ -62,163 +63,174 @@ fun AllProductsScreen(
     Column(
         modifier =
             modifier
-                .fillMaxSize()
-                .padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                ),
+                .fillMaxSize(),
     ) {
-        if (deviceType != DeviceConfiguration.MOBILE_LANDSCAPE) {
-            AllProductsHeader(
-                searchQuery = state.searchQuery,
-                onQueryChange = {
-                    onAction(AllProductsAction.OnQueryChange(it))
-                },
-                onChipClick = {
-                    coroutineScope.launch {
-                        listState.animateScrollToItem(
-                            state.headerIndexMap[it] ?: 0,
-                        )
-                    }
-                },
-            )
-        }
+        AllProductsTopBar(
+            isLoggedIn = state.isLoggedIn,
+            onLoginClick = {
+                onAction(AllProductsAction.OnNavigateToAuthenticationScreen)
+            },
+            onLogoutClick = {
+                onAction(AllProductsAction.ShowLogoutDialog)
+            },
+        )
 
-        if (state.products.isEmpty()) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                CircularProgressIndicator()
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 16.dp),
+        ) {
+            if (deviceType != DeviceConfiguration.MOBILE_LANDSCAPE) {
+                AllProductsHeader(
+                    searchQuery = state.searchQuery,
+                    onQueryChange = {
+                        onAction(AllProductsAction.OnQueryChange(it))
+                    },
+                    onChipClick = {
+                        coroutineScope.launch {
+                            listState.animateScrollToItem(
+                                state.headerIndexMap[it] ?: 0,
+                            )
+                        }
+                    },
+                )
             }
-        } else {
-            LazyColumn(
-                contentPadding =
-                    PaddingValues(
-                        bottom = WindowInsets.navigationBars
-                            .asPaddingValues()
-                            .calculateBottomPadding(),
-                    ),
-                state = listState,
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                if (deviceType == DeviceConfiguration.MOBILE_LANDSCAPE) {
-                    item {
-                        AllProductsHeader(
-                            searchQuery = state.searchQuery,
-                            onQueryChange = {
-                                onAction(AllProductsAction.OnQueryChange(it))
-                            },
-                            onChipClick = {
-                                coroutineScope.launch {
-                                    listState.animateScrollToItem(
-                                        state.headerIndexMap[it] ?: 0,
-                                    )
-                                }
-                            },
-                        )
-                    }
+
+            if (state.products.isEmpty()) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    CircularProgressIndicator()
                 }
-                state.productsFiltered.forEach { (type, products) ->
-                    stickyHeader {
-                        Row(
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .background(color = background)
-                                    .padding(vertical = 8.dp),
-                        ) {
-                            Text(
-                                text = type.name.replaceUnderscores(),
-                                style =
-                                    label_2_semiBold.copy(
-                                        color = textSecondary,
-                                    ),
+            } else {
+                LazyColumn(
+                    contentPadding =
+                        PaddingValues(
+                            bottom = WindowInsets.navigationBars
+                                .asPaddingValues()
+                                .calculateBottomPadding(),
+                        ),
+                    state = listState,
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    if (deviceType == DeviceConfiguration.MOBILE_LANDSCAPE) {
+                        item {
+                            AllProductsHeader(
+                                searchQuery = state.searchQuery,
+                                onQueryChange = {
+                                    onAction(AllProductsAction.OnQueryChange(it))
+                                },
+                                onChipClick = {
+                                    coroutineScope.launch {
+                                        listState.animateScrollToItem(
+                                            state.headerIndexMap[it] ?: 0,
+                                        )
+                                    }
+                                },
                             )
                         }
                     }
+                    state.productsFiltered.forEach { (type, products) ->
+                        stickyHeader {
+                            Row(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .background(color = background)
+                                        .padding(vertical = 8.dp),
+                            ) {
+                                Text(
+                                    text = type.name.replaceUnderscores(),
+                                    style =
+                                        label_2_semiBold.copy(
+                                            color = textSecondary,
+                                        ),
+                                )
+                            }
+                        }
 
-                    val chunkedProducts = products.chunked(if (deviceType.isTablet()) 2 else 1)
-                    items(chunkedProducts.size) { rowIndex ->
-                        val rowItems = chunkedProducts[rowIndex]
+                        val chunkedProducts = products.chunked(if (deviceType.isTablet()) 2 else 1)
+                        items(chunkedProducts.size) { rowIndex ->
+                            val rowItems = chunkedProducts[rowIndex]
 
-                        Row(
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            rowItems.forEach { product ->
-                                Box(modifier = Modifier.weight(1f)) {
-                                    when (product.type) {
-                                        ProductType.PIZZA -> {
-                                            PizzaCard(
-                                                imageUrl = product.image,
-                                                pizzaName = product.name,
-                                                pizzaDescription =
-                                                    product.ingredients.joinToString(
-                                                        ", ",
-                                                    ),
-                                                pizzaPrice = product.price,
-                                                onPizzaClick = {
-                                                    onAction(
-                                                        AllProductsAction.OnProductClicked(
-                                                            pizzaName = product.name,
+                            Row(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                rowItems.forEach { product ->
+                                    Box(modifier = Modifier.weight(1f)) {
+                                        when (product.type) {
+                                            ProductType.PIZZA -> {
+                                                PizzaCard(
+                                                    imageUrl = product.image,
+                                                    pizzaName = product.name,
+                                                    pizzaDescription =
+                                                        product.ingredients.joinToString(
+                                                            ", ",
                                                         ),
-                                                    )
-                                                },
-                                            )
-                                        }
+                                                    pizzaPrice = product.price,
+                                                    onPizzaClick = {
+                                                        onAction(
+                                                            AllProductsAction.OnProductClicked(
+                                                                pizzaName = product.name,
+                                                            ),
+                                                        )
+                                                    },
+                                                )
+                                            }
 
-                                        else -> {
-                                            ProductCard(
-                                                imageUrl = product.image,
-                                                productName = product.name,
-                                                productPrice = product.price,
-                                                quantity = product.quantity,
-                                                onQuantityChange = { newQuantity ->
-                                                    when {
-                                                        newQuantity == 0 -> {
-                                                            onAction(
-                                                                AllProductsAction.OnProductMinus(
-                                                                    product,
-                                                                ),
-                                                            )
-                                                        }
+                                            else -> {
+                                                ProductCard(
+                                                    imageUrl = product.image,
+                                                    productName = product.name,
+                                                    productPrice = product.price,
+                                                    quantity = product.quantity,
+                                                    onQuantityChange = { newQuantity ->
+                                                        when {
+                                                            newQuantity == 0 -> {
+                                                                onAction(
+                                                                    AllProductsAction.OnProductMinus(
+                                                                        product,
+                                                                    ),
+                                                                )
+                                                            }
 
-                                                        newQuantity > product.quantity -> {
-                                                            onAction(
-                                                                AllProductsAction.OnProductPlus(
-                                                                    product,
-                                                                ),
-                                                            )
-                                                        }
+                                                            newQuantity > product.quantity -> {
+                                                                onAction(
+                                                                    AllProductsAction.OnProductPlus(
+                                                                        product,
+                                                                    ),
+                                                                )
+                                                            }
 
-                                                        newQuantity < product.quantity -> {
-                                                            onAction(
-                                                                AllProductsAction.OnProductMinus(
-                                                                    product,
-                                                                ),
-                                                            )
+                                                            newQuantity < product.quantity -> {
+                                                                onAction(
+                                                                    AllProductsAction.OnProductMinus(
+                                                                        product,
+                                                                    ),
+                                                                )
+                                                            }
                                                         }
-                                                    }
-                                                },
-                                                onDeleteClick = {
-                                                    onAction(
-                                                        AllProductsAction.OnProductDelete(
-                                                            product,
-                                                        ),
-                                                    )
-                                                },
-                                            )
+                                                    },
+                                                    onDeleteClick = {
+                                                        onAction(
+                                                            AllProductsAction.OnProductDelete(
+                                                                product,
+                                                            ),
+                                                        )
+                                                    },
+                                                )
+                                            }
                                         }
                                     }
                                 }
-                            }
 
-                            if (deviceType.isTablet() && rowItems.size == 1) {
-                                Spacer(modifier = Modifier.weight(1f))
+                                if (deviceType.isTablet() && rowItems.size == 1) {
+                                    Spacer(modifier = Modifier.weight(1f))
+                                }
                             }
                         }
                     }

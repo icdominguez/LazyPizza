@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.seno.cart.presentation.checkout.components.OrderCheckoutTopBar
 import com.seno.cart.presentation.checkout.components.PickUpTimeUI
 import com.seno.core.presentation.theme.background
 
@@ -21,13 +22,19 @@ fun OrderCheckoutScreen(
             .fillMaxSize()
             .background(
                 color = background,
-                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-            )
-            .padding(horizontal = 16.dp)
+                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+            ),
     ) {
-        PickUpTimeUI(
-            state = state,
-            onAction = onAction
-        )
+        OrderCheckoutTopBar(onBackClick = { onAction(OrderCheckoutActions.OnBackClick) })
+
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 16.dp),
+        ) {
+            PickUpTimeUI(
+                state = state,
+                onAction = onAction,
+            )
+        }
     }
 }

@@ -19,6 +19,7 @@ sealed class Screen {
     data object Cart {
         @Serializable
         data object CartScreen
+
         @Serializable
         data object OrderCheckoutScreen
     }

@@ -16,8 +16,7 @@ import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-class OrderCheckoutViewModel: ViewModel() {
-
+class OrderCheckoutViewModel : ViewModel() {
     private val _state = MutableStateFlow(OrderCheckoutState())
     val state = _state.asStateFlow()
 
@@ -33,7 +32,8 @@ class OrderCheckoutViewModel: ViewModel() {
     }
 
     private fun initializeDates() {
-        val todayMillis = LocalDate.now()
+        val todayMillis = LocalDate
+            .now()
             .atStartOfDay(ZoneId.systemDefault())
             .toInstant()
             .toEpochMilli()
@@ -41,7 +41,7 @@ class OrderCheckoutViewModel: ViewModel() {
         _state.update {
             it.copy(
                 todayDateMillis = todayMillis,
-                minSelectableDateMillis = todayMillis
+                minSelectableDateMillis = todayMillis,
             )
         }
     }
@@ -53,7 +53,7 @@ class OrderCheckoutViewModel: ViewModel() {
                 _state.update {
                     it.copy(
                         currentTime = earliestTime,
-                        displayPickupTime = formatPickupTime(earliestTime, it)
+                        displayPickupTime = formatPickupTime(earliestTime, it),
                     )
                 }
                 delay(60000)
@@ -61,17 +61,19 @@ class OrderCheckoutViewModel: ViewModel() {
         }
     }
 
-    private fun formatPickupTime(currentTime: LocalTime, state: OrderCheckoutState): String {
-        return if (state.selectedDeliveryOption == RadioOptions.EARLIEST) {
+    private fun formatPickupTime(
+        currentTime: LocalTime,
+        state: OrderCheckoutState
+    ): String =
+        if (state.selectedDeliveryOption == RadioOptions.EARLIEST) {
             currentTime.format(DateTimeFormatter.ofPattern("HH:mm"))
         } else {
             formatScheduledPickup(
                 state.selectedScheduleDateMillis,
                 state.selectedScheduleTime,
-                state.todayDateMillis
+                state.todayDateMillis,
             )
         }
-    }
 
     private fun formatScheduledPickup(
         selectedDateMillis: Long?,
@@ -80,11 +82,13 @@ class OrderCheckoutViewModel: ViewModel() {
     ): String {
         if (selectedDateMillis == null) return "Select Date"
 
-        val selectedDate = Instant.ofEpochMilli(selectedDateMillis)
+        val selectedDate = Instant
+            .ofEpochMilli(selectedDateMillis)
             .atZone(ZoneId.systemDefault())
             .toLocalDate()
 
-        val todayDate = Instant.ofEpochMilli(todayDateMillis)
+        val todayDate = Instant
+            .ofEpochMilli(todayDateMillis)
             .atZone(ZoneId.systemDefault())
             .toLocalDate()
 
@@ -93,7 +97,9 @@ class OrderCheckoutViewModel: ViewModel() {
         return when {
             selectedTime == null -> selectedDate.format(DateTimeFormatter.ofPattern("dd MMMM"))
             isToday -> selectedTime.format(DateTimeFormatter.ofPattern("HH:mm"))
-            else -> "${selectedDate.format(DateTimeFormatter.ofPattern("MMMM dd"))}, ${selectedTime.format(DateTimeFormatter.ofPattern("HH:mm"))}"
+            else -> "${selectedDate.format(
+                DateTimeFormatter.ofPattern("MMMM dd"),
+            )}, ${selectedTime.format(DateTimeFormatter.ofPattern("HH:mm"))}"
         }
     }
 
@@ -104,21 +110,21 @@ class OrderCheckoutViewModel: ViewModel() {
                 displayScheduleDate = formatScheduledPickup(
                     it.selectedScheduleDateMillis,
                     it.selectedScheduleTime,
-                    it.todayDateMillis
-                )
+                    it.todayDateMillis,
+                ),
             )
         }
     }
 
     fun onAction(action: OrderCheckoutActions) {
-        when(action) {
+        when (action) {
             OrderCheckoutActions.OnEarliestAvailableSelected -> {
                 _state.update {
                     it.copy(
                         selectedDeliveryOption = RadioOptions.EARLIEST,
                         showDatePicker = false,
                         showTimePicker = false,
-                        timeValidationError = null
+                        timeValidationError = null,
                     )
                 }
                 updateDisplayStrings()
@@ -127,7 +133,7 @@ class OrderCheckoutViewModel: ViewModel() {
                 _state.update {
                     it.copy(
                         selectedDeliveryOption = RadioOptions.SCHEDULE,
-                        showDatePicker = true
+                        showDatePicker = true,
                     )
                 }
                 updateDisplayStrings()
@@ -142,7 +148,7 @@ class OrderCheckoutViewModel: ViewModel() {
                 _state.update {
                     it.copy(
                         showTimePicker = false,
-                        timeValidationError = null
+                        timeValidationError = null,
                     )
                 }
             }
@@ -154,7 +160,7 @@ class OrderCheckoutViewModel: ViewModel() {
                         timeValidationError = null,
                         selectedDeliveryOption = if (hasConfirmedTime) RadioOptions.SCHEDULE else RadioOptions.EARLIEST,
                         selectedScheduleDateMillis = if (hasConfirmedTime) it.selectedScheduleDateMillis else null,
-                        selectedScheduleTime = if (hasConfirmedTime) it.selectedScheduleTime else null
+                        selectedScheduleTime = if (hasConfirmedTime) it.selectedScheduleTime else null,
                     )
                 }
                 updateDisplayStrings()
@@ -163,7 +169,7 @@ class OrderCheckoutViewModel: ViewModel() {
                 _state.update {
                     it.copy(
                         showDatePicker = false,
-                        showTimePicker = true
+                        showTimePicker = true,
                     )
                 }
             }
@@ -180,7 +186,8 @@ class OrderCheckoutViewModel: ViewModel() {
             }
             is OrderCheckoutActions.OnTimeChanged -> {
                 val selectedDate = _state.value.selectedScheduleDateMillis?.let {
-                    Instant.ofEpochMilli(it)
+                    Instant
+                        .ofEpochMilli(it)
                         .atZone(ZoneId.systemDefault())
                         .toLocalDate()
                 }
@@ -191,7 +198,8 @@ class OrderCheckoutViewModel: ViewModel() {
             }
             is OrderCheckoutActions.OnTimeSelected -> {
                 val selectedDate = _state.value.selectedScheduleDateMillis?.let {
-                    Instant.ofEpochMilli(it)
+                    Instant
+                        .ofEpochMilli(it)
                         .atZone(ZoneId.systemDefault())
                         .toLocalDate()
                 }
@@ -201,23 +209,27 @@ class OrderCheckoutViewModel: ViewModel() {
                         it.copy(
                             selectedScheduleTime = action.time,
                             showTimePicker = false,
-                            timeValidationError = null
+                            timeValidationError = null,
                         )
                     }
                     updateDisplayStrings()
                 }
             }
+            else -> Unit
         }
     }
 
-    private fun validateTime(time: LocalTime, selectedDate: LocalDate?): UiText? {
+    private fun validateTime(
+        time: LocalTime,
+        selectedDate: LocalDate?
+    ): UiText? {
         if (time !in PICKUP_START_TIME..PICKUP_END_TIME) {
             return UiText.StringResource(
                 id = R.string.pickup_time_range_error,
                 args = arrayOf(
                     PICKUP_START_TIME.toString(),
-                    PICKUP_END_TIME.toString()
-                )
+                    PICKUP_END_TIME.toString(),
+                ),
             )
         }
         val isToday = selectedDate == LocalDate.now()
@@ -226,7 +238,7 @@ class OrderCheckoutViewModel: ViewModel() {
             if (time < minimumTime) {
                 return UiText.StringResource(
                     id = R.string.pickup_time_minimum_error,
-                    args = arrayOf(MIN_MINUTES_FROM_NOW.toString())
+                    args = arrayOf(MIN_MINUTES_FROM_NOW.toString()),
                 )
             }
         }
