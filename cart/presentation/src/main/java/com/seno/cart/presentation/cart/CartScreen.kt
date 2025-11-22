@@ -29,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.seno.cart.presentation.R
+import com.seno.cart.presentation.cart.components.CartTopBar
 import com.seno.cart.presentation.cart.components.CartToppingCard
 import com.seno.cart.presentation.cart.components.EmptyCartComponent
 import com.seno.core.presentation.components.LoadingComponent
@@ -51,16 +52,23 @@ fun CartScreen(
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     val deviceConfiguration = DeviceConfiguration.fromWindowSizeClass(windowSizeClass)
 
-    when (deviceConfiguration) {
-        DeviceConfiguration.MOBILE_PORTRAIT,
-        DeviceConfiguration.MOBILE_LANDSCAPE -> {
-            MobileCartScreenUI(state, onAction)
-        }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        CartTopBar()
 
-        DeviceConfiguration.TABLET_PORTRAIT,
-        DeviceConfiguration.TABLET_LANDSCAPE,
-        DeviceConfiguration.DESKTOP -> {
-            TabletCartScreenUI(state, onAction)
+        when (deviceConfiguration) {
+            DeviceConfiguration.MOBILE_PORTRAIT,
+            DeviceConfiguration.MOBILE_LANDSCAPE -> {
+                MobileCartScreenUI(state, onAction)
+            }
+
+            DeviceConfiguration.TABLET_PORTRAIT,
+            DeviceConfiguration.TABLET_LANDSCAPE,
+            DeviceConfiguration.DESKTOP -> {
+                TabletCartScreenUI(state, onAction)
+            }
         }
     }
 }
@@ -131,7 +139,8 @@ private fun TabletCartScreenUI(
                             .background(
                                 color = surfaceHigher,
                                 shape = RoundedCornerShape(16.dp),
-                            ).padding(16.dp),
+                            )
+                            .padding(16.dp),
                     verticalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Spacer(modifier = Modifier.height(24.dp))
@@ -195,7 +204,8 @@ private fun MobileCartScreenUI(
     val deviceType = currentDeviceConfiguration()
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
     ) {
         Column(
             modifier =
@@ -249,7 +259,13 @@ private fun MobileCartScreenUI(
                                     ),
                                 )
                             },
-                            onDeleteClick = { onAction(CartActions.OnDeleteCartItemClick(cartItem.reference)) },
+                            onDeleteClick = {
+                                onAction(
+                                    CartActions.OnDeleteCartItemClick(
+                                        cartItem.reference,
+                                    ),
+                                )
+                            },
                             extraToppings = cartItem.extraToppingsRelated,
                         )
                     }

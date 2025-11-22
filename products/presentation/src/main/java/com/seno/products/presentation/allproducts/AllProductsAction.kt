@@ -13,6 +13,8 @@ sealed interface AllProductsAction {
 
     data class OnProductDelete(val productState: CartItemUI) : AllProductsAction
 
+    data object OnNavigateToAuthenticationScreen : AllProductsAction
+
     data object ShowLogoutDialog : AllProductsAction
 
     data object DismissLogoutDialog : AllProductsAction

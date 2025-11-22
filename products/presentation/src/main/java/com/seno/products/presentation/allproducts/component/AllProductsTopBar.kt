@@ -35,9 +35,8 @@ fun AllProductsTopBar(
     LazyPizzaTopAppBar(
         title = {
             Row(
-                modifier =
-                    modifier
-                        .padding(vertical = 12.dp),
+                modifier = Modifier
+                    .padding(start = 6.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Image(
@@ -60,9 +59,6 @@ fun AllProductsTopBar(
         },
         actions = {
             Row(
-                modifier =
-                    Modifier
-                        .padding(vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
@@ -83,26 +79,27 @@ fun AllProductsTopBar(
                 )
 
                 Spacer(modifier = Modifier.size(16.dp))
-            }
-            if (isLoggedIn) {
-                IconButton(
-                    onClick = onLogoutClick,
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.logout_ic),
-                        contentDescription = null,
-                        tint = Color.Unspecified,
-                    )
-                }
-            } else {
-                IconButton(
-                    onClick = onLoginClick,
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.profile_ic),
-                        contentDescription = null,
-                        tint = Color.Unspecified,
-                    )
+
+                if (isLoggedIn) {
+                    IconButton(
+                        onClick = onLogoutClick,
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.logout_ic),
+                            contentDescription = null,
+                            tint = Color.Unspecified,
+                        )
+                    }
+                } else {
+                    IconButton(
+                        onClick = onLoginClick,
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.profile_ic),
+                            contentDescription = null,
+                            tint = Color.Unspecified,
+                        )
+                    }
                 }
             }
         },
