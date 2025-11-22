@@ -7,8 +7,11 @@ android {
 }
 
 dependencies {
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore)
     with(projects) {
         implementation(history.domain)
         implementation(core.domain)
+        implementation(core.data)
     }
 }

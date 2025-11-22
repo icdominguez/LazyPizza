@@ -19,6 +19,7 @@
     <string name="error_service_unavailable">Service unavailable, please try again later</string>
     <string name="error_serialization">Serialization error</string>
     <string name="error_phone_number_invalid">Invalid phone number</string>
+    <string name="error_phone_number_not_available">Phone number not available</string>
     <string name="error_request_id_invalid">Request ID is invalid</string>
     <string name="error_verification_code_invalid">Incorrect Code. Please try again</string>
     <string name="error_balance_not_enough">Balance not enough</string>

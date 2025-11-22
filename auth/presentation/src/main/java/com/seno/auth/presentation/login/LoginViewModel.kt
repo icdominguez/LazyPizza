@@ -86,9 +86,10 @@ class LoginViewModel(
             _state.update { it.copy(isLoading = true) }
 
             authService
-                .sendCode(state.value.phoneNumber)
+                .sendCode(_state.value.phoneNumber)
                 .onSuccess { requestId ->
                     savedStateHandle[REQUEST_ID_KEY] = requestId
+                    savedStateHandle[PHONE_NUMBER_KEY] = _state.value.phoneNumber
                     _state.update {
                         it.copy(
                             isCodeSent = true,
@@ -119,8 +120,9 @@ class LoginViewModel(
     private fun onOtpConfirm() {
         val currentOtp = state.value.otp
         val requestId = savedStateHandle.get<String>(REQUEST_ID_KEY)
+        val phoneNumber = savedStateHandle.get<String>(PHONE_NUMBER_KEY)
 
-        if (currentOtp.length != 6 || requestId == null) return
+        if (currentOtp.length != 6 || requestId == null || phoneNumber == null) return
 
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
@@ -130,7 +132,7 @@ class LoginViewModel(
                     requestId = requestId,
                     code = currentOtp,
                 ).onSuccess {
-                    userData.setIsLogin(true)
+                    userData.setUserId(phoneNumber)
                     _state.update {
                         it.copy(
                             isLoading = false,
@@ -202,5 +204,6 @@ class LoginViewModel(
 
     companion object {
         private const val REQUEST_ID_KEY = "request_id"
+        private const val PHONE_NUMBER_KEY = "phone_number"
     }
 }

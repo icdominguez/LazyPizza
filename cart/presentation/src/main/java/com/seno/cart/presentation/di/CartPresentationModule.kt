@@ -1,6 +1,6 @@
 package com.seno.cart.presentation.di
 
-import com.seno.cart.presentation.CartViewModel
+import com.seno.cart.presentation.cart.CartViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 

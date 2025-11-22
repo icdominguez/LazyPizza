@@ -17,8 +17,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navigation
 import com.seno.auth.presentation.login.LoginRoot
-import com.seno.cart.presentation.CartRoot
-import com.seno.cart.presentation.components.CartTopBar
+import com.seno.cart.presentation.cart.CartRoot
+import com.seno.cart.presentation.cart.components.CartTopBar
 import com.seno.core.presentation.components.LazyPizzaDefaultScreen
 import com.seno.core.presentation.components.bar.LazyPizzaMenuBar
 import com.seno.core.presentation.model.NavigationMenu

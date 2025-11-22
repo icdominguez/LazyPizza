@@ -1,4 +1,4 @@
-package com.seno.cart.presentation
+package com.seno.cart.presentation.cart
 
 import android.widget.Toast
 import androidx.compose.material3.CircularProgressIndicator

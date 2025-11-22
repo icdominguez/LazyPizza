@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,17 +29,39 @@ internal fun HistoryScreen(
 ) {
     val deviceType = currentDeviceConfiguration()
 
+    if (state.isLoading) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+
     when (state.isLoggedIn) {
         true ->
             if (state.orderItems.isEmpty()) {
-                HistoryInformationComponent(
-                    title = stringResource(R.string.no_orders_yet),
-                    description = stringResource(R.string.your_our_will_appear_here),
-                    buttonText = stringResource(R.string.go_to_menu),
-                    onClick = {
-                        onAction(HistoryAction.OnGoToMenuClick)
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .applyIf(
+                            deviceType != DeviceConfiguration.MOBILE_LANDSCAPE,
+                        ) {
+                            padding(top = 120.dp)
+                        },
+                    contentAlignment = if (deviceType == DeviceConfiguration.MOBILE_LANDSCAPE) {
+                        Alignment.Center
+                    } else {
+                        Alignment.TopCenter
                     },
-                )
+                ) {
+                    HistoryInformationComponent(
+                        title = stringResource(R.string.no_orders_yet),
+                        description = stringResource(R.string.your_our_will_appear_here),
+                        buttonText = stringResource(R.string.go_to_menu),
+                        onClick = {
+                            onAction(HistoryAction.OnGoToMenuClick)
+                        },
+                    )
+                }
             } else {
                 LazyVerticalStaggeredGrid(
                     columns = StaggeredGridCells.Fixed(if (deviceType.isTablet()) 2 else 1),
@@ -85,7 +108,7 @@ internal fun HistoryScreen(
 private fun HistoryScreenNotLoggedInPreview() {
     LazyPizzaTheme {
         HistoryScreen(
-            state = HistoryState(isLoggedIn = true),
+            state = HistoryState(isLoading = true),
             onAction = {},
         )
     }

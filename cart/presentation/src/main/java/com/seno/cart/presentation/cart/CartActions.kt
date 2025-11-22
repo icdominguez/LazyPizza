@@ -1,4 +1,4 @@
-package com.seno.cart.presentation
+package com.seno.cart.presentation.cart
 
 sealed interface CartActions {
     data class OnCartItemQuantityChange(val reference: String, val quantity: Int) : CartActions

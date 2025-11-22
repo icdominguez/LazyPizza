@@ -1,4 +1,4 @@
-package com.seno.cart.presentation
+package com.seno.cart.presentation.cart
 
 import com.seno.core.presentation.model.CartItemUI
 

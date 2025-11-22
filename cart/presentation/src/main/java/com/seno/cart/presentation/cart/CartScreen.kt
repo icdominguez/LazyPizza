@@ -1,4 +1,4 @@
-package com.seno.cart.presentation
+package com.seno.cart.presentation.cart
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,8 +28,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.seno.cart.presentation.components.CartToppingCard
-import com.seno.cart.presentation.components.EmptyCartComponent
+import com.seno.cart.presentation.R
+import com.seno.cart.presentation.cart.components.CartToppingCard
+import com.seno.cart.presentation.cart.components.EmptyCartComponent
 import com.seno.core.presentation.components.LoadingComponent
 import com.seno.core.presentation.components.button.LazyPizzaPrimaryButton
 import com.seno.core.presentation.components.card.ProductCard
