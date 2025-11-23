@@ -3,6 +3,7 @@ package com.seno.cart.presentation.cart
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seno.cart.domain.CartRepository
+import com.seno.cart.domain.CheckoutRepository
 import com.seno.core.domain.FirebaseResult
 import com.seno.core.domain.cart.identityKey
 import com.seno.core.domain.product.ProductType
@@ -25,6 +26,7 @@ import kotlinx.coroutines.launch
 class CartViewModel(
     private val cartRepository: CartRepository,
     private val coreRepository: CoreRepository,
+    private val checkoutRepository: CheckoutRepository,
     private val userData: UserData
 ) : ViewModel() {
     private val _state = MutableStateFlow(CartState())
@@ -194,6 +196,7 @@ class CartViewModel(
                     action.reference,
                     action.quantity,
                 )
+
             is CartActions.OnDeleteCartItemClick -> onDeleteProductClick(action.reference)
             else -> Unit
         }

@@ -32,6 +32,7 @@ class KtorAuthService(
                 it.result?.requestId ?: it.error?.let { error ->
                     return when (error) {
                         SendCodeError.PHONE_NUMBER_INVALID.name -> Result.Error(DataError.Network.PHONE_NUMBER_INVALID)
+                        SendCodeError.PHONE_NUMBER_NOT_AVAILABLE.name -> Result.Error(DataError.Network.PHONE_NUMBER_NOT_AVAILABLE)
                         SendCodeError.BALANCE_NOT_ENOUGH.name -> Result.Error(DataError.Network.BALANCE_NOT_ENOUGH)
                         else -> Result.Error(DataError.Network.SERVER_ERROR)
                     }

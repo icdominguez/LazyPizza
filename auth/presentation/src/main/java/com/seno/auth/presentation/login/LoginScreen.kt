@@ -16,6 +16,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.seno.auth.presentation.OtpComponent
@@ -35,6 +36,8 @@ fun LoginScreen(
     state: LoginState = LoginState(),
     onAction: (LoginAction) -> Unit = {},
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -85,33 +88,34 @@ fun LoginScreen(
                 onOptTextChange = {
                     onAction(LoginAction.OnOtpChange(it))
                 },
-                isError = state.isWrongOtp,
+                error = state.error?.asString(),
             )
         }
 
         Spacer(modifier = Modifier.size(16.dp))
 
-        if (state.isCodeSent) {
-            LazyPizzaPrimaryButton(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                buttonText = "Confirm",
-                onClick = {
+        LazyPizzaPrimaryButton(
+            modifier = Modifier
+                .fillMaxWidth(),
+            buttonText = if (state.isCodeSent) "Confirm" else "Continue",
+            onClick = {
+                keyboardController?.hide()
+                if (state.isCodeSent) {
                     onAction(LoginAction.OnOtpConfirm)
-                },
-                enabled = state.otp.length == 6 && !state.isLoading,
-            )
-        } else {
-            LazyPizzaPrimaryButton(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                buttonText = "Continue",
-                onClick = {
+                } else {
                     onAction(LoginAction.OnContinueButtonClick)
-                },
-                enabled = state.isContinueButtonEnabled,
-            )
-        }
+                }
+            },
+            enabled = (
+                if (state.isCodeSent) {
+                    state.otp.length == 6
+                } else {
+                    state.isContinueButtonEnabled
+                }
+            ) &&
+                !state.isLoading,
+            isLoading = state.isLoading,
+        )
 
         Spacer(modifier = Modifier.size(12.dp))
 
@@ -133,7 +137,13 @@ fun LoginScreen(
                 val minutes = state.timeLeft / 60
                 val seconds = state.timeLeft % 60
                 Text(
-                    text = "You can request a new code in ${String.format("%02d:%02d", minutes, seconds)}",
+                    text = "You can request a new code in ${
+                        String.format(
+                            "%02d:%02d",
+                            minutes,
+                            seconds,
+                        )
+                    }",
                     style = body_3_regular.copy(textSecondary),
                 )
             } else {

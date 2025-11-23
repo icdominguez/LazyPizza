@@ -39,6 +39,8 @@ import com.seno.core.presentation.theme.label_2_semiBold
 import com.seno.core.presentation.theme.surfaceHigher
 import com.seno.core.presentation.theme.textSecondary
 import com.seno.core.presentation.utils.DeviceConfiguration
+import com.seno.core.presentation.utils.applyIf
+import com.seno.core.presentation.utils.currentDeviceConfiguration
 import com.seno.core.presentation.utils.formatToPrice
 
 @Composable
@@ -171,7 +173,7 @@ private fun TabletCartScreenUI(
                         LazyPizzaPrimaryButton(
                             modifier = Modifier.fillMaxWidth(),
                             buttonText = "Proceed to Checkout (${totalPrice.formatToPrice()})",
-                            onClick = {  },
+                            onClick = { /* Checkout click */ },
                         )
                     }
                 }
@@ -190,6 +192,8 @@ private fun MobileCartScreenUI(
             state.cartItems.sumOf { it.price * it.quantity }
         }
 
+    val deviceType = currentDeviceConfiguration()
+
     Box(
         modifier = Modifier.fillMaxSize(),
     ) {
@@ -206,12 +210,24 @@ private fun MobileCartScreenUI(
             if (state.isLoading) {
                 LoadingComponent(text = "Getting your cart, please wait ...")
             } else if (state.cartItems.isEmpty()) {
-                EmptyCartComponent(
-                    modifier =
-                        Modifier
-                            .padding(top = 120.dp),
-                    onBackToMenuClick = { onAction(CartActions.OnNavigateToMenuClick) },
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .applyIf(
+                            deviceType != DeviceConfiguration.MOBILE_LANDSCAPE,
+                        ) {
+                            padding(top = 120.dp)
+                        },
+                    contentAlignment = if (deviceType == DeviceConfiguration.MOBILE_LANDSCAPE) {
+                        Alignment.Center
+                    } else {
+                        Alignment.TopCenter
+                    },
+                ) {
+                    EmptyCartComponent(
+                        onBackToMenuClick = { onAction(CartActions.OnNavigateToMenuClick) },
+                    )
+                }
             } else {
                 LazyColumn(
                     modifier =

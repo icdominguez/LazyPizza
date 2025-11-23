@@ -37,7 +37,7 @@ fun LoginRoot(
     ) { event ->
         when (event) {
             is LoginEvent.LoginError -> {
-                Toast.makeText(context, event.message.toString(), Toast.LENGTH_LONG).show()
+                Toast.makeText(context, event.message.asString(context), Toast.LENGTH_LONG).show()
             }
             is LoginEvent.LoginSuccess -> {
                 onConfirmButtonClick()

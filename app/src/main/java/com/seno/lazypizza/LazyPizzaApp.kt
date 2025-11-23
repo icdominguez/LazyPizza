@@ -6,6 +6,7 @@ import com.seno.auth.presentation.di.authPresentationModule
 import com.seno.cart.data.di.cartDataModule
 import com.seno.cart.presentation.di.cartPresentationModule
 import com.seno.core.data.di.coreDataModule
+import com.seno.history.data.di.historyDataModule
 import com.seno.history.presentation.di.historyPresentationModule
 import com.seno.lazypizza.di.applicationModule
 import com.seno.products.data.di.productsDataModule
@@ -36,6 +37,7 @@ class LazyPizzaApp : Application() {
                 cartDataModule,
                 authDataModule,
                 authPresentationModule,
+                historyDataModule,
             )
         }
     }

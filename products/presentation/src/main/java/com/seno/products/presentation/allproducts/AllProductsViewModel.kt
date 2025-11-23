@@ -47,9 +47,9 @@ class AllProductsViewModel(
 
     init {
         userData
-            .getIsLogin()
-            .onEach { isLoggedIn ->
-                _state.update { it.copy(isLoggedIn = isLoggedIn) }
+            .getUserId()
+            .onEach { userId ->
+                _state.update { it.copy(isLoggedIn = userId != null) }
             }.launchIn(viewModelScope)
         userData
             .getCartId()
@@ -83,34 +83,44 @@ class AllProductsViewModel(
                     )
                 }
             }
+
             is AllProductsAction.OnProductMinus -> onProductMinus(action.productState)
             is AllProductsAction.OnProductPlus -> onProductPlus(action.productState)
             is AllProductsAction.OnProductDelete -> onProductDelete(action.productState)
             AllProductsAction.ConfirmLogout -> {
                 viewModelScope.launch {
-                    if(userData.getCartId().first() == null) {
+                    if (userData.getCartId().first() == null) {
                         userData.clear()
                         _state.update { it.copy(showLogoutDialog = false) }
                     } else {
                         val logOutAndDeleteCartResponse = productsRepository.logoutAndDeleteCart()
-                        when(logOutAndDeleteCartResponse) {
+                        when (logOutAndDeleteCartResponse) {
                             is FirebaseResult.Success -> {
                                 _state.update { it.copy(showLogoutDialog = false) }
                             }
+
                             is FirebaseResult.Error -> {
                                 _state.update { it.copy(showLogoutDialog = false) }
-                                _event.send(AllProductsEvent.Error(logOutAndDeleteCartResponse.exception.message ?: "Error logging out"))
+                                _event.send(
+                                    AllProductsEvent.Error(
+                                        logOutAndDeleteCartResponse.exception.message
+                                            ?: "Error logging out",
+                                    ),
+                                )
                             }
                         }
                     }
                 }
             }
+
             AllProductsAction.DismissLogoutDialog -> {
                 _state.update { it.copy(showLogoutDialog = false) }
             }
+
             AllProductsAction.ShowLogoutDialog -> {
                 _state.update { it.copy(showLogoutDialog = true) }
             }
+
             else -> Unit
         }
     }
@@ -321,7 +331,8 @@ class AllProductsViewModel(
                                 when (result) {
                                     is FirebaseResult.Success -> {
                                         result.data.associate { cartItem ->
-                                            val productId = cartItem.reference.substringAfterLast("/")
+                                            val productId =
+                                                cartItem.reference.substringAfterLast("/")
                                             productId to cartItem.quantity
                                         }
                                     }
@@ -329,7 +340,8 @@ class AllProductsViewModel(
                                     is FirebaseResult.Error -> {
                                         _event.trySend(
                                             AllProductsEvent.Error(
-                                                result.exception.message ?: "Error getting the cart",
+                                                result.exception.message
+                                                    ?: "Error getting the cart",
                                             ),
                                         )
                                         emptyMap()
