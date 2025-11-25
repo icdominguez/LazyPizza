@@ -4,8 +4,6 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 sealed interface OrderCheckoutActions {
-    data object OnNavigateUp: OrderCheckoutActions
-    data object OnPlaceOrder: OrderCheckoutActions
     data object OnDismissDatePicker : OrderCheckoutActions
     data object OnDismissTimePicker : OrderCheckoutActions
     data object OnCancelTimePicker : OrderCheckoutActions

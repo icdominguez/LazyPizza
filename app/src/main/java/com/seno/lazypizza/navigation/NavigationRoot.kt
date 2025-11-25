@@ -208,10 +208,7 @@ private fun NavGraphBuilder.cartGraph(navHostController: NavHostController) {
                     }
                 },
                 onNavigateToCheckout = {
-                    navHostController.navigate(Screen.Cart.OrderCheckoutScreen){
-                        popUpTo(0)
-                        launchSingleTop = true
-                    }
+                    navHostController.navigate(Screen.Cart.OrderCheckoutScreen)
                 }
             )
         }

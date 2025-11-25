@@ -1,6 +1,9 @@
 package com.seno.cart.presentation.checkout.components
 
+import android.R.attr.onClick
 import androidx.compose.foundation.border
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,9 +12,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,16 +41,20 @@ internal fun RadioButtonSingleSelection(
     onSelected: (RadioOptions) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier.selectableGroup()) {
+    Column(
+        modifier.selectableGroup(),
+    ) {
         RadioOptions.entries.forEach { option ->
             Row(
                 Modifier
                     .fillMaxWidth()
                     .height(56.dp)
                     .selectable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
                         selected = (option == selectedOption),
                         onClick = { onSelected(option) },
-                        role = Role.RadioButton
+                        role = Role.RadioButton,
                     )
                     .padding(vertical = 4.dp)
                     .border(

@@ -1,30 +1,37 @@
 package com.seno.cart.presentation.checkout.components
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePickerDefaults
-import androidx.compose.material3.TimePickerDialog
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.seno.core.presentation.components.button.LazyPizzaPrimaryButton
+import com.seno.core.presentation.theme.LazyPizzaTheme
 import com.seno.core.presentation.theme.label_2_semiBold
+import com.seno.core.presentation.theme.outline
 import com.seno.core.presentation.theme.primary
 import com.seno.core.presentation.theme.surfaceHigher
 import com.seno.core.presentation.theme.surfaceHighest
-import com.seno.core.presentation.theme.textOnPrimary
 import com.seno.core.presentation.theme.textSecondary
 import com.seno.core.presentation.theme.title_3
 import java.time.LocalTime
@@ -53,72 +60,87 @@ fun InputTimePicker(
         onTimeChanged(selectedTime)
     }
 
-    TimePickerDialog(
-        containerColor = surfaceHighest,
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            // reason why i didn't use lazy pizza primary button is we didn't implement enabled parameter.
-            Button(
-                onClick = {
-                    if (validationError == null) {
-                        val selectedTime = LocalTime.of(
-                            timePickerState.hour,
-                            timePickerState.minute
-                        )
-                        onConfirm(selectedTime)
-                    }
-                },
-                enabled = validationError == null
-            ) {
-                Text(
-                    text = "OK",
-                    style = title_3.copy(color = textOnPrimary)
-                )
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    onCancel()
-                }
-            ) {
-                Text(
-                    text = "Cancel",
-                    style = title_3.copy(color = primary)
-                )
-            }
-        },
-        title = {
-            Text(
-                text = "Select Time".uppercase(),
-                modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
-                style = label_2_semiBold.copy(color = textSecondary)
-            )
-        },
+    BasicAlertDialog(
+        onDismissRequest = onDismiss
     ) {
-        Column {
-            TimeInput(
-                state = timePickerState,
-                colors = TimePickerDefaults.colors(
-                    timeSelectorSelectedContainerColor = surfaceHigher,
-                    timeSelectorUnselectedContainerColor = surfaceHighest,
-                    timeSelectorSelectedContentColor = Color(0xFF001945),
-                    timeSelectorUnselectedContentColor = Color(0xFF001945),
-                    periodSelectorBorderColor = primary,
-                    periodSelectorSelectedContainerColor = surfaceHigher,
-                    periodSelectorUnselectedContainerColor = surfaceHighest,
-                    periodSelectorSelectedContentColor = Color(0xFF001945),
-                    periodSelectorUnselectedContentColor = Color(0xFF001945),
-                )
-            )
-            if (validationError != null) {
-                Spacer(modifier = Modifier.height(8.dp))
+        Surface(
+            modifier = Modifier
+                .width(264.dp),
+            shape = RoundedCornerShape(28.dp),
+            color = surfaceHigher
+        ) {
+            Column {
+                // Title
                 Text(
-                    text = validationError,
-                    color = primary,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    text = "Select Time".uppercase(),
+                    modifier = Modifier.padding(16.dp),
+                    style = label_2_semiBold.copy(color = textSecondary)
                 )
+
+                // Time Input
+                TimeInput(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(horizontal = 16.dp),
+                    state = timePickerState,
+                    colors = TimePickerDefaults.colors(
+                        containerColor = surfaceHighest,
+                        timeSelectorSelectedContainerColor = surfaceHigher,
+                        timeSelectorUnselectedContainerColor = surfaceHighest,
+                    )
+                )
+
+                // Validation Error
+                if (validationError != null) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = validationError,
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = primary,
+                            fontSize = 12.sp,
+                            lineHeight = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                        ),
+                        maxLines = 2,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .align(Alignment.Start)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    HorizontalDivider(thickness = 1.dp, color = outline)
+                }
+
+                // Action Buttons
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(end = 16.dp, bottom = 24.dp, top = 8.dp)
+                ) {
+                    TextButton(
+                        onClick = onCancel
+                    ) {
+                        Text(
+                            text = "Cancel",
+                            style = title_3.copy(color = primary)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    LazyPizzaPrimaryButton(
+                        onClick = {
+                            if (validationError == null) {
+                                val selectedTime = LocalTime.of(
+                                    timePickerState.hour,
+                                    timePickerState.minute
+                                )
+                                onConfirm(selectedTime)
+                            }
+                        },
+                        buttonText = "Ok",
+                        enabled = validationError == null
+                    )
+                }
             }
         }
     }
@@ -127,11 +149,13 @@ fun InputTimePicker(
 @Preview(showBackground = true)
 @Composable
 private fun InputTimePickerPreview() {
-    InputTimePicker(
-        onConfirm = {},
-        onDismiss = {},
-        onCancel = {},
-        onTimeChanged = {},
-        initialTime = LocalTime.now(),
-    )
+    LazyPizzaTheme {
+        InputTimePicker(
+            onConfirm = {},
+            onDismiss = {},
+            onCancel = {},
+            onTimeChanged = {},
+            initialTime = LocalTime.now(),
+        )
+    }
 }

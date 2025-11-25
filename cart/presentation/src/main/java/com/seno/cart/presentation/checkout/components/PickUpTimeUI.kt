@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.seno.cart.presentation.R
 import com.seno.cart.presentation.checkout.OrderCheckoutActions
 import com.seno.cart.presentation.checkout.OrderCheckoutState
@@ -62,19 +63,15 @@ internal fun PickUpTimeUI(
         ) {
             Text(
                 text = if (state.selectedDeliveryOption == RadioOptions.EARLIEST) {
-                    "EARLIEST PICKUP TIME:"
+                    stringResource(R.string.earliest_pickup_time)
                 } else {
-                    "SCHEDULED PICKUP:"
+                    stringResource(R.string.scheduled_time)
                 },
                 style = MaterialTheme.typography.labelSmall.copy(color = textSecondary)
             )
 
             Text(
-                text = if (state.selectedDeliveryOption == RadioOptions.EARLIEST) {
-                    state.currentTime.format(DateTimeFormatter.ofPattern("HH:mm"))
-                } else {
-                    formatScheduledPickup(state.selectedScheduleDate, state.selectedScheduleTime, state.todayDate)
-                },
+                text = state.displayPickupTime,
                 style = label_2_semiBold.copy(color = textPrimary)
             )
         }
@@ -86,15 +83,16 @@ internal fun PickUpTimeUI(
 
     if (state.showDatePicker) {
         ModalDatePicker(
-            state = state,
-            onDismiss = {
-                onAction(OrderCheckoutActions.OnDismissDatePicker)
-            },
-            onDateSelected = { selectedDate ->
-                onAction(OrderCheckoutActions.OnDateSelected(selectedDate))
+            initialSelectedDateMillis = state.selectedScheduleDateMillis ?: state.todayDateMillis,
+            minSelectableDateMillis = state.minSelectableDateMillis,
+            onDateSelected = { date ->
+                onAction(OrderCheckoutActions.OnDateSelected(date))
             },
             onConfirmDatePicker = {
                 onAction(OrderCheckoutActions.OnConfirmDatePicker)
+            },
+            onDismiss = {
+                onAction(OrderCheckoutActions.OnDismissDatePicker)
             }
         )
     }
@@ -110,23 +108,7 @@ internal fun PickUpTimeUI(
                 onAction(OrderCheckoutActions.OnTimeChanged(time))
             },
             initialTime = state.selectedScheduleTime,
-            validationError = state.timeValidationError
+            validationError = state.timeValidationError?.asString()
         )
-    }
-}
-
-private fun formatScheduledPickup(
-    selectedDate: LocalDate?,
-    selectedTime: LocalTime?,
-    todayDate: LocalDate
-): String {
-    if (selectedDate == null) return "Select Date"
-
-    val isToday = selectedDate == todayDate
-
-    return when {
-        selectedTime == null -> selectedDate.format(DateTimeFormatter.ofPattern("dd MMMM"))
-        isToday -> selectedTime.format(DateTimeFormatter.ofPattern("HH:mm"))
-        else -> "${selectedDate.format(DateTimeFormatter.ofPattern("MMMM dd"))}, ${selectedTime.format(DateTimeFormatter.ofPattern("HH:mm"))}"
     }
 }

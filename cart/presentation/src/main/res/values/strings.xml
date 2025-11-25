@@ -5,4 +5,6 @@
     <string name="navigate_up_from_cart_to_previous_screen">navigate up from cart page to previous page</string>
     <string name="order_checkout">Order Checkout</string>
     <string name="pickup_time">PICKUP TIME</string>
+    <string name="earliest_pickup_time">EARLIEST PICKUP TIME:</string>
+    <string name="scheduled_time">SCHEDULED PICKUP:</string>
 </resources>
