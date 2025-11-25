@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.seno.core.presentation.utils.ObserveAsEvents
 import org.koin.androidx.compose.koinViewModel
 
@@ -14,6 +15,7 @@ import org.koin.androidx.compose.koinViewModel
 fun CartRoot(
     viewModel: CartViewModel = koinViewModel(),
     onNavigateToMenu: () -> Unit = {},
+    onNavigateToCheckout: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -42,6 +44,7 @@ fun CartRoot(
         onAction = { action ->
             when (action) {
                 is CartActions.OnNavigateToMenuClick -> onNavigateToMenu()
+                is CartActions.OnNavigateToCheckoutClick -> onNavigateToCheckout()
                 else -> viewModel.onAction(action)
             }
         },

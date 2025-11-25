@@ -320,7 +320,7 @@ private fun MobileCartScreenUI(
                             .padding(horizontal = 16.dp)
                             .padding(bottom = 24.dp),
                     buttonText = "Proceed to Checkout ($${totalPrice.formatToPrice()})",
-                    onClick = { /* Checkout click */ },
+                    onClick = { onAction(CartActions.OnNavigateToCheckoutClick) },
                 )
             }
         }

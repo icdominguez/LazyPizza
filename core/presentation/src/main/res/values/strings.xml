@@ -23,4 +23,7 @@
     <string name="error_request_id_invalid">Request ID is invalid</string>
     <string name="error_verification_code_invalid">Incorrect Code. Please try again</string>
     <string name="error_balance_not_enough">Balance not enough</string>
+    <string name="error_time_too_early">Pickup is possible at least 15 minutes from the current time</string>
+    <string name="pickup_time_minimum_error">Please select a time at least %1$s minutes from now</string>
+    <string name="pickup_time_range_error">Pickup available between %1$s and %2$s</string>
 </resources>
