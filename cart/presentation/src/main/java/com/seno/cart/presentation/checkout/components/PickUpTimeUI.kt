@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.seno.cart.presentation.R
 import com.seno.cart.presentation.checkout.OrderCheckoutActions
 import com.seno.cart.presentation.checkout.OrderCheckoutState
@@ -23,9 +22,6 @@ import com.seno.core.presentation.theme.label_2_semiBold
 import com.seno.core.presentation.theme.outline
 import com.seno.core.presentation.theme.textPrimary
 import com.seno.core.presentation.theme.textSecondary
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,30 +32,30 @@ internal fun PickUpTimeUI(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
+            .padding(vertical = 8.dp),
     ) {
         Text(
             text = stringResource(R.string.pickup_time),
-            style = label_2_semiBold.copy(color = textSecondary)
+            style = label_2_semiBold.copy(color = textSecondary),
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         RadioButtonSingleSelection(
             selectedOption = state.selectedDeliveryOption,
-            onSelected = { option ->
+            onSelect = { option ->
                 when (option) {
                     RadioOptions.EARLIEST -> onAction(OrderCheckoutActions.OnEarliestAvailableSelected)
                     RadioOptions.SCHEDULE -> onAction(OrderCheckoutActions.OnScheduleTimeSelected)
                 }
-            }
+            },
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
                 text = if (state.selectedDeliveryOption == RadioOptions.EARLIEST) {
@@ -67,12 +63,12 @@ internal fun PickUpTimeUI(
                 } else {
                     stringResource(R.string.scheduled_time)
                 },
-                style = MaterialTheme.typography.labelSmall.copy(color = textSecondary)
+                style = MaterialTheme.typography.labelSmall.copy(color = textSecondary),
             )
 
             Text(
                 text = state.displayPickupTime,
-                style = label_2_semiBold.copy(color = textPrimary)
+                style = label_2_semiBold.copy(color = textPrimary),
             )
         }
 
@@ -85,7 +81,7 @@ internal fun PickUpTimeUI(
         ModalDatePicker(
             initialSelectedDateMillis = state.selectedScheduleDateMillis ?: state.todayDateMillis,
             minSelectableDateMillis = state.minSelectableDateMillis,
-            onDateSelected = { date ->
+            onSelectDate = { date ->
                 onAction(OrderCheckoutActions.OnDateSelected(date))
             },
             onConfirmDatePicker = {
@@ -93,7 +89,7 @@ internal fun PickUpTimeUI(
             },
             onDismiss = {
                 onAction(OrderCheckoutActions.OnDismissDatePicker)
-            }
+            },
         )
     }
 
@@ -104,11 +100,11 @@ internal fun PickUpTimeUI(
             },
             onDismiss = { onAction(OrderCheckoutActions.OnDismissTimePicker) },
             onCancel = { onAction(OrderCheckoutActions.OnCancelTimePicker) },
-            onTimeChanged = { time ->
+            onTimeChange = { time ->
                 onAction(OrderCheckoutActions.OnTimeChanged(time))
             },
             initialTime = state.selectedScheduleTime,
-            validationError = state.timeValidationError?.asString()
+            validationError = state.timeValidationError?.asString(),
         )
     }
 }

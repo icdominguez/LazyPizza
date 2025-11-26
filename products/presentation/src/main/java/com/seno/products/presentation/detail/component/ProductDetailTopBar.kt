@@ -2,21 +2,12 @@
 
 package com.seno.products.presentation.detail.component
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import com.seno.core.presentation.components.bar.LazyPizzaTopAppBar
-import com.seno.core.presentation.theme.textSecondary
-import com.seno.core.presentation.theme.textSecondary8
+import com.seno.core.presentation.components.button.BackButton
 
 @Composable
 fun ProductDetailTopBar(
@@ -24,25 +15,16 @@ fun ProductDetailTopBar(
     modifier: Modifier = Modifier,
 ) {
     LazyPizzaTopAppBar(
-        modifier = modifier,
         navigationIcon = {
-            IconButton(
-                modifier =
-                    Modifier
-                        .padding(start = 16.dp)
-                        .size(32.dp)
-                        .background(
-                            color = textSecondary8.copy(alpha = 0.08f),
-                            shape = RoundedCornerShape(100),
-                        ),
-                onClick = { onBackClick() },
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                    contentDescription = "back",
-                    tint = textSecondary,
-                )
-            }
+            BackButton { onBackClick() }
         },
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ProductDetailTopBarPreview() {
+    ProductDetailTopBar(
+        onBackClick = {},
     )
 }

@@ -12,6 +12,7 @@ import org.koin.androidx.compose.koinViewModel
 fun ProductDetailRoot(
     viewModel: ProductDetailViewModel = koinViewModel(),
     onAddToCartClick: () -> Unit = {},
+    onBackClick: () -> Unit = {},
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -31,6 +32,11 @@ fun ProductDetailRoot(
 
     ProductDetailScreen(
         state = state,
-        onAction = viewModel::onAction,
+        onAction = { action ->
+            when (action) {
+                is ProductDetailAction.OnBackClick -> onBackClick()
+                else -> viewModel.onAction(action)
+            }
+        },
     )
 }

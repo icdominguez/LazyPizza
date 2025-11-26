@@ -2,7 +2,6 @@ package com.seno.cart.presentation.checkout
 
 import com.seno.cart.presentation.checkout.components.RadioOptions
 import com.seno.core.presentation.utils.UiText
-import java.time.LocalDate
 import java.time.LocalTime
 
 data class OrderCheckoutState(

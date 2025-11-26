@@ -25,8 +25,8 @@ import com.seno.core.presentation.utils.DeviceConfiguration
 
 @Composable
 fun OrderCheckoutTopBar(
-    modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     val deviceType = DeviceConfiguration.fromWindowSizeClass(windowSizeClass)

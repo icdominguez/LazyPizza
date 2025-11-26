@@ -7,12 +7,18 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun OrderCheckoutRoot(
-    viewModel: OrderCheckoutViewModel = koinViewModel()
+    viewModel: OrderCheckoutViewModel = koinViewModel(),
+    navigateBack: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     OrderCheckoutScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = { action ->
+            when (action) {
+                OrderCheckoutActions.OnBackClick -> navigateBack()
+                else -> viewModel.onAction(action)
+            }
+        },
     )
 }

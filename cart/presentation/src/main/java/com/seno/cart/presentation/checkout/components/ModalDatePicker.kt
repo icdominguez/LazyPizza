@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.seno.cart.presentation.checkout.OrderCheckoutState
 import com.seno.core.presentation.components.button.LazyPizzaPrimaryButton
 import com.seno.core.presentation.theme.LazyPizzaTheme
 import com.seno.core.presentation.theme.label_2_semiBold
@@ -36,23 +35,22 @@ internal fun ModalDatePicker(
     initialSelectedDateMillis: Long,
     minSelectableDateMillis: Long,
     onDismiss: () -> Unit = {},
-    onDateSelected: (LocalDate) -> Unit = {},
+    onSelectDate: (LocalDate) -> Unit = {},
     onConfirmDatePicker: () -> Unit = {}
 ) {
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = initialSelectedDateMillis,
         selectableDates = object : SelectableDates {
-            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                return utcTimeMillis >= minSelectableDateMillis
-            }
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean = utcTimeMillis >= minSelectableDateMillis
 
             override fun isSelectableYear(year: Int): Boolean {
-                val minYear = Instant.ofEpochMilli(minSelectableDateMillis)
+                val minYear = Instant
+                    .ofEpochMilli(minSelectableDateMillis)
                     .atZone(ZoneId.systemDefault())
                     .year
                 return year >= minYear
             }
-        }
+        },
     )
 
     val deviceType = currentDeviceConfiguration()
@@ -64,7 +62,8 @@ internal fun ModalDatePicker(
     }
 
     val displayDate = datePickerState.selectedDateMillis?.let { millis ->
-        Instant.ofEpochMilli(millis)
+        Instant
+            .ofEpochMilli(millis)
             .atZone(ZoneId.systemDefault())
             .toLocalDate()
             .format(DateTimeFormatter.ofPattern("MMMM dd"))
@@ -77,24 +76,25 @@ internal fun ModalDatePicker(
             LazyPizzaPrimaryButton(
                 onClick = {
                     datePickerState.selectedDateMillis?.let { millis ->
-                        val selectedDate = Instant.ofEpochMilli(millis)
+                        val selectedDate = Instant
+                            .ofEpochMilli(millis)
                             .atZone(ZoneId.systemDefault())
                             .toLocalDate()
-                        onDateSelected(selectedDate)
+                        onSelectDate(selectedDate)
                     }
                     onConfirmDatePicker()
                 },
-                buttonText = "Ok"
+                buttonText = "Ok",
             )
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
                 Text(
                     text = "Cancel",
-                    style = title_3.copy(color = primary)
+                    style = title_3.copy(color = primary),
                 )
             }
-        }
+        },
     ) {
         DatePicker(
             state = datePickerState,
@@ -102,27 +102,27 @@ internal fun ModalDatePicker(
                 Text(
                     text = "Select date".uppercase(),
                     modifier = Modifier.padding(start = 24.dp, top = 48.dp),
-                    style = label_2_semiBold.copy(color = textSecondary)
+                    style = label_2_semiBold.copy(color = textSecondary),
                 )
             },
             headline = {
                 Text(
                     text = displayDate,
                     modifier = Modifier.padding(start = 24.dp, bottom = 24.dp),
-                    style = title_1_semiBold.copy(color = textPrimary)
+                    style = title_1_semiBold.copy(color = textPrimary),
                 )
-            }
+            },
         )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun DatePickerModalPreview() {
+private fun DatePickerModalPreview() {
     LazyPizzaTheme {
         ModalDatePicker(
             initialSelectedDateMillis = System.currentTimeMillis(),
-            minSelectableDateMillis = System.currentTimeMillis()
+            minSelectableDateMillis = System.currentTimeMillis(),
         )
     }
 }
