@@ -97,9 +97,12 @@ class OrderCheckoutViewModel : ViewModel() {
         return when {
             selectedTime == null -> selectedDate.format(DateTimeFormatter.ofPattern("dd MMMM"))
             isToday -> selectedTime.format(DateTimeFormatter.ofPattern("HH:mm"))
-            else -> "${selectedDate.format(
-                DateTimeFormatter.ofPattern("MMMM dd"),
-            )}, ${selectedTime.format(DateTimeFormatter.ofPattern("HH:mm"))}"
+            else ->
+                "${
+                    selectedDate.format(
+                        DateTimeFormatter.ofPattern("MMMM dd"),
+                    )
+                }, ${selectedTime.format(DateTimeFormatter.ofPattern("HH:mm"))}"
         }
     }
 
@@ -129,6 +132,7 @@ class OrderCheckoutViewModel : ViewModel() {
                 }
                 updateDisplayStrings()
             }
+
             OrderCheckoutActions.OnScheduleTimeSelected -> {
                 _state.update {
                     it.copy(
@@ -138,12 +142,15 @@ class OrderCheckoutViewModel : ViewModel() {
                 }
                 updateDisplayStrings()
             }
+
             OrderCheckoutActions.OnExpandedOrderDetails -> {
                 _state.update { it.copy(isOrderDetailsExpanded = !it.isOrderDetailsExpanded) }
             }
+
             OrderCheckoutActions.OnDismissDatePicker -> {
                 _state.update { it.copy(showDatePicker = false) }
             }
+
             OrderCheckoutActions.OnDismissTimePicker -> {
                 _state.update {
                     it.copy(
@@ -152,6 +159,7 @@ class OrderCheckoutViewModel : ViewModel() {
                     )
                 }
             }
+
             OrderCheckoutActions.OnCancelTimePicker -> {
                 _state.update {
                     val hasConfirmedTime = it.selectedScheduleTime != null
@@ -165,6 +173,7 @@ class OrderCheckoutViewModel : ViewModel() {
                 }
                 updateDisplayStrings()
             }
+
             OrderCheckoutActions.OnConfirmDatePicker -> {
                 _state.update {
                     it.copy(
@@ -173,6 +182,7 @@ class OrderCheckoutViewModel : ViewModel() {
                     )
                 }
             }
+
             is OrderCheckoutActions.OnDateSelected -> {
                 val dateMillis = action.date
                     .atStartOfDay(ZoneId.systemDefault())
@@ -184,6 +194,7 @@ class OrderCheckoutViewModel : ViewModel() {
                 }
                 updateDisplayStrings()
             }
+
             is OrderCheckoutActions.OnTimeChanged -> {
                 val selectedDate = _state.value.selectedScheduleDateMillis?.let {
                     Instant
@@ -196,6 +207,7 @@ class OrderCheckoutViewModel : ViewModel() {
                     it.copy(timeValidationError = error)
                 }
             }
+
             is OrderCheckoutActions.OnTimeSelected -> {
                 val selectedDate = _state.value.selectedScheduleDateMillis?.let {
                     Instant
@@ -215,6 +227,13 @@ class OrderCheckoutViewModel : ViewModel() {
                     updateDisplayStrings()
                 }
             }
+
+            is OrderCheckoutActions.OnCommentTextChange -> {
+                _state.update {
+                    it.copy(comment = action.comment)
+                }
+            }
+
             else -> Unit
         }
     }

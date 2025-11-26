@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import com.seno.core.presentation.model.NavigationMenu
 import com.seno.core.presentation.theme.LazyPizzaTheme
 import com.seno.core.presentation.theme.background
-import com.seno.core.presentation.theme.surfaceHigher
 
 @Composable
 fun NavigationBarItems(
@@ -61,7 +60,7 @@ fun NavigationBarItems(
                 }.clip(
                     shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
                 ).background(
-                    color = surfaceHigher,
+                    color = background,
                 ).padding(
                     top = 10.dp,
                     bottom = 30.dp,

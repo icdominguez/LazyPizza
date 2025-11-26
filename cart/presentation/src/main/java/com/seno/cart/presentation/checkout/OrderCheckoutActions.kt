@@ -24,5 +24,7 @@ sealed interface OrderCheckoutActions {
 
     data class OnTimeChanged(val time: LocalTime) : OrderCheckoutActions
 
+    data class OnCommentTextChange(val comment: String) : OrderCheckoutActions
+
     data object OnBackClick : OrderCheckoutActions
 }

@@ -24,6 +24,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navigation
 import com.seno.auth.presentation.login.LoginRoot
 import com.seno.cart.presentation.cart.CartRoot
+import com.seno.cart.presentation.cart.CartViewModel
 import com.seno.cart.presentation.checkout.OrderCheckoutRoot
 import com.seno.core.presentation.components.LazyPizzaDefaultScreen
 import com.seno.core.presentation.components.bar.NavigationBarItems
@@ -38,6 +39,7 @@ import com.seno.lazypizza.util.getSelectedMenu
 import com.seno.products.presentation.allproducts.AllProductsRoot
 import com.seno.products.presentation.detail.ProductDetailRoot
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun NavigationRoot(
@@ -103,6 +105,10 @@ fun NavigationRoot(
                     onNavigationMenuClick = { menu ->
                         onNavigationMenuClick(navHostController, currentRoute, menu)
                     },
+                    badgeCounts = mapOf(
+                        NavigationMenu.CART to state.totalCartItem,
+                        NavigationMenu.HISTORY to 0,
+                    ),
                 )
 
                 VerticalDivider(modifier = Modifier.background(color = outline))
@@ -168,8 +174,14 @@ private fun NavGraphBuilder.cartGraph(navHostController: NavHostController) {
     navigation<Screen.Cart>(
         startDestination = Screen.Cart.CartScreen,
     ) {
-        composable<Screen.Cart.CartScreen> {
+        composable<Screen.Cart.CartScreen> { navBackStackEntry ->
+            val parentEntry = remember(navBackStackEntry) {
+                navHostController.getBackStackEntry(Screen.Cart)
+            }
+            val cartViewModel = koinViewModel<CartViewModel>(viewModelStoreOwner = parentEntry)
+
             CartRoot(
+                viewModel = cartViewModel,
                 onNavigateToMenu = {
                     navHostController.navigate(Screen.Menu) {
                         popUpTo(0)
@@ -182,10 +194,14 @@ private fun NavGraphBuilder.cartGraph(navHostController: NavHostController) {
             )
         }
         composable<Screen.Cart.OrderCheckoutScreen> {
+            val cartGraphEntry = navHostController.getBackStackEntry(Screen.Cart)
+            val cartViewModel = koinViewModel<CartViewModel>(viewModelStoreOwner = cartGraphEntry)
+
             OrderCheckoutRoot(
                 navigateBack = {
                     navHostController.popBackStack()
                 },
+                cartViewModel = cartViewModel,
             )
         }
     }
@@ -235,8 +251,9 @@ private fun NavGraphBuilder.authGraph(navHostController: NavHostController) {
 private fun shouldShowNavigationItem(currentRoute: NavDestination?): Boolean {
     val isProductDetail = currentRoute?.hasRoute<Screen.Menu.ProductDetail>() == true
     val isLogin = currentRoute?.hasRoute<Screen.Authentication.LoginScreen>() == true
+    val isOrderCheckout = currentRoute?.hasRoute<Screen.Cart.OrderCheckoutScreen>() == true
 
-    return !(isProductDetail || isLogin)
+    return !(isProductDetail || isLogin || isOrderCheckout)
 }
 
 private fun onNavigationMenuClick(

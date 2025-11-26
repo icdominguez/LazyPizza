@@ -181,7 +181,7 @@ private fun TabletCartScreenUI(
                         LazyPizzaPrimaryButton(
                             modifier = Modifier.fillMaxWidth(),
                             buttonText = "Proceed to Checkout (${totalPrice.formatToPrice()})",
-                            onClick = { /* Checkout click */ },
+                            onClick = { onAction(CartActions.OnNavigateToCheckoutClick) },
                         )
                     }
                 }
