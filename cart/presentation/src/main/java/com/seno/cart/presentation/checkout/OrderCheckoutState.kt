@@ -16,5 +16,6 @@ data class OrderCheckoutState(
     val timeValidationError: UiText? = null,
     val minSelectableDateMillis: Long = 0L,
     val displayPickupTime: String = "",
-    val displayScheduleDate: String = "Select Date"
+    val displayScheduleDate: String = "Select Date",
+    val comment: String = "",
 )

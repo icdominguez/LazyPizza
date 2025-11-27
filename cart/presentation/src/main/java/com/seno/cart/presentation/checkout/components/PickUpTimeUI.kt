@@ -32,11 +32,12 @@ internal fun PickUpTimeUI(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(top = 8.dp),
     ) {
         Text(
             text = stringResource(R.string.pickup_time),
-            style = label_2_semiBold.copy(color = textSecondary),
+            style = label_2_semiBold,
+            color = textSecondary,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
