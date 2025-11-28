@@ -346,6 +346,6 @@ private fun MobileCartScreenUI(
 @Composable
 private fun CartScreenPreview() {
     LazyPizzaTheme {
-        CartScreen(CartState(isLoading = true))
+        CartScreen(CartState(isLoading = false))
     }
 }

@@ -117,7 +117,7 @@ internal fun HistoryScreen(
 private fun HistoryScreenNotLoggedInPreview() {
     LazyPizzaTheme {
         HistoryScreen(
-            state = HistoryState(isLoading = true),
+            state = HistoryState(isLoading = false, isLoggedIn = false),
             onAction = {},
         )
     }
@@ -129,6 +129,7 @@ private fun HistoryScreenLoggedInWithNoOrdersPreview() {
     LazyPizzaTheme {
         HistoryScreen(
             state = HistoryState(
+                isLoading = false,
                 isLoggedIn = true,
                 orderItems = emptyList(),
             ),
@@ -143,6 +144,7 @@ private fun HistoryScreenLoggedInWithOrdersPreview() {
     LazyPizzaTheme {
         HistoryScreen(
             state = HistoryState(
+                isLoading = false,
                 isLoggedIn = true,
                 orderItems = listOf(
                     OrderItem(

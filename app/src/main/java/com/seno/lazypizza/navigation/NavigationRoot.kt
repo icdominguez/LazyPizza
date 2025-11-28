@@ -193,13 +193,24 @@ private fun NavGraphBuilder.cartGraph(navHostController: NavHostController) {
                 },
             )
         }
-        composable<Screen.Cart.OrderCheckoutScreen> {
-            val cartGraphEntry = navHostController.getBackStackEntry(Screen.Cart)
+        composable<Screen.Cart.OrderCheckoutScreen> { navBackStackEntry ->
+            val cartGraphEntry = remember(navBackStackEntry) {
+                navHostController.getBackStackEntry(Screen.Cart)
+            }
             val cartViewModel = koinViewModel<CartViewModel>(viewModelStoreOwner = cartGraphEntry)
 
             OrderCheckoutRoot(
                 navigateBack = {
-                    navHostController.popBackStack()
+                    navHostController.navigateUp()
+                },
+                onLoginClick = {
+                    navHostController.navigate(Screen.Authentication.LoginScreen)
+                },
+                onMenuClick = {
+                    navHostController.navigate(Screen.Menu) {
+                        popUpTo(0)
+                        launchSingleTop = true
+                    }
                 },
                 cartViewModel = cartViewModel,
             )

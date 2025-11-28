@@ -1,7 +1,10 @@
 package com.seno.cart.presentation.cart.components
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -24,7 +27,9 @@ fun EmptyCartComponent(
 ) {
     Column(
         modifier = modifier
-            .verticalScroll(rememberScrollState()),
+            .height(IntrinsicSize.Min)
+            .verticalScroll(rememberScrollState())
+            .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(

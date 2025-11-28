@@ -41,7 +41,6 @@ import java.util.Calendar
 @Composable
 fun InputTimePicker(
     onConfirm: (LocalTime) -> Unit,
-    onDismiss: () -> Unit,
     onCancel: () -> Unit,
     onTimeChange: (LocalTime) -> Unit,
     initialTime: LocalTime? = null,
@@ -61,7 +60,7 @@ fun InputTimePicker(
     }
 
     BasicAlertDialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = onCancel,
     ) {
         Surface(
             modifier = Modifier
@@ -152,7 +151,6 @@ private fun InputTimePickerPreview() {
     LazyPizzaTheme {
         InputTimePicker(
             onConfirm = {},
-            onDismiss = {},
             onCancel = {},
             onTimeChange = {},
             initialTime = LocalTime.now(),

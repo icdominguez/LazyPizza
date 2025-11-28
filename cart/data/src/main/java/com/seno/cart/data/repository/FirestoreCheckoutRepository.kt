@@ -2,6 +2,7 @@ package com.seno.cart.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.seno.cart.domain.CheckoutRepository
+import com.seno.cart.domain.orderNumber
 import com.seno.core.data.model.toDto
 import com.seno.core.data.repository.FirestoreCoreRepository.Companion.CART_COLLECTION
 import com.seno.core.data.repository.FirestoreCoreRepository.Companion.CART_ITEMS_COLLECTION
@@ -15,7 +16,7 @@ class FirestoreCheckoutRepository(
     private val db: FirebaseFirestore,
     private val userData: UserData,
 ) : CheckoutRepository {
-    override suspend fun sendOrder(checkoutOrder: CheckoutOrder): FirebaseResult<Unit> {
+    override suspend fun sendOrder(checkoutOrder: CheckoutOrder): FirebaseResult<orderNumber> {
         return try {
             val cartId = userData.getCartId().first()
                 ?: return FirebaseResult.Error(Exception("Cart id is null"))
@@ -36,7 +37,7 @@ class FirestoreCheckoutRepository(
                 }.await()
             userData.setTotalItemCart(0)
 
-            FirebaseResult.Success(Unit)
+            FirebaseResult.Success(checkoutOrder.orderNumber)
         } catch (e: Exception) {
             FirebaseResult.Error(e)
         }

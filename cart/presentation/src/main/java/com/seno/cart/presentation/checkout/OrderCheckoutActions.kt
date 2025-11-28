@@ -4,11 +4,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 sealed interface OrderCheckoutActions {
-    data object OnDismissDatePicker : OrderCheckoutActions
-
-    data object OnDismissTimePicker : OrderCheckoutActions
-
-    data object OnCancelTimePicker : OrderCheckoutActions
+    data object OnCancelPickupTimePicker : OrderCheckoutActions
 
     data object OnConfirmDatePicker : OrderCheckoutActions
 
@@ -27,4 +23,10 @@ sealed interface OrderCheckoutActions {
     data class OnCommentTextChange(val comment: String) : OrderCheckoutActions
 
     data object OnBackClick : OrderCheckoutActions
+
+    data object OnLoginClick : OrderCheckoutActions
+
+    data object OnMainMenuClick : OrderCheckoutActions
+
+    data class OnPlaceOrderClick(val totalPrice: Double) : OrderCheckoutActions
 }
