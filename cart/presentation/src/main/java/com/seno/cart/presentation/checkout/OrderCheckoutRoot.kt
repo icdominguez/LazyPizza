@@ -10,9 +10,11 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun OrderCheckoutRoot(
+    navigateBack: () -> Unit,
+    onLoginClick: () -> Unit,
+    onMenuClick: () -> Unit,
     cartViewModel: CartViewModel = koinViewModel(),
-    viewModel: OrderCheckoutViewModel = koinViewModel(),
-    navigateBack: () -> Unit
+    viewModel: OrderCheckoutViewModel = koinViewModel()
 ) {
     val cartState by cartViewModel.state.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -31,6 +33,8 @@ fun OrderCheckoutRoot(
         onAction = { action ->
             when (action) {
                 OrderCheckoutActions.OnBackClick -> navigateBack()
+                OrderCheckoutActions.OnLoginClick -> onLoginClick()
+                OrderCheckoutActions.OnMainMenuClick -> onMenuClick()
                 else -> viewModel.onAction(action)
             }
         },

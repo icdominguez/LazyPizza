@@ -85,11 +85,9 @@ internal fun PickUpTimeUI(
             onSelectDate = { date ->
                 onAction(OrderCheckoutActions.OnDateSelected(date))
             },
+            onCancel = { onAction(OrderCheckoutActions.OnCancelPickupTimePicker) },
             onConfirmDatePicker = {
                 onAction(OrderCheckoutActions.OnConfirmDatePicker)
-            },
-            onDismiss = {
-                onAction(OrderCheckoutActions.OnDismissDatePicker)
             },
         )
     }
@@ -99,8 +97,7 @@ internal fun PickUpTimeUI(
             onConfirm = { selectedTime ->
                 onAction(OrderCheckoutActions.OnTimeSelected(selectedTime))
             },
-            onDismiss = { onAction(OrderCheckoutActions.OnDismissTimePicker) },
-            onCancel = { onAction(OrderCheckoutActions.OnCancelTimePicker) },
+            onCancel = { onAction(OrderCheckoutActions.OnCancelPickupTimePicker) },
             onTimeChange = { time ->
                 onAction(OrderCheckoutActions.OnTimeChanged(time))
             },

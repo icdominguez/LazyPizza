@@ -1,6 +1,5 @@
 package com.seno.cart.presentation.checkout
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,18 +16,23 @@ import androidx.compose.ui.unit.dp
 import com.seno.core.presentation.components.button.LazyPizzaPrimaryButton
 import com.seno.core.presentation.theme.label_1_medium
 import com.seno.core.presentation.theme.label_1_semiBold
-import com.seno.core.presentation.theme.surfaceHigher
 import com.seno.core.presentation.theme.textPrimary
 import com.seno.core.presentation.theme.textSecondary
 import com.seno.core.presentation.utils.formatToPrice
 
 @Composable
 fun OrderCheckoutBottomBar(
+    onPlaceOrderClick: () -> Unit,
+    isPlaceOrderLoading: Boolean = false,
+    isPlaceOrderSuccess: Boolean = false,
     isTablet: Boolean = false,
-    totalPrice: Double = 0.0
+    totalPrice: Double = 0.0,
 ) {
     if (isTablet) {
-        Column {
+        Column(
+            modifier = Modifier
+                .padding(top = 8.dp),
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -50,10 +54,12 @@ fun OrderCheckoutBottomBar(
                 Spacer(modifier = Modifier.weight(1f))
 
                 LazyPizzaPrimaryButton(
+                    enabled = !isPlaceOrderLoading && !isPlaceOrderSuccess,
+                    isLoading = isPlaceOrderLoading,
                     modifier = Modifier
                         .width(380.dp),
                     buttonText = "Place order",
-                    onClick = { /* */ },
+                    onClick = onPlaceOrderClick,
                 )
             }
 
@@ -62,7 +68,7 @@ fun OrderCheckoutBottomBar(
     } else {
         Column(
             modifier = Modifier
-                .background(surfaceHigher)
+                .padding(top = 8.dp)
                 .padding(horizontal = 16.dp),
         ) {
             Row(
@@ -88,8 +94,10 @@ fun OrderCheckoutBottomBar(
 
             LazyPizzaPrimaryButton(
                 modifier = Modifier.fillMaxWidth(),
+                enabled = !isPlaceOrderLoading && !isPlaceOrderSuccess,
+                isLoading = isPlaceOrderLoading,
                 buttonText = "Place order",
-                onClick = { /* */ },
+                onClick = onPlaceOrderClick,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -100,11 +108,16 @@ fun OrderCheckoutBottomBar(
 @Preview(showBackground = true)
 @Composable
 private fun OrderCheckoutMobileBottomBarPreview() {
-    OrderCheckoutBottomBar()
+    OrderCheckoutBottomBar(
+        onPlaceOrderClick = {},
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun OrderCheckoutTabletBottomBarPreview() {
-    OrderCheckoutBottomBar(isTablet = true)
+    OrderCheckoutBottomBar(
+        onPlaceOrderClick = {},
+        isTablet = true,
+    )
 }

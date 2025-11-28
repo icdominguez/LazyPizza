@@ -2,21 +2,40 @@ package com.seno.cart.presentation.checkout
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.seno.cart.domain.CheckoutRepository
+import com.seno.cart.presentation.R
 import com.seno.cart.presentation.checkout.components.RadioOptions
-import com.seno.core.presentation.R
+import com.seno.cart.presentation.checkout.utils.toPlaceOrderPickupTime
+import com.seno.core.domain.FirebaseResult
+import com.seno.core.domain.checkout.CheckoutOrder
+import com.seno.core.domain.repository.CoreRepository
+import com.seno.core.domain.userdata.UserData
+import com.seno.core.presentation.utils.SnackbarAction
+import com.seno.core.presentation.utils.SnackbarController
+import com.seno.core.presentation.utils.SnackbarEvent
 import com.seno.core.presentation.utils.UiText
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.math.RoundingMode
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import kotlin.time.Duration.Companion.minutes
 
-class OrderCheckoutViewModel : ViewModel() {
+class OrderCheckoutViewModel(
+    private val userData: UserData,
+    private val checkoutRepository: CheckoutRepository,
+    private val coreRepository: CoreRepository
+) : ViewModel() {
     private val _state = MutableStateFlow(OrderCheckoutState())
     val state = _state.asStateFlow()
 
@@ -29,6 +48,11 @@ class OrderCheckoutViewModel : ViewModel() {
     init {
         initializeDates()
         startTimeUpdate()
+        userData
+            .getUserId()
+            .onEach { userId ->
+                _state.update { it.copy(isUserLoggedIn = userId != null) }
+            }.launchIn(viewModelScope)
     }
 
     private fun initializeDates() {
@@ -56,7 +80,7 @@ class OrderCheckoutViewModel : ViewModel() {
                         displayPickupTime = formatPickupTime(earliestTime, it),
                     )
                 }
-                delay(60000)
+                delay(1.minutes)
             }
         }
     }
@@ -110,11 +134,6 @@ class OrderCheckoutViewModel : ViewModel() {
         _state.update {
             it.copy(
                 displayPickupTime = formatPickupTime(it.currentTime, it),
-                displayScheduleDate = formatScheduledPickup(
-                    it.selectedScheduleDateMillis,
-                    it.selectedScheduleTime,
-                    it.todayDateMillis,
-                ),
             )
         }
     }
@@ -147,23 +166,11 @@ class OrderCheckoutViewModel : ViewModel() {
                 _state.update { it.copy(isOrderDetailsExpanded = !it.isOrderDetailsExpanded) }
             }
 
-            OrderCheckoutActions.OnDismissDatePicker -> {
-                _state.update { it.copy(showDatePicker = false) }
-            }
-
-            OrderCheckoutActions.OnDismissTimePicker -> {
-                _state.update {
-                    it.copy(
-                        showTimePicker = false,
-                        timeValidationError = null,
-                    )
-                }
-            }
-
-            OrderCheckoutActions.OnCancelTimePicker -> {
+            OrderCheckoutActions.OnCancelPickupTimePicker -> {
                 _state.update {
                     val hasConfirmedTime = it.selectedScheduleTime != null
                     it.copy(
+                        showDatePicker = false,
                         showTimePicker = false,
                         timeValidationError = null,
                         selectedDeliveryOption = if (hasConfirmedTime) RadioOptions.SCHEDULE else RadioOptions.EARLIEST,
@@ -234,7 +241,104 @@ class OrderCheckoutViewModel : ViewModel() {
                 }
             }
 
+            is OrderCheckoutActions.OnPlaceOrderClick -> placeOrder(action.totalPrice)
+
             else -> Unit
+        }
+    }
+
+    private fun placeOrder(totalPrice: Double) {
+        viewModelScope.launch {
+            val userId = userData.getUserId().first() ?: return@launch
+            val cartId = userData.getCartId().first() ?: return@launch
+            val cartResult = coreRepository.getCart(cartId).first()
+            if (cartResult is FirebaseResult.Error) {
+                SnackbarController.sendEvent(
+                    SnackbarEvent("Place order error, please try again", SnackbarAction("OK") {}),
+                )
+                return@launch
+            }
+            val items = (cartResult as FirebaseResult.Success).data
+
+            _state.update {
+                it.copy(
+                    isPlaceOrderLoading = true,
+                )
+            }
+
+            val pickupTimeMillis = when (_state.value.selectedDeliveryOption) {
+                RadioOptions.EARLIEST -> {
+                    val todayDate = LocalDate.now()
+                    LocalDateTime
+                        .of(todayDate, _state.value.currentTime)
+                        .atZone(ZoneId.systemDefault())
+                        .toInstant()
+                        .toEpochMilli()
+                }
+
+                RadioOptions.SCHEDULE -> {
+                    val selectedDateMillis = _state.value.selectedScheduleDateMillis
+                    val selectedTime = _state.value.selectedScheduleTime
+
+                    if (selectedDateMillis == null || selectedTime == null) {
+                        val todayDate = LocalDate.now()
+                        LocalDateTime
+                            .of(todayDate, _state.value.currentTime)
+                            .atZone(ZoneId.systemDefault())
+                            .toInstant()
+                            .toEpochMilli()
+                    } else {
+                        val selectedLocalDate = Instant
+                            .ofEpochMilli(selectedDateMillis)
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDate()
+
+                        LocalDateTime
+                            .of(selectedLocalDate, selectedTime)
+                            .atZone(ZoneId.systemDefault())
+                            .toInstant()
+                            .toEpochMilli()
+                    }
+                }
+            }.toPlaceOrderPickupTime()
+
+            val result = checkoutRepository.sendOrder(
+                CheckoutOrder(
+                    userId = userId,
+                    pickupTime = pickupTimeMillis,
+                    items = items,
+                    totalAmount = totalPrice
+                        .toBigDecimal()
+                        .setScale(2, RoundingMode.HALF_UP)
+                        .toDouble(),
+                ),
+            )
+
+            when (result) {
+                is FirebaseResult.Error -> {
+                    SnackbarController.sendEvent(
+                        SnackbarEvent(
+                            "Place order error, please try again",
+                            SnackbarAction("OK") {},
+                        ),
+                    )
+                }
+
+                is FirebaseResult.Success -> {
+                    _state.update {
+                        it.copy(
+                            placeOrderSuccess = true,
+                            placeOrderNumber = result.data,
+                            placeOrderPickupTime = pickupTimeMillis,
+                        )
+                    }
+                }
+            }
+            _state.update {
+                it.copy(
+                    isPlaceOrderLoading = false,
+                )
+            }
         }
     }
 

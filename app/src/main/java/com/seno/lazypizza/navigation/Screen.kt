@@ -34,8 +34,5 @@ sealed class Screen {
     data object Authentication {
         @Serializable
         data object LoginScreen
-
-        @Serializable
-        data object OTPScreen
     }
 }

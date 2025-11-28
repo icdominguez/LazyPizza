@@ -7,4 +7,13 @@
     <string name="pickup_time">PICKUP TIME</string>
     <string name="earliest_pickup_time">EARLIEST PICKUP TIME:</string>
     <string name="scheduled_time">SCHEDULED PICKUP:</string>
+    <string name="login_to_place_order">Login to place order</string>
+    <string name="place_order_error">Place order error, please try again</string>
+    <string name="pickup_time_minimum_error">Please select a time at least %1$s minutes from now</string>
+    <string name="pickup_time_range_error">Pickup available between %1$s and %2$s</string>
+    <string name="place_order_success_title">Your order has been placed!</string>
+    <string name="place_order_success_subtitle">Thank you for your order! Please come at the indicated time.</string>
+    <string name="place_order_number">ORDER NUMBER:</string>
+    <string name="place_order_pickup">PICKUP TIME:</string>
+    <string name="back_to_menu">Back to Menu</string>
 </resources>

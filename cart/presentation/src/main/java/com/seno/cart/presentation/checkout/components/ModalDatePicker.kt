@@ -34,7 +34,7 @@ import java.time.format.DateTimeFormatter
 internal fun ModalDatePicker(
     initialSelectedDateMillis: Long,
     minSelectableDateMillis: Long,
-    onDismiss: () -> Unit = {},
+    onCancel: () -> Unit,
     onSelectDate: (LocalDate) -> Unit = {},
     onConfirmDatePicker: () -> Unit = {}
 ) {
@@ -71,7 +71,7 @@ internal fun ModalDatePicker(
 
     DatePickerDialog(
         shape = RoundedCornerShape(12.dp),
-        onDismissRequest = onDismiss,
+        onDismissRequest = onCancel,
         confirmButton = {
             LazyPizzaPrimaryButton(
                 onClick = {
@@ -88,7 +88,7 @@ internal fun ModalDatePicker(
             )
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(onClick = onCancel) {
                 Text(
                     text = "Cancel",
                     style = title_3.copy(color = primary),
@@ -123,6 +123,7 @@ private fun DatePickerModalPreview() {
         ModalDatePicker(
             initialSelectedDateMillis = System.currentTimeMillis(),
             minSelectableDateMillis = System.currentTimeMillis(),
+            onCancel = {},
         )
     }
 }

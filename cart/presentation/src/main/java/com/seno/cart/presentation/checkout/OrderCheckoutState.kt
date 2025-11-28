@@ -16,6 +16,10 @@ data class OrderCheckoutState(
     val timeValidationError: UiText? = null,
     val minSelectableDateMillis: Long = 0L,
     val displayPickupTime: String = "",
-    val displayScheduleDate: String = "Select Date",
     val comment: String = "",
+    val isUserLoggedIn: Boolean = false,
+    val isPlaceOrderLoading: Boolean = false,
+    val placeOrderSuccess: Boolean = false,
+    val placeOrderNumber: String = "",
+    val placeOrderPickupTime: String = ""
 )

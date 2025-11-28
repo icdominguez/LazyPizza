@@ -14,7 +14,7 @@ interface AuthService {
      * On failure, it returns a [DataError.Network] subtype. This error should be handled in the ViewModel
      * to show a user-friendly message, for example by using `DataError.asUiText()`.
      */
-    suspend fun sendCode(phoneNumber: String,): Result<RequestId, DataError.Network>
+    suspend fun sendCode(phoneNumber: String): Result<RequestId, DataError.Network>
 
     /**
      * Verifies the phone number using the provided code and request ID.
