@@ -4,7 +4,7 @@ data class HistoryOrder(
     val id: String,
     val userId: String = "",
     val orderNumber: String = "#${System.currentTimeMillis().toString().takeLast(5)}",
-    val pickupTime: String = "",
+    val pickupTime: Long = 0L,
     val items: List<String> = emptyList(),
     val totalAmount: Double = 0.0,
     val status: String = "In Progress",

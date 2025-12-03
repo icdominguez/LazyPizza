@@ -32,6 +32,7 @@ import com.seno.core.presentation.components.button.LazyPizzaPrimaryButton
 import com.seno.core.presentation.theme.background
 import com.seno.core.presentation.theme.surfaceHigher
 import com.seno.core.presentation.utils.DeviceConfiguration
+import com.seno.core.presentation.utils.toPlaceOrderPickupTime
 
 @Composable
 fun OrderCheckoutScreen(
@@ -107,7 +108,7 @@ fun OrderCheckoutScreen(
                         Modifier
                             .padding(top = 120.dp),
                     orderNumber = state.placeOrderNumber,
-                    pickupTime = state.placeOrderPickupTime,
+                    pickupTime = state.placeOrderPickupTime.toPlaceOrderPickupTime(),
                     onBackToMenuClick = { onAction(OrderCheckoutActions.OnMainMenuClick) },
                 )
             }

@@ -149,13 +149,13 @@ private fun HistoryScreenLoggedInWithOrdersPreview() {
                 orderItems = listOf(
                     OrderItem(
                         id = "12347",
-                        date = "November 10, 12:22",
+                        date = 1762777320000,
                         items = listOf("1 x Margherita"),
                         totalPrice = 8.99,
                     ),
                     OrderItem(
                         id = "12345",
-                        date = "November 1, 13:45",
+                        date = 1762004700000,
                         items = listOf(
                             "1 x Margherita",
                             "2 x Pepsi",
@@ -166,7 +166,7 @@ private fun HistoryScreenLoggedInWithOrdersPreview() {
                     ),
                     OrderItem(
                         id = "12346",
-                        date = "October 28, 19:53",
+                        date = 1761681180000,
                         items = listOf(
                             "1 x Margherita",
                             "2 x Cookies Ice Cream",

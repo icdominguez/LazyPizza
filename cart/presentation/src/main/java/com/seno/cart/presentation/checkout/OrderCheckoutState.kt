@@ -21,5 +21,5 @@ data class OrderCheckoutState(
     val isPlaceOrderLoading: Boolean = false,
     val placeOrderSuccess: Boolean = false,
     val placeOrderNumber: String = "",
-    val placeOrderPickupTime: String = ""
+    val placeOrderPickupTime: Long = 0L
 )
