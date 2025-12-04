@@ -28,6 +28,7 @@ import com.seno.core.presentation.theme.textOnPrimary
 import com.seno.core.presentation.theme.textPrimary
 import com.seno.core.presentation.theme.textSecondary
 import com.seno.core.presentation.theme.title_3
+import com.seno.core.presentation.utils.toPlaceOrderPickupTime
 import com.seno.history.presentation.OrderItem
 
 @Composable
@@ -56,7 +57,7 @@ fun HistoryItem(orderItem: OrderItem) {
                     color = textPrimary,
                 )
                 Text(
-                    text = orderItem.date,
+                    text = orderItem.date.toPlaceOrderPickupTime(),
                     style = body_4_regular,
                     color = Color(0xFF627686),
                 )
@@ -128,7 +129,7 @@ private fun HistoryItemComponent() {
         HistoryItem(
             orderItem = OrderItem(
                 id = "123456",
-                date = "November 10, 12:24",
+                date = 1762777440000,
                 items = listOf("1x Margherita"),
                 totalPrice = 10.0,
             ),

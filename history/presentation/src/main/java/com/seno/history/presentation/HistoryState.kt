@@ -1,10 +1,9 @@
 package com.seno.history.presentation
 
 import com.seno.history.domain.model.HistoryOrder
+import java.time.Instant
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoField
-import java.util.Locale
+import java.time.ZoneId
 
 data class HistoryState(
     val isLoading: Boolean = true,
@@ -13,34 +12,23 @@ data class HistoryState(
 )
 
 fun HistoryOrder.toOrderItem(): OrderItem {
-    val dateString = pickupTime
     return OrderItem(
         id = orderNumber,
-        date = dateString,
+        date = pickupTime,
         items = items,
         totalPrice = totalAmount,
         status = getOrderStatusFromPickupTime(pickupTime),
     )
 }
 
-private fun getOrderStatusFromPickupTime(pickupTimeString: String): OrderStatus {
-    val inputFormatter = DateTimeFormatter.ofPattern(
-        "MMMM d, HH:mm",
-        Locale.getDefault(),
-    )
-
+private fun getOrderStatusFromPickupTime(pickUpTime: Long): OrderStatus {
     val now = LocalDateTime.now()
 
-    val parsedDate = inputFormatter.parse(pickupTimeString)
-    val targetDateTime = LocalDateTime.of(
-        now.year,
-        parsedDate.get(ChronoField.MONTH_OF_YEAR),
-        parsedDate.get(ChronoField.DAY_OF_MONTH),
-        parsedDate.get(ChronoField.HOUR_OF_DAY),
-        parsedDate.get(ChronoField.MINUTE_OF_HOUR),
-    )
+    val pickUpDateTime = Instant.ofEpochMilli(pickUpTime)
+        .atZone(ZoneId.of("UTC"))
+        .toLocalDateTime()
 
-    return if (now.isBefore(targetDateTime)) {
+    return if (now.isBefore(pickUpDateTime)) {
         OrderStatus.IN_PROGRESS
     } else {
         OrderStatus.COMPLETED

@@ -2,6 +2,8 @@ package com.seno.core.presentation.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 @Composable
@@ -27,3 +29,9 @@ fun String.toCamelCase() =
         }
 
 fun Double.formatToPrice(): String = String.format(Locale.ROOT, "%.2f", this)
+
+fun Long.toPlaceOrderPickupTime(): String {
+    val date = Date(this)
+    val formatter = SimpleDateFormat("MMMM dd, HH:mm", Locale.getDefault())
+    return formatter.format(date)
+}

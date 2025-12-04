@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.seno.cart.domain.CheckoutRepository
 import com.seno.cart.presentation.R
 import com.seno.cart.presentation.checkout.components.RadioOptions
-import com.seno.cart.presentation.checkout.utils.toPlaceOrderPickupTime
 import com.seno.core.domain.FirebaseResult
 import com.seno.core.domain.checkout.CheckoutOrder
 import com.seno.core.domain.repository.CoreRepository
@@ -300,7 +299,7 @@ class OrderCheckoutViewModel(
                             .toEpochMilli()
                     }
                 }
-            }.toPlaceOrderPickupTime()
+            }
 
             val result = checkoutRepository.sendOrder(
                 CheckoutOrder(

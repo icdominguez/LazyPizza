@@ -12,7 +12,7 @@ data class CheckoutOrderDto(
     var orderNumber: String = "#${System.currentTimeMillis().toString().takeLast(5)}",
     @get:PropertyName("pickup_time")
     @set:PropertyName("pickup_time")
-    var pickupTime: String = "",
+    var pickupTime: Long = 0L,
     val items: List<CartDto> = emptyList(),
     @get:PropertyName("total_amount")
     @set:PropertyName("total_amount")
