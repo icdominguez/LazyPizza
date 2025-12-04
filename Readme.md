@@ -8,23 +8,21 @@ and [@icdominguez](https://github.com/icdominguez)
 
 ## Project Status
 
-This project is divided in 4 different milestones that are launched every fortnight. Was started
-being developed at 1st October. We are currently working on Milestone 3.
+This project was divided in 4 different milestones that were launched every fortnight. Was started
+being developed at 1st October and was finished at 29th November.
 
 ### 🚨 Latest Features ###
 
-- **All Products Screen**
-  - Displays a new icon to login or logout.
-  - Log out only deletes cart from remote database (firebase).
-- **Login Screen**
-  - Displays a text field to type phone number.
-  - If number is correct, continue button is enabled and a telegram code will be sent to the phone
-    entered.
-  - Otp component displayed to enter the code previously sent.
-  - If the code is correct, the user will be logged in. If not, an error message will be displayed.
-  - Timer for request a new code after a minute.
+- **Checkout Screen**
+  - Shows a pickup time to allow users to choose between Earliest available time or schedule custom time for receiving the order.
+  - Displays the order details collapsed at the beginning and it is up to the user to show it.
+  - Allows users to select recommended add ons to add directly to the cart.
+  - To make the order more customizable there is a comment section where the users can describe the order or place any recommendation.
+  - Place order button that connects to firebase and stores the order in firebase
 - **History Screen**
-  - Checks if user is logged in or not and if its logged displays a fake order list
+  - Now the data is not fake, that screen shows every order placed by the user.
+- **General development**
+  - Custom navigation bar and navigation rail components were created in order to fit Figma files. 
 
 ## 🧑🏽‍💻 Technical implementation
 
@@ -37,7 +35,7 @@ being developed at 1st October. We are currently working on Milestone 3.
 
 ## 🎥 Demo ##
 
-https://github.com/user-attachments/assets/17985058-5ab6-4322-8470-cbb9d9e5a368
+https://github.com/user-attachments/assets/c64dcd4c-cc58-4eb4-9898-4391e7636809
 
 ## 📱 Screenshots ##
 
@@ -74,6 +72,15 @@ https://github.com/user-attachments/assets/17985058-5ab6-4322-8470-cbb9d9e5a368
 | Mobile                                                            | Tablet                                                             |
 |-------------------------------------------------------------------|--------------------------------------------------------------------|
 | <img src="assets/screenshots/cart/cart_mobile.png" width="600" /> | <img src="assets/screenshots/cart/cart_tablet.png" width="1200" /> |
+
+</details>
+
+<details>
+  <summary>Checkout</summary>
+
+| Mobile                                                                    | Tablet                                                                     |
+|---------------------------------------------------------------------------|----------------------------------------------------------------------------|
+| <img src="assets/screenshots/checkout/checkout_mobile.png" width="600" /> | <img src="assets/screenshots/checkout/checkout_tablet.png" width="1200" /> |
 
 </details>
 
