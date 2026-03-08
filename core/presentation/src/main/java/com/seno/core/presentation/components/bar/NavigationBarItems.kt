@@ -37,7 +37,7 @@ fun NavigationBarItems(
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            NavigationMenu.entries.map { navigationMenu ->
+            NavigationMenu.entries.forEach { navigationMenu ->
                 NavigationBarItem(
                     navigationMenu = navigationMenu,
                     onNavigationMenuClick = onNavigationMenuClick,
@@ -67,7 +67,7 @@ fun NavigationBarItems(
                 ),
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
-            NavigationMenu.entries.map { navigationMenu ->
+            NavigationMenu.entries.forEach { navigationMenu ->
                 NavigationBarItem(
                     navigationMenu = navigationMenu,
                     onNavigationMenuClick = onNavigationMenuClick,

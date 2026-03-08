@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -43,8 +44,8 @@ fun AllProductsScreen(
     modifier: Modifier = Modifier,
     state: AllProductsState = AllProductsState(),
     onAction: (AllProductsAction) -> Unit = {},
+    listState: LazyListState
 ) {
-    val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     val deviceType = DeviceConfiguration.fromWindowSizeClass(windowSizeClass)
@@ -244,6 +245,8 @@ fun AllProductsScreen(
 @Composable
 private fun AllProductsScreenPreview() {
     LazyPizzaTheme {
-        AllProductsScreen()
+        AllProductsScreen(
+            listState = rememberLazyListState()
+        )
     }
 }
