@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -52,6 +54,8 @@ fun NavigationRoot(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+    val listState = rememberLazyListState()
+
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     val deviceType = DeviceConfiguration.fromWindowSizeClass(windowSizeClass)
 
@@ -93,6 +97,7 @@ fun NavigationRoot(
             }
         },
         snackbarHostState = snackbarHostState,
+        listState = listState,
     ) {
         if (deviceType.isTablet() && shouldShowNavigationItem(currentRoute)) {
             Row(
@@ -121,7 +126,10 @@ fun NavigationRoot(
                         navController = navHostController,
                         startDestination = Screen.Menu,
                     ) {
-                        mainGraph(navHostController)
+                        mainGraph(
+                            navHostController,
+                            listState
+                        )
                         cartGraph(navHostController)
                         historyGraph(navHostController)
                         authGraph(navHostController)
@@ -133,7 +141,10 @@ fun NavigationRoot(
                 navController = navHostController,
                 startDestination = Screen.Menu,
             ) {
-                mainGraph(navHostController)
+                mainGraph(
+                    navHostController,
+                    listState
+                )
                 cartGraph(navHostController)
                 historyGraph(navHostController)
                 authGraph(navHostController)
@@ -142,7 +153,10 @@ fun NavigationRoot(
     }
 }
 
-private fun NavGraphBuilder.mainGraph(navHostController: NavHostController) {
+private fun NavGraphBuilder.mainGraph(
+    navHostController: NavHostController,
+    listState: LazyListState
+) {
     navigation<Screen.Menu>(
         startDestination = Screen.Menu.AllProducts,
     ) {
@@ -154,6 +168,7 @@ private fun NavGraphBuilder.mainGraph(navHostController: NavHostController) {
                 onNavigateToProductDetail = { pizzaName ->
                     navHostController.navigate(route = Screen.Menu.ProductDetail(pizzaName))
                 },
+                listState = listState
             )
         }
     }

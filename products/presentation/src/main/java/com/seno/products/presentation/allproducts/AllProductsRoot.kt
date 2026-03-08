@@ -1,6 +1,8 @@
 package com.seno.products.presentation.allproducts
 
 import android.widget.Toast
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,7 +16,8 @@ import org.koin.androidx.compose.koinViewModel
 fun AllProductsRoot(
     onNavigateToAuthenticationScreen: () -> Unit,
     onNavigateToProductDetail: (String) -> Unit,
-    viewModel: AllProductsViewModel = koinViewModel()
+    viewModel: AllProductsViewModel = koinViewModel(),
+    listState: LazyListState,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -46,5 +49,6 @@ fun AllProductsRoot(
                 else -> viewModel.onAction(action)
             }
         },
+        listState = listState
     )
 }
